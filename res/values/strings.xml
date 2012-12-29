@@ -1,7 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Open Manager</string>
+    <string name="app_name">Slim File Manager</string>
+    <string name="about">About Slim File Manager</string>
     <string name="media_dialog">Media preview</string>
     <string name="dir_info">Folder Information</string>
     <string name="manager_act">Phone Management</string>
+    <string name="play">Play</string>
+    <string name="close">Close</string>
+    <string name="backup_all">Backup All</string>
+    <string name="email_dev">Email Developer</string>
+    <string name="dev_website">Developer Website</string>
+    <string name="folder_count">Number of Folders</string>
+    <string name="file_count">Number of Files</string>
+    <string name="last_modified">Last Modified</string>
+    <string name="total_size">Total Size</string>
+    <string name="used_size">Used Size</string>
+    <string name="back">Back</string>
+    <string name="zip_folder">Zip Folder</string>
+    <string name="path_string">Path goes here</string>
+    <string name="create">Create</string>
+    <string name="cancel">Cancel</string>
+    <string name="path_desc">Path is</string>
+    <string name="attach">Attach</string>
+    <string name="delete">Delete</string>
+    <string name="copy">Copy</string>
+    <string name="move">Move</string>
+    <string name="display">Display</string>
+    <string name="text_color">Text Color</string>
+    <string name="text_color_desc">Change the preferred text color</string>
+    <string name="hidden_files">Show hidden files/folders</string>
+    <string name="hidden_files_desc">Display files and folders that begin with a (period)</string>
+    <string name="image_preview">Show Image Preview</string>
+    <string name="image_preview_desc">Display a thumbnail for image files</string>
+    <string name="storage_banner">Show Storage Banner</string>
+    <string name="storage_banner_desc">Display sdcard storage information</string>
+    <string name="sorting">Sorting</string>
+    <string name="sorting_type">Sorting type</string>
+    <string name="sorting_desc">Choose how to sort files and folders</string>
+
 </resources>
