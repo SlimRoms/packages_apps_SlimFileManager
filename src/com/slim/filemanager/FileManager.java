@@ -56,6 +56,7 @@ public class FileManager {
     private static final int SORT_ALPHA =     1;
     private static final int SORT_TYPE =     2;
     private static final int SORT_SIZE =     3;
+    private static final int SORT_FF =     4;
 
     private boolean mShowHiddenFiles = false;
     private int mSortType = SORT_ALPHA;
@@ -584,9 +585,25 @@ public class FileManager {
                             mDirContent.add((String)a);
                     }
                     break;
+
+                case SORT_FF:
+                    int ffindex = 0;
+                    Object[] ff = mDirContent.toArray();
+                    String curr = mPathStack.peek();
+
+                    Arrays.sort(ff, alph);
+                    mDirContent.clear();
+
+                    for (Object a : ff) {
+                        if(new File(curr + "/" + (String)a).isDirectory())
+                            mDirContent.add(ffindex++, (String)a);
+                        else
+                            mDirContent.add((String)a);
+                    }
+                    break;
             }
 
-                } else {
+        } else {
             mDirContent.add("Emtpy");
         }
 

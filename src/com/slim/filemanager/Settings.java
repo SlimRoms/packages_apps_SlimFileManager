@@ -165,7 +165,7 @@ public class Settings extends Activity {
             @Override
             public void onClick(View view) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(Settings.this);
-                CharSequence[] options = {"None", "Alphabetical", "Type", "Size"};
+                CharSequence[] options = {"None", "Alphabetical", "Type", "Size", "Folders-Files"};
 
                 builder.setTitle("Sort by...");
                 builder.setIcon(R.drawable.filter);
@@ -193,6 +193,12 @@ public class Settings extends Activity {
 
                         case 3:
                             sort_state = 3;
+                            mSortChanged = true;
+                            is.putExtra("SORT", sort_state);
+                            break;
+
+                        case 4:
+                            sort_state = 4;
                             mSortChanged = true;
                             is.putExtra("SORT", sort_state);
                             break;
