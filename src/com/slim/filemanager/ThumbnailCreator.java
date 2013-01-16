@@ -22,11 +22,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 import java.lang.ref.SoftReference;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.io.File;
+import java.lang.RuntimeException;
 
 public class ThumbnailCreator extends Thread {
     private int mWidth;
@@ -62,6 +64,8 @@ public class ThumbnailCreator extends Thread {
 
     @Override
     public void run() {
+        String TAG = "ThumbnailCreator";
+
         int len = mFiles.size();
 
         for (int i = 0; i < len; i++) {
@@ -82,30 +86,45 @@ public class ThumbnailCreator extends Thread {
                 if (len_kb > 1000 && len_kb < 5000) {
                     options.inSampleSize = 32;
                     options.inPurgeable = true;
-                    mThumb = new SoftReference<Bitmap>(BitmapFactory.decodeFile(file.getPath(), options));
-
+                    try {
+                        mThumb = new SoftReference<Bitmap>(BitmapFactory.decodeFile(file.getPath(), options));
+                    } catch (RuntimeException e) {
+                        Log.e(TAG, "Error creating thumbnail in " + file.getPath());
+                    }
                 } else if (len_kb >= 5000) {
                     options.inSampleSize = 32;
                     options.inPurgeable = true;
-                    mThumb = new SoftReference<Bitmap>(BitmapFactory.decodeFile(file.getPath(), options));
-
+                    try {
+                        mThumb = new SoftReference<Bitmap>(BitmapFactory.decodeFile(file.getPath(), options));
+                    } catch (RuntimeException e) {
+                        Log.e(TAG, "Error creating thumbnail in " + file.getPath());
+                    }
                 } else if (len_kb <= 1000) {
                     options.inPurgeable = true;
-                    mThumb = new SoftReference<Bitmap>(Bitmap.createScaledBitmap(
-                                                        BitmapFactory.decodeFile(file.getPath()),
-                                                        mWidth,
-                                                        mHeight,
-                                                        false));
+                    try {
+                        mThumb = new SoftReference<Bitmap>(Bitmap.createScaledBitmap(
+                                                            BitmapFactory.decodeFile(file.getPath()),
+                                                            mWidth,
+                                                            mHeight,
+                                                            false));
+                    } catch (RuntimeException e) {
+                        Log.e(TAG, "Error creating thumbnail in " + file.getPath());
+                    }
                 }
 
-                mCacheMap.put(file.getPath(), mThumb.get());
+
+                if (mThumb != null) {
+                    mCacheMap.put(file.getPath(), mThumb.get());
+                }
 
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        Message msg = mHandler.obtainMessage();
-                        msg.obj = (Bitmap)mThumb.get();
-                        msg.sendToTarget();
+                        if (mThumb != null) {
+                            Message msg = mHandler.obtainMessage();
+                            msg.obj = (Bitmap)mThumb.get();
+                            msg.sendToTarget();
+                        }
                     }
                 });
             }
