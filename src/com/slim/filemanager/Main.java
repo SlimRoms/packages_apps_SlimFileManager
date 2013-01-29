@@ -27,6 +27,7 @@ import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.StatFs;
 import android.os.Environment;
@@ -48,6 +49,7 @@ import android.widget.ImageButton;
 import android.widget.Button;
 import android.widget.Toast;
 import android.util.Log;
+import com.stericson.RootTools.RootTools;
 
 /**
  * This is the main activity. The activity that is presented to the user
@@ -77,6 +79,7 @@ public final class Main extends ListActivity {
     private static final String PREFS_HIDDEN = "hidden";
     private static final String PREFS_COLOR = "color";
     private static final String PREFS_THUMBNAIL = "thumbnail";
+    private static final String PREFS_ROOT = "root";
     private static final String PREFS_SORT = "sort";
     private static final String PREFS_STORAGE = "sdcard space";
 
@@ -113,7 +116,9 @@ public final class Main extends ListActivity {
     private String mCopiedTarget;
     private String mZippedTarget;
     private String mSelectedListItem;                //item from context menu
-    private TextView  mPathLabel, mDetailLabel, mStorageLabel;
+    private TextView  mPathLabel, mDetailLabel, mStorageLabel, mRemountLabel;
+
+    private final String TAG = "SFM-Main";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -121,16 +126,24 @@ public final class Main extends ListActivity {
         getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.main);
 
+        //RootTools DEBUG Switch
+        //RootTools.debugMode = true;
+
         /*read settings*/
         mSettings = getSharedPreferences(PREFS_NAME, 0);
         boolean hide = mSettings.getBoolean(PREFS_HIDDEN, false);
         boolean thumb = mSettings.getBoolean(PREFS_THUMBNAIL, true);
+        boolean root = mSettings.getBoolean(PREFS_ROOT, false);
         int space = mSettings.getInt(PREFS_STORAGE, View.VISIBLE);
         int color = mSettings.getInt(PREFS_COLOR, -1);
         int sort = mSettings.getInt(PREFS_SORT, 3);
 
         mFileMag = new FileManager();
         mFileMag.setShowHiddenFiles(hide);
+        if (root && !RootTools.isAccessGiven()) {
+            root = false;
+        }
+        mFileMag.setRootMode(root);
         mFileMag.setSortType(sort);
 
         if (savedInstanceState != null)
@@ -154,17 +167,25 @@ public final class Main extends ListActivity {
         mStorageLabel = (TextView)findViewById(R.id.storage_label);
         mDetailLabel = (TextView)findViewById(R.id.detail_label);
         mPathLabel = (TextView)findViewById(R.id.path_label);
-        mPathLabel.setText("path: /sdcard");
+        mPathLabel.setText("path: " + mFileMag.getCurrentDir());
+        mRemountLabel = (TextView)findViewById(R.id.remount_label);
+        try {
+            Log.d(TAG, "mounted: " + RootTools.getMountedAs(mFileMag.getCurrentDir()));
+            mRemountLabel.setText("mounted: " + RootTools.getMountedAs(mFileMag.getCurrentDir()));
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
 
         updateStorageLabel();
         mStorageLabel.setVisibility(space);
 
-        mHandler.setUpdateLabels(mPathLabel, mDetailLabel);
+        mHandler.setUpdateLabels(mPathLabel, mDetailLabel, mRemountLabel);
 
         /* setup buttons */
         int[] img_button_id = {R.id.help_button, R.id.home_button,
                                R.id.back_button, R.id.info_button,
-                               R.id.manage_button, R.id.multiselect_button};
+                               R.id.manage_button, R.id.multiselect_button,
+                               R.id.remount_button};
 
         int[] button_id = {R.id.hidden_copy, R.id.hidden_attach,
                            R.id.hidden_delete, R.id.hidden_move};
@@ -191,7 +212,7 @@ public final class Main extends ListActivity {
             }
 
         } else if (intent.getAction().equals(ACTION_WIDGET)) {
-            Log.e("MAIN", "Widget action, string = " + intent.getExtras().getString("folder"));
+            Log.e(TAG, "Widget action, string = " + intent.getExtras().getString("folder"));
             mHandler.updateDirectory(mFileMag.getNextDir(intent.getExtras().getString("folder"), true));
 
         }
@@ -243,7 +264,13 @@ public final class Main extends ListActivity {
     public void onListItemClick(ListView parent, View view, int position, long id) {
         final String item = mHandler.getData(position);
         boolean multiSelect = mHandler.isMultiSelected();
-        File file = new File(mFileMag.getCurrentDir() + "/" + item);
+        File file;
+        if (mFileMag.getRootMode() && RootTools.isAccessGiven()) {
+            file = new FileRoot(mFileMag.getCurrentDir() + "/" + item);
+        } else {
+            file = new File(mFileMag.getCurrentDir() + "/" + item);
+        }
+        Log.d(TAG,"selected: [" + file.getPath() + "]");
         String item_ext = null;
 
         try {
@@ -262,13 +289,19 @@ public final class Main extends ListActivity {
 
         } else {
             if (file.isDirectory()) {
+                Log.d(TAG,"Selected is Directory!");
                 if(file.canRead()) {
                     mHandler.stopThumbnailThread();
-                    mHandler.updateDirectory(mFileMag.getNextDir(item, false));
+                    mHandler.updateDirectory(mFileMag.getNextDir(file.getPath(), true));
                     mPathLabel.setText(mFileMag.getCurrentDir());
-
+                    try {
+                        Log.d(TAG, mFileMag.getCurrentDir() + " mounted: " + RootTools.getMountedAs(mFileMag.getCurrentDir()));
+                        mRemountLabel.setText("mounted: " + RootTools.getMountedAs(mFileMag.getCurrentDir()));
+                    } catch (Exception e) {
+                        Log.e(TAG, e.getMessage());
+                    }
                     /*set back button switch to true
-                     * (this will be better implemented later)
+                    * (this will be better implemented later)
                      */
                     if(!mUseBackKey)
                         mUseBackKey = true;
@@ -468,8 +501,10 @@ public final class Main extends ListActivity {
 
             /* generic intent */
             else {
+                Log.d(TAG, "could not identify item type");
                 if(file.exists()) {
                     if(mReturnIntent) {
+                        Log.d(TAG, "generic item exists");
                         returnIntentResults(file);
 
                     } else {
@@ -497,6 +532,7 @@ public final class Main extends ListActivity {
         SharedPreferences.Editor editor = mSettings.edit();
         boolean check;
         boolean thumbnail;
+        boolean root;
         int color, sort, space;
 
         /* resultCode must equal RESULT_CANCELED because the only way
@@ -507,18 +543,24 @@ public final class Main extends ListActivity {
             //save the information we get from settings activity
             check = data.getBooleanExtra("HIDDEN", false);
             thumbnail = data.getBooleanExtra("THUMBNAIL", true);
+            root = data.getBooleanExtra("ROOT", false);
             color = data.getIntExtra("COLOR", -1);
             sort = data.getIntExtra("SORT", 0);
             space = data.getIntExtra("SPACE", View.VISIBLE);
 
             editor.putBoolean(PREFS_HIDDEN, check);
             editor.putBoolean(PREFS_THUMBNAIL, thumbnail);
+            editor.putBoolean(PREFS_ROOT, root);
             editor.putInt(PREFS_COLOR, color);
             editor.putInt(PREFS_SORT, sort);
             editor.putInt(PREFS_STORAGE, space);
             editor.commit();
 
             mFileMag.setShowHiddenFiles(check);
+            if (root && !RootTools.isAccessGiven()) {
+                root = false;
+            }
+            mFileMag.setRootMode(root);
             mFileMag.setSortType(sort);
             mHandler.setTextColor(color);
             mHandler.setShowThumbnails(thumbnail);
@@ -559,6 +601,7 @@ public final class Main extends ListActivity {
                 Intent settings_int = new Intent(this, Settings.class);
                 settings_int.putExtra("HIDDEN", mSettings.getBoolean(PREFS_HIDDEN, false));
                 settings_int.putExtra("THUMBNAIL", mSettings.getBoolean(PREFS_THUMBNAIL, true));
+                settings_int.putExtra("ROOT", mSettings.getBoolean(PREFS_ROOT, false));
                 settings_int.putExtra("COLOR", mSettings.getInt(PREFS_COLOR, -1));
                 settings_int.putExtra("SORT", mSettings.getInt(PREFS_SORT, 0));
                 settings_int.putExtra("SPACE", mSettings.getInt(PREFS_STORAGE, View.VISIBLE));
@@ -693,6 +736,12 @@ public final class Main extends ListActivity {
                     if(new File(mZippedTarget).canRead() && new File(current_dir).canWrite()) {
                         mHandler.unZipFileToDir(name, current_dir, old_dir);
                         mPathLabel.setText(current_dir);
+                        try {
+                            Log.d(TAG, "mounted: " + RootTools.getMountedAs(mFileMag.getCurrentDir()));
+                            mRemountLabel.setText("mounted: " + RootTools.getMountedAs(mFileMag.getCurrentDir()));
+                        } catch (Exception e) {
+                            Log.e(TAG, e.getMessage());
+                        }
 
                     } else {
                         Toast.makeText(this, "You do not have permission to unzip " + name,
@@ -743,6 +792,7 @@ public final class Main extends ListActivity {
 
                         dialog.dismiss();
                         String temp = mFileMag.getCurrentDir();
+                        mHandler.stopThumbnailThread();
                         mHandler.updateDirectory(mFileMag.getNextDir(temp, true));
                     }
                 });
@@ -780,6 +830,7 @@ public final class Main extends ListActivity {
 
                         dialog.dismiss();
                         String temp = mFileMag.getCurrentDir();
+                        mHandler.stopThumbnailThread();
                         mHandler.updateDirectory(mFileMag.getNextDir(temp, true));
                     }
                 });
@@ -824,6 +875,122 @@ public final class Main extends ListActivity {
         return dialog;
     }
 
+    @Override
+    protected void onPrepareDialog(final int id, final Dialog dialog) {
+
+        switch(id) {
+            case MENU_MKDIR:
+                dialog.setContentView(R.layout.input_layout);
+                dialog.setTitle("Create New Directory");
+                dialog.setCancelable(false);
+
+                ImageView icon = (ImageView)dialog.findViewById(R.id.input_icon);
+                icon.setImageResource(R.drawable.newfolder);
+
+                TextView label = (TextView)dialog.findViewById(R.id.input_label);
+                label.setText(mFileMag.getCurrentDir());
+                final EditText input = (EditText)dialog.findViewById(R.id.input_inputText);
+
+                Button cancel = (Button)dialog.findViewById(R.id.input_cancel_b);
+                Button create = (Button)dialog.findViewById(R.id.input_create_b);
+
+                create.setOnClickListener(new OnClickListener() {
+                    public void onClick (View v) {
+                        if (input.getText().length() > 1) {
+                            if (mFileMag.createDir(mFileMag.getCurrentDir() + "/", input.getText().toString()) == 0)
+                                Toast.makeText(Main.this,
+                                               "Folder " + input.getText().toString() + " created",
+                                               Toast.LENGTH_LONG).show();
+                            else
+                                Toast.makeText(Main.this, "New folder was not created", Toast.LENGTH_SHORT).show();
+                        }
+
+                        dialog.dismiss();
+                        String temp = mFileMag.getCurrentDir();
+                        mHandler.stopThumbnailThread();
+                        mHandler.updateDirectory(mFileMag.getNextDir(temp, true));
+                    }
+                });
+                cancel.setOnClickListener(new OnClickListener() {
+                    public void onClick (View v) {    dialog.dismiss(); }
+                });
+            break;
+            case D_MENU_RENAME:
+            case F_MENU_RENAME:
+                dialog.setContentView(R.layout.input_layout);
+                dialog.setTitle("Rename " + 
+                        (mSelectedListItem.length() <= 18 ? mSelectedListItem : mSelectedListItem.substring(0,15) + "..."));
+                dialog.setCancelable(false);
+
+                ImageView rename_icon = (ImageView)dialog.findViewById(R.id.input_icon);
+                rename_icon.setImageResource(R.drawable.rename);
+
+                TextView rename_label = (TextView)dialog.findViewById(R.id.input_label);
+                rename_label.setText(mFileMag.getCurrentDir());
+                final EditText rename_input = (EditText)dialog.findViewById(R.id.input_inputText);
+                rename_input.setText(mSelectedListItem);
+
+                Button rename_cancel = (Button)dialog.findViewById(R.id.input_cancel_b);
+                Button rename_create = (Button)dialog.findViewById(R.id.input_create_b);
+                rename_create.setText("Rename");
+
+                rename_create.setOnClickListener(new OnClickListener() {
+                    public void onClick (View v) {
+                        if(rename_input.getText().length() < 1)
+                            dialog.dismiss();
+
+                        if(mFileMag.renameTarget(mFileMag.getCurrentDir() +"/"+ mSelectedListItem, rename_input.getText().toString()) == 0) {
+                            Toast.makeText(Main.this, mSelectedListItem + " was renamed to " +rename_input.getText().toString(),
+                                    Toast.LENGTH_LONG).show();
+                        }else
+                            Toast.makeText(Main.this, mSelectedListItem + " was not renamed", Toast.LENGTH_LONG).show();
+
+                        dialog.dismiss();
+                        String temp = mFileMag.getCurrentDir();
+                        mHandler.stopThumbnailThread();
+                        mHandler.updateDirectory(mFileMag.getNextDir(temp, true));
+                    }
+                });
+                rename_cancel.setOnClickListener(new OnClickListener() {
+                    public void onClick (View v) {    dialog.dismiss(); }
+                });
+            break;
+
+            case SEARCH_B:
+            case MENU_SEARCH:
+                dialog.setContentView(R.layout.input_layout);
+                dialog.setTitle("Search");
+                dialog.setCancelable(false);
+
+                ImageView searchIcon = (ImageView)dialog.findViewById(R.id.input_icon);
+                searchIcon.setImageResource(R.drawable.search);
+
+                TextView search_label = (TextView)dialog.findViewById(R.id.input_label);
+                search_label.setText("Search for a file");
+                final EditText search_input = (EditText)dialog.findViewById(R.id.input_inputText);
+
+                Button search_button = (Button)dialog.findViewById(R.id.input_create_b);
+                Button cancel_button = (Button)dialog.findViewById(R.id.input_cancel_b);
+                search_button.setText("Search");
+
+                search_button.setOnClickListener(new OnClickListener() {
+                    public void onClick(View v) {
+                        String temp = search_input.getText().toString();
+
+                        if (temp.length() > 0)
+                            mHandler.searchForFile(temp);
+                        dialog.dismiss();
+                    }
+                });
+
+                cancel_button.setOnClickListener(new OnClickListener() {
+                    public void onClick(View v) { dialog.dismiss(); }
+                });
+
+            break;
+        }
+    }
+
     /*
      * (non-Javadoc)
      * This will check if the user is at root directory. If so, if they press back
@@ -849,6 +1016,12 @@ public final class Main extends ListActivity {
                 mHandler.stopThumbnailThread();
                 mHandler.updateDirectory(mFileMag.getPreviousDir());
                 mPathLabel.setText(mFileMag.getCurrentDir());
+                try {
+                    Log.d(TAG, "mounted: " + RootTools.getMountedAs(mFileMag.getCurrentDir()));
+                    mRemountLabel.setText("mounted: " + RootTools.getMountedAs(mFileMag.getCurrentDir()));
+                } catch (Exception e) {
+                    Log.e(TAG, e.getMessage());
+                }
             }
             return true;
 
@@ -862,7 +1035,12 @@ public final class Main extends ListActivity {
 
             mUseBackKey = false;
             mPathLabel.setText(mFileMag.getCurrentDir());
-
+            try {
+                Log.d(TAG, "mounted: " + RootTools.getMountedAs(mFileMag.getCurrentDir()));
+                mRemountLabel.setText("mounted: " + RootTools.getMountedAs(mFileMag.getCurrentDir()));
+            } catch (Exception e) {
+                Log.e(TAG, e.getMessage());
+            }
             return false;
 
         } else if(keycode == KeyEvent.KEYCODE_BACK && !mUseBackKey && current.equals("/")) {
@@ -871,5 +1049,11 @@ public final class Main extends ListActivity {
             return false;
         }
         return false;
+    }
+
+    //don't freak out on rotation and reset the entire activity
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
     }
 }

@@ -20,6 +20,8 @@ package com.slim.filemanager;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -39,6 +41,8 @@ public class ThumbnailCreator extends Thread {
     private String mDir;
     private Handler mHandler;
     private boolean mStop = false;
+
+    private final String TAG = "SFM-ThumbnailCreator";
 
     public ThumbnailCreator(int width, int height) {
         mHeight = height;
@@ -62,6 +66,93 @@ public class ThumbnailCreator extends Thread {
         this.mHandler = handler;
     }
 
+    // Returns the next power of two.
+    // Returns the input if it is already power of 2.
+    // Throws IllegalArgumentException if the input is <= 0 or
+    // the answer overflows.
+    public static int nextPowerOf2(int n) {
+        if (n <= 0 || n > (1 << 30)) throw new IllegalArgumentException("n is invalid: " + n);
+        n -= 1;
+        n |= n >> 16;
+        n |= n >> 8;
+        n |= n >> 4;
+        n |= n >> 2;
+        n |= n >> 1;
+        return n + 1;
+    }
+
+    public int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            // Calculate ratios of height and width to requested height and width
+            final int heightRatio = Math.round((float) height / (float) reqHeight);
+            final int widthRatio = Math.round((float) width / (float) reqWidth);
+
+            // Choose the smallest ratio as inSampleSize value, this will guarantee
+            // a final image with both dimensions larger than or equal to the
+            // requested height and width.
+            inSampleSize = Math.min(heightRatio, widthRatio);
+
+            // Finally round up the sample size to a power of 2 or multiple
+            // of 8 because BitmapFactory only honors sample size this way.
+            // For example, BitmapFactory downsamples an image by 2 even though the
+            // request is 3. So we round up the sample size to avoid OOM.
+            inSampleSize = inSampleSize <= 8 ? nextPowerOf2(inSampleSize) : (inSampleSize + 7) / 8 * 8;
+        }
+
+        return inSampleSize;
+    }
+
+    public Bitmap decodeSampledBitmapFromFile(String imagePath, int reqWidth, int reqHeight) {
+
+        // First decode with inJustDecodeBounds=true to check dimensions
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(imagePath, options);
+
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+        // Decode bitmap with inSampleSize set (NOTE: won't work on GIF files!)
+        options.inJustDecodeBounds = false;
+        options.inPurgeable = true;
+        return BitmapFactory.decodeFile(imagePath, options);
+    }
+
+    private Bitmap.Config getConfig(Bitmap bitmap) {
+        Bitmap.Config config = bitmap.getConfig();
+        if (config == null) {
+            config = Bitmap.Config.ARGB_8888;
+        }
+        return config;
+    }
+
+    public Bitmap resizeAndCropCenter(Bitmap bitmap, int size, boolean recycle) {
+        int w = bitmap.getWidth();
+        int h = bitmap.getHeight();
+        if (w == size && h == size) return bitmap;
+
+        // scale the image so that the shorter side equals to the target;
+        // the longer side will be center-cropped.
+        float scale = (float) size / Math.min(w,  h);
+
+        Bitmap target = Bitmap.createBitmap(size, size, getConfig(bitmap));
+        int width = Math.round(scale * bitmap.getWidth());
+        int height = Math.round(scale * bitmap.getHeight());
+        Canvas canvas = new Canvas(target);
+        canvas.translate((size - width) / 2f, (size - height) / 2f);
+        canvas.scale(scale, scale);
+        Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG | Paint.DITHER_FLAG);
+        canvas.drawBitmap(bitmap, 0, 0, paint);
+        if (recycle) bitmap.recycle();
+        return target;
+    }
+
     @Override
     public void run() {
         String TAG = "ThumbnailCreator";
@@ -77,41 +168,11 @@ public class ThumbnailCreator extends Thread {
             final File file = new File(mDir + "/" + mFiles.get(i));
 
             if (isImageFile(file.getName())) {
-                long len_kb = file.length() / 1024;
-
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                options.outWidth = mWidth;
-                options.outHeight = mHeight;
-
-                if (len_kb > 1000 && len_kb < 5000) {
-                    options.inSampleSize = 32;
-                    options.inPurgeable = true;
-                    try {
-                        mThumb = new SoftReference<Bitmap>(BitmapFactory.decodeFile(file.getPath(), options));
-                    } catch (RuntimeException e) {
-                        Log.e(TAG, "Error creating thumbnail in " + file.getPath());
-                    }
-                } else if (len_kb >= 5000) {
-                    options.inSampleSize = 32;
-                    options.inPurgeable = true;
-                    try {
-                        mThumb = new SoftReference<Bitmap>(BitmapFactory.decodeFile(file.getPath(), options));
-                    } catch (RuntimeException e) {
-                        Log.e(TAG, "Error creating thumbnail in " + file.getPath());
-                    }
-                } else if (len_kb <= 1000) {
-                    options.inPurgeable = true;
-                    try {
-                        mThumb = new SoftReference<Bitmap>(Bitmap.createScaledBitmap(
-                                                            BitmapFactory.decodeFile(file.getPath()),
-                                                            mWidth,
-                                                            mHeight,
-                                                            false));
-                    } catch (RuntimeException e) {
-                        Log.e(TAG, "Error creating thumbnail in " + file.getPath());
-                    }
+                try {
+                    mThumb = new SoftReference<Bitmap>(resizeAndCropCenter(decodeSampledBitmapFromFile(file.getPath(), mWidth, mHeight),52,true));
+                } catch (RuntimeException e) {
+                    Log.e(TAG, "Error creating thumbnail in " + file.getPath());
                 }
-
 
                 if (mThumb != null) {
                     mCacheMap.put(file.getPath(), mThumb.get());

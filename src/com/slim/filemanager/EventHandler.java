@@ -43,6 +43,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.util.Log;
+import com.stericson.RootTools.RootTools;
 
 /**
  * This class sits between the Main activity and the FileManager class.
@@ -89,7 +91,9 @@ public class EventHandler implements OnClickListener {
     private ArrayList<String> mDataSource, mMultiSelectData;
     private TextView mPathLabel;
     private TextView mInfoLabel;
+    private TextView mRemountLabel;
 
+    private final String TAG = "SFM-EventHandler";
 
     /**
      * Creates an EventHandler object. This object is used to communicate
@@ -140,9 +144,10 @@ public class EventHandler implements OnClickListener {
      * @param path    The label to update as the directory changes
      * @param label    the label to update information
      */
-    public void setUpdateLabels(TextView path, TextView label) {
+    public void setUpdateLabels(TextView path, TextView label, TextView remount) {
         mPathLabel = path;
         mInfoLabel = label;
+        mRemountLabel = remount;
     }
 
     /**
@@ -309,6 +314,14 @@ public class EventHandler implements OnClickListener {
                     updateDirectory(mFileMang.getPreviousDir());
                     if(mPathLabel != null)
                         mPathLabel.setText(mFileMang.getCurrentDir());
+                    if (mRemountLabel != null) {
+                        try {
+                            Log.d(TAG, "mounted: " + RootTools.getMountedAs(mFileMang.getCurrentDir()));
+                            mRemountLabel.setText("mounted: " + RootTools.getMountedAs(mFileMang.getCurrentDir()));
+                        } catch (Exception e) {
+                            Log.e(TAG, e.getMessage());
+                        }
+                    }
                 }
                 break;
 
@@ -323,6 +336,14 @@ public class EventHandler implements OnClickListener {
                 updateDirectory(mFileMang.setHomeDir(ApplicationBackup.SDCARDLOC));
                 if(mPathLabel != null)
                     mPathLabel.setText(mFileMang.getCurrentDir());
+                if (mRemountLabel != null) {
+                    try {
+                        Log.d(TAG, "mounted: " + RootTools.getMountedAs(mFileMang.getCurrentDir()));
+                        mRemountLabel.setText("mounted: " + RootTools.getMountedAs(mFileMang.getCurrentDir()));
+                    } catch (Exception e) {
+                        Log.e(TAG, e.getMessage());
+                    }
+                }
                 break;
 
             case R.id.info_button:
@@ -350,6 +371,31 @@ public class EventHandler implements OnClickListener {
 
                     multi_select_flag = true;
                     hidden_lay.setVisibility(LinearLayout.VISIBLE);
+                }
+                break;
+
+            case R.id.remount_button:
+                try {
+                    Log.d(TAG, "Mounted as ["+RootTools.getMountedAs(mFileMang.getCurrentDir())+"]");
+                    if (RootTools.remount(mFileMang.getCurrentDir(), RootTools.getMountedAs(mFileMang.getCurrentDir()).equals("ro") ? "RW" : "RO")) {
+                        Toast.makeText(mContext,
+                                "Successfully remounted as "  + RootTools.getMountedAs(mFileMang.getCurrentDir()),
+                                Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(mContext, "Remount Failed!", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (Exception e) {
+                    Log.d(TAG, e.getMessage());
+                }
+                if(mPathLabel != null)
+                    mPathLabel.setText(mFileMang.getCurrentDir());
+                if (mRemountLabel != null) {
+                    try {
+                        Log.d(TAG, "mounted: " + RootTools.getMountedAs(mFileMang.getCurrentDir()));
+                        mRemountLabel.setText("mounted: " + RootTools.getMountedAs(mFileMang.getCurrentDir()));
+                    } catch (Exception e) {
+                        Log.e(TAG, e.getMessage());
+                    }
                 }
                 break;
 
@@ -610,10 +656,17 @@ public class EventHandler implements OnClickListener {
             int num_items = 0;
             String temp = mFileMang.getCurrentDir();
             File file = new File(temp + "/" + mDataSource.get(position));
-            String[] list = file.list();
+            //If we can't read using normal File, attempt to use FileRoot
+            if (!file.exists() && mFileMang.getRootMode() && RootTools.isAccessGiven()) {
+                file = new FileRoot(temp + "/" + mDataSource.get(position));
+            }
 
-            if(list != null)
-                num_items = list.length;
+            if (file.isDirectory()) {
+                String[] list = file.list();
+
+                if(list != null)
+                    num_items = list.length;
+            }
 
             if(convertView == null) {
                 LayoutInflater inflater = (LayoutInflater) mContext.
@@ -640,8 +693,9 @@ public class EventHandler implements OnClickListener {
             mViewHolder.topView.setTextColor(mColor);
             mViewHolder.bottomView.setTextColor(mColor);
 
-            if(mThumbnail == null)
+            if(mThumbnail == null) {
                 mThumbnail = new ThumbnailCreator(52, 52);
+            }
 
             if(file != null && file.isFile()) {
                 String ext = file.toString();
@@ -680,8 +734,9 @@ public class EventHandler implements OnClickListener {
 
                             mThumbnail.createNewThumbnail(mDataSource, mFileMang.getCurrentDir(), handle);
 
-                            if (!mThumbnail.isAlive())
+                            if (mThumbnail.getState() == Thread.State.NEW) {
                                 mThumbnail.start();
+                            }
 
                         } else {
                             mViewHolder.icon.setImageBitmap(thumb);
@@ -800,6 +855,7 @@ public class EventHandler implements OnClickListener {
         private ProgressDialog pr_dialog;
         private int type;
         private int copy_rtn;
+        private int delete_rtn;
 
         private BackgroundWork(int type) {
             this.type = type;
@@ -900,7 +956,7 @@ public class EventHandler implements OnClickListener {
                     int size = params.length;
 
                     for(int i = 0; i < size; i++)
-                        mFileMang.deleteTarget(params[i]);
+                        delete_rtn = mFileMang.deleteTarget(params[i]);
 
                     return null;
             }
@@ -936,6 +992,7 @@ public class EventHandler implements OnClickListener {
 
                             public void onClick(DialogInterface dialog, int position) {
                                 String path = file.get(position);
+                                stopThumbnailThread();
                                 updateDirectory(mFileMang.getNextDir(path.
                                                     substring(0, path.lastIndexOf("/")), true));
                             }
@@ -962,19 +1019,24 @@ public class EventHandler implements OnClickListener {
 
                     pr_dialog.dismiss();
                     mInfoLabel.setText("");
+                    stopThumbnailThread();
+                    updateDirectory(mFileMang.getNextDir(mFileMang.getCurrentDir(), true));
                     break;
 
                 case UNZIP_TYPE:
+                    stopThumbnailThread();
                     updateDirectory(mFileMang.getNextDir(mFileMang.getCurrentDir(), true));
                     pr_dialog.dismiss();
                     break;
 
                 case UNZIPTO_TYPE:
+                    stopThumbnailThread();
                     updateDirectory(mFileMang.getNextDir(mFileMang.getCurrentDir(), true));
                     pr_dialog.dismiss();
                     break;
 
                 case ZIP_TYPE:
+                    stopThumbnailThread();
                     updateDirectory(mFileMang.getNextDir(mFileMang.getCurrentDir(), true));
                     pr_dialog.dismiss();
                     break;
@@ -984,7 +1046,11 @@ public class EventHandler implements OnClickListener {
                         mMultiSelectData.clear();
                         multi_select_flag = false;
                     }
+                    if (delete_rtn < 0) {
+                        Toast.makeText(mContext, "Delete failed", Toast.LENGTH_SHORT).show();
+                    }
 
+                    stopThumbnailThread();
                     updateDirectory(mFileMang.getNextDir(mFileMang.getCurrentDir(), true));
                     pr_dialog.dismiss();
                     mInfoLabel.setText("");

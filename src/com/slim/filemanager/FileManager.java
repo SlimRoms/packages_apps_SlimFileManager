@@ -20,7 +20,10 @@ package com.slim.filemanager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.Calendar;
 import java.util.Comparator;
+import java.util.Locale;
 import java.util.Stack;
 import java.io.File;
 import java.io.BufferedInputStream;
@@ -29,12 +32,18 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import android.os.PatternMatcher;
 import android.util.Log;
-
+import com.stericson.RootTools.Command;
+import com.stericson.RootTools.RootTools;
+import com.stericson.RootTools.Shell;
 /**
  * This class is completely modular, which is to say that it has
  * no reference to the any GUI activity. This class could be taken
@@ -59,11 +68,14 @@ public class FileManager {
     private static final int SORT_FF =     4;
 
     private boolean mShowHiddenFiles = false;
+    private boolean mRootMode = false;
     private int mSortType = SORT_ALPHA;
     private long mDirSize = 0;
     private Stack<String> mPathStack;
     private ArrayList<String> mDirContent;
+    private boolean isDir = false;
 
+    private final String TAG = "SFM-FileManager";
     /**
      * Constructs an object of the class
      * <br>
@@ -105,6 +117,22 @@ public class FileManager {
      */
     public void setShowHiddenFiles(boolean choice) {
         mShowHiddenFiles = choice;
+    }
+
+    /**
+     * This will determine if root mode is active
+     * @param choice    true if user is in root mode
+     */
+    public void setRootMode(boolean choice) {
+        mRootMode = choice;
+    }
+
+    /**
+     * This will determine if root mode is active
+     * @param choice    true if user is in root mode
+     */
+    public boolean getRootMode() {
+        return mRootMode;
     }
 
     /**
@@ -161,52 +189,96 @@ public class FileManager {
      * @return
      */
     public int copyToDirectory(String old, String newDir) {
-        File old_file = new File(old);
-        File temp_dir = new File(newDir);
-        byte[] data = new byte[BUFFER];
-        int read = 0;
+        File old_file;
+        File temp_dir;
+        if (getRootMode() && RootTools.isAccessGiven()) {
+            Log.d(TAG, "c2d ROOT!");
+            old_file = new FileRoot(old);
+            temp_dir = new FileRoot(newDir);
+            if (old_file.isFile()) {
+                Log.d(TAG, "c2d copying File [" + old + "]");
+                if (RootTools.copyFile(old, newDir, false, true)) {
+                    return 0;
+                } else {
+                    return -1;
+                }
+            } else if (old_file.isDirectory()) {
+                Log.d(TAG, "c2d copying Dir [" + old + "]");
+                String files[] = old_file.list();
+                String dir = newDir + old.substring(old.lastIndexOf("/"), old.length());
+                int len = files.length;
 
-        if(old_file.isFile() && temp_dir.isDirectory() && temp_dir.canWrite()){
-            String file_name = old.substring(old.lastIndexOf("/"), old.length());
-            File cp_file = new File(newDir + file_name);
+                if(!new FileRoot(dir).mkdir()) {
+                    Log.e(TAG, "Couldn't create new dir [" + dir + "]");
+                    return -1;
+                }
 
-            try {
-                BufferedOutputStream o_stream = new BufferedOutputStream(
-                                                new FileOutputStream(cp_file));
-                BufferedInputStream i_stream = new BufferedInputStream(
-                                               new FileInputStream(old_file));
-
-                while((read = i_stream.read(data, 0, BUFFER)) != -1)
-                    o_stream.write(data, 0, read);
-
-                o_stream.flush();
-                i_stream.close();
-                o_stream.close();
-
-            } catch (FileNotFoundException e) {
-                Log.e("FileNotFoundException", e.getMessage());
-                return -1;
-
-            } catch (IOException e) {
-                Log.e("IOException", e.getMessage());
-                return -1;
+                for(int i = 0; i < len; i++) {
+                    if ((new FileRoot(old + "/" + files[i])).isDirectory()) {
+                        Log.d(TAG, "c2d Found a subdir [" + old + "/" + files[i] + "]");
+                        if (copyToDirectory(old + "/" + files[i], dir) < 0) {
+                            return -1;
+                        }
+                    }
+                    else {
+                        Log.d(TAG, "c2d Copying dir file [" + files[i] + "]");
+                        if (!RootTools.copyFile(old + "/" + files[i], dir, false, true)) {
+                            return -1;
+                        }
+                    }
+                }
+                 return 0;
             }
+            return -1;
+        } else {
+            Log.d(TAG, "c2d Normal");
+            old_file = new File(old);
+            temp_dir = new File(newDir);
+            byte[] data = new byte[BUFFER];
+            int read = 0;
 
-        }else if(old_file.isDirectory() && temp_dir.isDirectory() && temp_dir.canWrite()) {
-            String files[] = old_file.list();
-            String dir = newDir + old.substring(old.lastIndexOf("/"), old.length());
-            int len = files.length;
+            if(old_file.isFile() && temp_dir.isDirectory() && temp_dir.canWrite()){
+                String file_name = old.substring(old.lastIndexOf("/"), old.length());
+                File cp_file = new File(newDir + file_name);
 
-            if(!new File(dir).mkdir())
+                try {
+                    BufferedOutputStream o_stream = new BufferedOutputStream(
+                                                    new FileOutputStream(cp_file));
+                    BufferedInputStream i_stream = new BufferedInputStream(
+                                                   new FileInputStream(old_file));
+
+                    while((read = i_stream.read(data, 0, BUFFER)) != -1)
+                        o_stream.write(data, 0, read);
+
+                    o_stream.flush();
+                    i_stream.close();
+                    o_stream.close();
+
+                } catch (FileNotFoundException e) {
+                    Log.e("FileNotFoundException", e.getMessage());
+                    return -1;
+
+                } catch (IOException e) {
+                    Log.e("IOException", e.getMessage());
+                    return -1;
+                }
+
+            }else if(old_file.isDirectory() && temp_dir.isDirectory() && temp_dir.canWrite()) {
+                String files[] = old_file.list();
+                String dir = newDir + old.substring(old.lastIndexOf("/"), old.length());
+                int len = files.length;
+
+                if(!new File(dir).mkdir())
+                    return -1;
+
+                for(int i = 0; i < len; i++)
+                    copyToDirectory(old + "/" + files[i], dir);
+
+            } else if(!temp_dir.canWrite())
                 return -1;
 
-            for(int i = 0; i < len; i++)
-                copyToDirectory(old + "/" + files[i], dir);
-
-        } else if(!temp_dir.canWrite())
-            return -1;
-
-        return 0;
+            return 0;
+        }
     }
 
     /**
@@ -332,24 +404,41 @@ public class FileManager {
      * @return
      */
     public int renameTarget(String filePath, String newName) {
-        File src = new File(filePath);
-        String ext = "";
-        File dest;
-
-        if(src.isFile())
-            /*get file extension*/
-            ext = filePath.substring(filePath.lastIndexOf("."), filePath.length());
-
-        if(newName.length() < 1)
+        if(newName.length() < 1) {
+            Log.d(TAG, "renameTarget Cannot Rename: No name found!");
             return -1;
+        }
+
+        boolean useRoot = false;
+        File src = new File(filePath);
+        if (!src.exists()) {
+            Log.d(TAG, "renameTarget cannot find src, trying FileRoot");
+            src = new FileRoot(filePath);
+            if (!src.exists()) {
+                Log.d(TAG, "renameTarget cannot find FileRoot src");
+                return -1;
+            } else {
+                useRoot = true;
+            }
+        }
+        File dest;
 
         String temp = filePath.substring(0, filePath.lastIndexOf("/"));
 
-        dest = new File(temp + "/" + newName + ext);
-        if(src.renameTo(dest))
-            return 0;
-        else
+        if (!useRoot) {
+            dest = new File(temp + "/" + newName);
+        } else {
+            dest = new FileRoot(temp + "/" + newName);
+        }
+        if (dest.exists()) {
+            Log.d(TAG, "renameTarget Cannot Rename: Destination already exists!");
             return -1;
+        }
+        if(src.renameTo(dest)) {
+            return 0;
+        } else {
+            return -1;
+        }
     }
 
     /**
@@ -367,8 +456,11 @@ public class FileManager {
         if(path.charAt(len - 1) != '/')
             path += "/";
 
-        if (new File(path+name).mkdir())
+        if (new File(path+name).mkdir()) {
             return 0;
+        } else if (new FileRoot(path+name).mkdir()) {
+            return 0;
+        }
 
         return -1;
     }
@@ -380,20 +472,35 @@ public class FileManager {
      * @return
      */
     public int deleteTarget(String path) {
-        File target = new File(path);
+        File target;
+
+        if (this.getRootMode() && RootTools.isAccessGiven()) {
+            Log.d(TAG, "deleteTarget - FileRoot");
+            target = new FileRoot(path);
+        } else {
+            Log.d(TAG, "deleteTarget - File");
+            target = new File(path);
+        }
 
         if(target.exists() && target.isFile() && target.canWrite()) {
-            target.delete();
-            return 0;
+            Log.d(TAG, "deleteTarget - it is a File");
+            if (target.delete()) {
+                return 0;
+            } else {
+                return -1;
+            }
         }
 
         else if(target.exists() && target.isDirectory() && target.canRead()) {
+            Log.d(TAG, "deleteTarget - it is a Directory");
             String[] file_list = target.list();
 
             if(file_list != null && file_list.length == 0) {
-                target.delete();
-                return 0;
-
+                if (target.delete()) {
+                    return 0;
+                } else {
+                    return -1;
+                }
             } else if(file_list != null && file_list.length > 0) {
 
                 for(int i = 0; i < file_list.length; i++) {
@@ -406,9 +513,13 @@ public class FileManager {
                 }
             }
             if(target.exists())
-                if(target.delete())
+                if (target.delete()) {
                     return 0;
+                } else {
+                    return -1;
+                }
         }
+        Log.d(TAG, "deleteTarget - Couldn't find and/or no Read/Write on Target");
         return -1;
     }
 
@@ -418,7 +529,13 @@ public class FileManager {
      * @return
      */
     public boolean isDirectory(String name) {
-        return new File(mPathStack.peek() + "/" + name).isDirectory();
+        if (new File(mPathStack.peek() + "/" + name).isDirectory()) {
+            return true;
+        } else if (new FileRoot(mPathStack.peek() + "/" + name).isDirectory()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -520,7 +637,9 @@ public class FileManager {
         if(!mDirContent.isEmpty())
             mDirContent.clear();
 
-        File file = new File(mPathStack.peek());
+        File file = (mRootMode && RootTools.isAccessGiven()) ? new FileRoot(mPathStack.peek()) : new File(mPathStack.peek());
+
+        Log.d(TAG,"PATH: [" + file.getPath() + "]");
 
         if(file.exists() && file.canRead()) {
             String[] list = file.list();
@@ -604,10 +723,141 @@ public class FileManager {
             }
 
         } else {
-            mDirContent.add("Emtpy");
+            mDirContent.add("Empty");
+        }
+        return mDirContent;
+    }
+
+    private String getItemName(String line) {
+        java.text.DateFormat DateFormatInstance = new SimpleDateFormat("MMM dd yyyy HH:mm:ss", Locale.ENGLISH);
+        String mPath;
+        String mName = line;  //FIXME
+        String mPerms;
+        String mSym;
+        Long mDate = null;
+        Long mSize = null;
+
+        PatternMatcher pmLong = new PatternMatcher(" [1-2][0-9][0-9][0-9]\\-[0-9]+\\-[0-9]+ ",
+                PatternMatcher.PATTERN_SIMPLE_GLOB);
+        boolean bLong = pmLong.match(line);
+        Pattern p = Pattern.compile("[0-9][0-9]\\:[0-9][0-9] "
+                + (bLong ? "[1-2][0-9][0-9][0-9] " : ""));
+        Matcher m = p.matcher(line);
+        boolean success = false;
+        if (m.matches()) {
+            mName = line.substring(m.end());
+            try {
+                String sDate = line.substring(m.start(), m.end() - 1).trim();
+                mDate = Date.parse(sDate);
+                mSize = Long.parseLong(line.substring(line.lastIndexOf(" ", m.start()),
+                        m.start() - 1).trim());
+                success = true;
+            } catch (Exception e) {
+                Log.e("Couldn't parse date.", e.getMessage());
+            }
+            mPerms = line.split(" ")[0];
+        }
+        if (!success) {
+            String[] parts = line.split(" +");
+            if (parts.length > 5) {
+                mPerms = parts[0];
+                int i = 4;
+                try {
+                    if (parts.length >= 7)
+                        mSize = Long.parseLong(parts[i++]);
+                } catch (NumberFormatException e) {
+                }
+                try {
+                    if (parts[i + 1].matches("(Sun|Mon|Tue|Wed|Thu|Fri|Sat)"))
+                        i++;
+                    String sDate = parts[i + 1] + " " + parts[i + 2];
+                    if (parts.length > i + 3 && parts[i + 4].length() <= 4)
+                        sDate += " " + parts[i + 4];
+                    else {
+                        sDate += " " + (Calendar.getInstance().get(Calendar.YEAR) + 1900);
+                        i--;
+                    }
+                    if (parts.length > i + 2 && parts[i + 3].indexOf(":") > -1)
+                        sDate += " " + parts[i + 3]; // Add Time
+                    mDate = DateFormatInstance.parse(sDate).getTime();
+                    success = true;
+                } catch (Exception e) {
+                }
+            }
+            mName = parts[parts.length - 1];
+        }
+        if (mName.indexOf(" -> ") > -1) {
+            mSym = mName.substring(mName.indexOf(" -> ") + 4);
+            mName = mName.substring(0, mName.indexOf(" -> ") - 1).trim();
         }
 
-        return mDirContent;
+        return mName;
+    }
+
+    private String getItemPerms(String line) {
+        java.text.DateFormat DateFormatInstance = new SimpleDateFormat("MMM dd yyyy HH:mm:ss", Locale.ENGLISH);
+        String mPath;
+        String mName = line;  //FIXME
+        String mPerms ="";
+        String mSym;
+        Long mDate = null;
+        Long mSize = null;
+
+        PatternMatcher pmLong = new PatternMatcher(" [1-2][0-9][0-9][0-9]\\-[0-9]+\\-[0-9]+ ",
+                PatternMatcher.PATTERN_SIMPLE_GLOB);
+        boolean bLong = pmLong.match(line);
+        Pattern p = Pattern.compile("[0-9][0-9]\\:[0-9][0-9] "
+                + (bLong ? "[1-2][0-9][0-9][0-9] " : ""));
+        Matcher m = p.matcher(line);
+        boolean success = false;
+        if (m.matches()) {
+            mName = line.substring(m.end());
+            try {
+                String sDate = line.substring(m.start(), m.end() - 1).trim();
+                mDate = Date.parse(sDate);
+                mSize = Long.parseLong(line.substring(line.lastIndexOf(" ", m.start()),
+                        m.start() - 1).trim());
+                success = true;
+            } catch (Exception e) {
+                Log.e("Couldn't parse date.", e.getMessage());
+            }
+            mPerms = line.split(" ")[0];
+        }
+        if (!success) {
+            String[] parts = line.split(" +");
+            if (parts.length > 5) {
+                mPerms = parts[0];
+                int i = 4;
+                try {
+                    if (parts.length >= 7)
+                        mSize = Long.parseLong(parts[i++]);
+                } catch (NumberFormatException e) {
+                }
+                try {
+                    if (parts[i + 1].matches("(Sun|Mon|Tue|Wed|Thu|Fri|Sat)"))
+                        i++;
+                    String sDate = parts[i + 1] + " " + parts[i + 2];
+                    if (parts.length > i + 3 && parts[i + 4].length() <= 4)
+                        sDate += " " + parts[i + 4];
+                    else {
+                        sDate += " " + (Calendar.getInstance().get(Calendar.YEAR) + 1900);
+                        i--;
+                    }
+                    if (parts.length > i + 2 && parts[i + 3].indexOf(":") > -1)
+                        sDate += " " + parts[i + 3]; // Add Time
+                    mDate = DateFormatInstance.parse(sDate).getTime();
+                    success = true;
+                } catch (Exception e) {
+                }
+            }
+            mName = parts[parts.length - 1];
+        }
+        if (mName.indexOf(" -> ") > -1) {
+            mSym = mName.substring(mName.indexOf(" -> ") + 4);
+            mName = mName.substring(0, mName.indexOf(" -> ") - 1).trim();
+        }
+
+        return mPerms;
     }
 
     /*

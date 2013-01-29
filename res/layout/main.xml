@@ -84,6 +84,14 @@
                 android:padding="6dp"
                 android:layout_marginRight="2dp"
                 android:layout_marginTop="6dp"
+                android:src="@drawable/stop_48"
+                android:id="@+id/remount_button"/>
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="6dp"
+                android:layout_marginRight="2dp"
+                android:layout_marginTop="6dp"
                 android:src="@drawable/help"
                 android:id="@+id/help_button"/>
         </LinearLayout>
@@ -96,6 +104,14 @@
             android:maxLines="1"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="0"/>
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/black"
+            android:textColor="@color/white"
+            android:maxLines="1"
+            android:id="@+id/remount_label"
             android:layout_weight="0"/>
         <TextView
             android:id="@+id/detail_label"

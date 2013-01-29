@@ -34,8 +34,10 @@
     <string name="image_preview_desc">Display a thumbnail for image files</string>
     <string name="storage_banner">Show Storage Banner</string>
     <string name="storage_banner_desc">Display sdcard storage information</string>
+    <string name="mode">Operating Mode</string>
+    <string name="mode_root">Root mode</string>
+    <string name="mode_root_desc">Operate in Root mode</string>
     <string name="sorting">Sorting</string>
     <string name="sorting_type">Sorting type</string>
     <string name="sorting_desc">Choose how to sort files and folders</string>
-
 </resources>

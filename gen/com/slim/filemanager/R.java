@@ -55,6 +55,7 @@ public final class R {
         public static final int setting=0x7f02001c;
         public static final int singlecheck=0x7f02001d;
         public static final int space=0x7f02001e;
+        public static final int stop_48=0x7f020028
         public static final int text=0x7f02001f;
         public static final int toolbox=0x7f020020;
         public static final int warning=0x7f020021;
@@ -107,9 +108,13 @@ public final class R {
         public static final int num_processes_label=0x7f07002f;
         public static final int path_label=0x7f070010;
         public static final int row_image=0x7f070035;
+        public static final int remount_button=0x7f07003d;
+        public static final int remount_icon=0x7f07003e;
+        public static final int remount_label=0x7f07003f;
         public static final int second_title=0x7f070013;
         public static final int setting_hidden_box=0x7f070031;
         public static final int setting_storage_box=0x7f070033;
+        public static final int setting_root_box=0x7f07003c;
         public static final int setting_text_color_button=0x7f070030;
         public static final int setting_thumbnail_box=0x7f070032;
         public static final int settings_sort_button=0x7f070034;
