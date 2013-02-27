@@ -185,8 +185,10 @@ public final class Main extends ListActivity {
         Intent intent = getIntent();
 
         if(intent.getAction().equals(Intent.ACTION_GET_CONTENT)) {
-            bimg[6].setVisibility(View.GONE);
-            mReturnIntent = true;
+            if (bimg[5] != null) {
+                bimg[5].setVisibility(View.GONE);
+                mReturnIntent = true;
+            }
 
         } else if (intent.getAction().equals(ACTION_WIDGET)) {
             Log.e("MAIN", "Widget action, string = " + intent.getExtras().getString("folder"));
