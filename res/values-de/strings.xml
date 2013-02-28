@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Slim Dateimanager</string>
+    <string name="about">Über Slim Dateimanager</string>
+    <string name="media_dialog">Medien Vorschau</string>
+    <string name="dir_info">Ordner Informationen</string>
+    <string name="manager_act">Telefonverwaltung</string>
+    <string name="play">Abspielen</string>
+    <string name="close">Schließen</string>
+    <string name="backup_all">Alles sichern</string>
+    <string name="email_dev">Entwickler E-Mail</string>
+    <string name="dev_website">Entwickler Webseite</string>
+    <string name="folder_count">Anzahl der Ordner</string>
+    <string name="file_count">Anzahl der Dateien</string>
+    <string name="last_modified">Letzte Änderung</string>
+    <string name="total_size">Gesamter Speicher</string>
+    <string name="used_size">Belegter Speicher</string>
+    <string name="back">Zurück</string>
+    <string name="zip_folder">Ordner packen</string>
+    <string name="path_string">Pfad</string>
+    <string name="create">Erstellen</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="path_desc">Pfad</string>
+    <string name="attach">Anhängen</string>
+    <string name="delete">Löschen</string>
+    <string name="copy">Kopieren</string>
+    <string name="move">Verschieben</string>
+    <string name="display">Anzeigen</string>
+    <string name="text_color">Textfarbe</string>
+    <string name="text_color_desc">Ändere die bevorzugte Textfarbe</string>
+    <string name="hidden_files">Zeige versteckte Dateien/Ordner</string>
+    <string name="hidden_files_desc">Zeige Dateien und Ordner die mit (Punkt) beginnen</string>
+    <string name="image_preview">Zeige Vorschaubild</string>
+    <string name="image_preview_desc">Zeigt ein Vorschaubild für Bilder</string>
+    <string name="storage_banner">Zeige SD-Karten Infos</string>
+    <string name="storage_banner_desc">Zeige Informationen zum Speicher der SD-Karte</string>
+    <string name="sorting">Sortierung</string>
+    <string name="sorting_type">Art der Sortierung</string>
+    <string name="sorting_desc">Wähle, wie die Dateien und Ordner sortiert werden</string>
+
+</resources>
