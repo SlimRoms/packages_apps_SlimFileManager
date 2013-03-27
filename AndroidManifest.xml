@@ -23,6 +23,16 @@
     android:versionName="1.0.0"
     android:installLocation="auto">
 
+    <supports-screens
+        android:smallScreens="true"
+        android:normalScreens="true"
+        android:largeScreens="true" />
+
+    <uses-sdk android:minSdkVersion="14" android:maxSdkVersion="17"/>
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.ACCESS_SUPERUSER" />
+
     <application
         android:icon="@drawable/icon"
         android:label="@string/app_name"
@@ -75,40 +85,5 @@
             android:name=".HelpManager"
             android:label="@string/about"
             android:theme="@android:style/Theme.Dialog" />
-
-        <!-- widget
-        <activity
-            android:name=".AppWidgetConfigureActivity">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
-            </intent-filter>
-        </activity>
-
-        <receiver
-            android:name=".FolderWidgetProvider">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/folder_widget_info" />
-        </receiver>
--->
-
     </application>
-
-    <supports-screens
-        android:smallScreens="true"
-        android:normalScreens="true"
-        android:largeScreens="true" />
-
-    <uses-sdk android:minSdkVersion="14" android:maxSdkVersion="17"/>
-
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-
-<!-- uncomment this in order to allow wifi information displayed
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
-
--->
-
 </manifest>
