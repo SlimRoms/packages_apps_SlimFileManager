@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Файл-менеджер Slim</string>
+    <string name="about">Про Slim File Manager</string>
+    <string name="media_dialog">Предпросмотр меда</string>
+    <string name="dir_info">Информация о папке</string>
+    <string name="manager_act">Управление телефоном</string>
+    <string name="play">Играть</string>
+    <string name="close">Закрыть</string>
+    <string name="backup_all">Резервировать все</string>
+    <string name="email_dev">Написать разработчику</string>
+    <string name="dev_website">Вебсайт разработчика</string>
+    <string name="folder_count">Количество папок</string>
+    <string name="file_count">Количество файлов</string>
+    <string name="last_modified">Изменено</string>
+    <string name="total_size">Общий размер</string>
+    <string name="used_size">Используется</string>
+    <string name="back">Назад</string>
+    <string name="zip_folder">Сжать папку в zip</string>
+    <string name="path_string">Путь</string>
+    <string name="create">Создать</string>
+    <string name="cancel">Отмена</string>
+    <string name="path_desc">Путь:</string>
+    <string name="attach">Прикрепить</string>
+    <string name="delete">Удалить</string>
+    <string name="copy">Копировать</string>
+    <string name="move">Переместить</string>
+    <string name="display">Отобразить</string>
+    <string name="text_color">Цвет текста</string>
+    <string name="text_color_desc">Изменить цвет текста</string>
+    <string name="hidden_files">Показывать скрытые файлы/папки</string>
+    <string name="hidden_files_desc">Показывать файлы и папки, начинающиеся с точки</string>
+    <string name="image_preview">Показывать предпросмотр рисунков</string>
+    <string name="image_preview_desc">Отображать содержимое рисунка вместо значка</string>
+    <string name="storage_banner">Показывать место</string>
+    <string name="storage_banner_desc">Отображать информацию о месте на карте</string>
+    <string name="mode">Операционный режим</string>
+    <string name="mode_root">Режим root</string>
+    <string name="mode_root_desc">Работать в режиме суперпользователя</string>
+    <string name="sorting">Сортировка</string>
+    <string name="sorting_type">Тип сортировки</string>
+    <string name="sorting_desc">Выбрать, как сортируются файлы и папки</string>
+</resources>
