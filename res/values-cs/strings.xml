@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ * Copyright (C) 2012 Slimroms
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *                        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+-->
+
+<resources>
+    <string name="app_name">Slim Správce souborů</string>
+    <string name="about">O aplikaci</string>
+    <string name="media_dialog">Náhled médií</string>
+    <string name="dir_info">Informace o složce</string>
+    <string name="manager_act">Správa telefonu</string>
+    <string name="play">Přehrát</string>
+    <string name="close">Zavřít</string>
+    <string name="backup_all">Zálohovat vše</string>
+    <string name="email_dev">E-mail vývojáře</string>
+    <string name="dev_website">Stránky vývojáře</string>
+    <string name="folder_count">Počet složek</string>
+    <string name="file_count">Počet souborů</string>
+    <string name="last_modified">Naposledy změněno</string>
+    <string name="total_size">Celková velikost</string>
+    <string name="used_size">Využitá velikost</string>
+    <string name="back">Zpět</string>
+    <string name="zip_folder">Zazipovat složku</string>
+    <string name="path_string">Umístění</string>
+    <string name="create">Vytvořit</string>
+    <string name="cancel">Zrušit</string>
+    <string name="path_desc">Cesta je</string>
+    <string name="attach">Příloha</string>
+    <string name="delete">Smazat</string>
+    <string name="copy">Kopírovat</string>
+    <string name="move">Přesunout</string>
+    <string name="display">Zobrazení</string>
+    <string name="text_color">Barva textu</string>
+    <string name="text_color_desc">Změnit upřednostňovanou barvu textu</string>
+    <string name="hidden_files">Zobrazit skryté soubory a složky</string>
+    <string name="hidden_files_desc">Zobrazit soubory a složky, jejichž název začíná tečkou</string>
+    <string name="image_preview">Zobrazovat náhled obrázku</string>
+    <string name="image_preview_desc">Zobrazovat náhledy obrázkových souborů</string>
+    <string name="storage_banner">Zobrazovat informace o úložišti</string>
+    <string name="storage_banner_desc">Zobrazit řádek s informacemi o SD kartě</string>
+    <string name="mode">Operační režim</string>
+    <string name="mode_root">Režim ROOT</string>
+    <string name="mode_root_desc">Pracovat v režimu ROOT</string>
+    <string name="sorting">Řazení</string>
+    <string name="sorting_type">Typ řazení</string>
+    <string name="sorting_desc">Zvolte způsob řazení souborů a složek</string>
+</resources>
