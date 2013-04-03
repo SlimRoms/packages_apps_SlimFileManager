@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ * Copyright (C) 2012 Slimroms
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *                        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+-->
+
+<resources>
+    <string name="app_name">Slim File Manager</string>
+    <string name="about">Info su Slim File Manager</string>
+    <string name="media_dialog">Anteprima dei media</string>
+    <string name="dir_info">Informazioni sulla cartella</string>
+    <string name="manager_act">Gestione del telefono</string>
+    <string name="play">Riproduci</string>
+    <string name="close">Chiudi</string>
+    <string name="backup_all">Backup di tutti</string>
+    <string name="email_dev">Invia un\'email allo sviluppatore</string>
+    <string name="dev_website">Sito Web dello sviluppatore</string>
+    <string name="folder_count">Numero di cartelle</string>
+    <string name="file_count">Numero di file</string>
+    <string name="last_modified">Ultima modifica</string>
+    <string name="total_size">Dimensione totale</string>
+    <string name="used_size">Dimensioni usata</string>
+    <string name="back">Indietro</string>
+    <string name="zip_folder">Cartella zip</string>
+    <string name="path_string">Percorso va qui</string>
+    <string name="create">Crea</string>
+    <string name="cancel">Annulla</string>
+    <string name="path_desc">Il percorso è</string>
+    <string name="attach">Allega</string>
+    <string name="delete">Elimina</string>
+    <string name="copy">Copia</string>
+    <string name="move">Sposta</string>
+    <string name="display">Schermo</string>
+    <string name="text_color">Colore del testo</string>
+    <string name="text_color_desc">Cambiare il colore del testo preferito</string>
+    <string name="hidden_files">Visualizza i file e le cartelle nascoste</string>
+    <string name="hidden_files_desc">Visualizzare i file e le cartelle che iniziano con (frase)</string>
+    <string name="image_preview">Visualizza l\'anteprima dell\'immagine</string>
+    <string name="image_preview_desc">Visualizzare un\'anteprima per i file di immagine</string>
+    <string name="storage_banner">Visualizza Banner di archiviazione</string>
+    <string name="storage_banner_desc">Visualizzare informazioni sull\'archiviazione della scheda SD</string>
+    <string name="mode">Modalità di funzionamento</string>
+    <string name="mode_root">Modalità root</string>
+    <string name="mode_root_desc">Opera in modalità Root</string>
+    <string name="sorting">Ordinati</string>
+    <string name="sorting_type">Tipo di ordinamento</string>
+    <string name="sorting_desc">Scegli come ordinare i file e le cartelle</string>
+</resources>
