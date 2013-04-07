@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ * Copyright (C) 2012 Slimroms
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *                                                http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+-->
+
+<resources>
+    <string name="app_name">Gestionnaire de fichiers Slim</string>
+    <string name="about">A propos du gestionnaire de fichiers</string>
+    <string name="media_dialog">Apreçu multimédia</string>
+    <string name="dir_info">Informations sur le dossier</string>
+    <string name="manager_act">Gestion du téléphone</string>
+    <string name="play">Lire</string>
+    <string name="close">Fermer</string>
+    <string name="backup_all">Sauvegarde tout</string>
+    <string name="email_dev">Envoyer email au développeur</string>
+    <string name="dev_website">Site web du développeur</string>
+    <string name="folder_count">Nombre de dossiers</string>
+    <string name="file_count">Nombre de fichiers</string>
+    <string name="last_modified">Dernière modification</string>
+    <string name="total_size">Taille totale</string>
+    <string name="used_size">Taille utilisée</string>
+    <string name="back">Retour</string>
+    <string name="zip_folder">Compresser le dossier</string>
+    <string name="path_string">Insérer ici le chemin d\'accès</string>
+    <string name="create">Créer</string>
+    <string name="cancel">Annuler</string>
+    <string name="path_desc">Les chemin d\'accès est</string>
+    <string name="attach">Pièce jointe</string>
+    <string name="delete">Supprimer</string>
+    <string name="copy">Copier</string>
+    <string name="move">Déplacer</string>
+    <string name="display">Affichage</string>
+    <string name="text_color">Couleur du texte</string>
+    <string name="text_color_desc">Changer la couleur préférée du texte</string>
+    <string name="hidden_files">Afficher les fichiers/dossiers cachés</string>
+    <string name="hidden_files_desc">Afficher les fichiers et dossiers qui commencent par un (point)</string>
+    <string name="image_preview">Afficher l\'aperçu d\'Image</string>
+    <string name="image_preview_desc">Afficher une miniature des fichiers image</string>
+    <string name="storage_banner">Voir la bannière de stockage</string>
+    <string name="storage_banner_desc">Afficher les informations de stockage carte SD</string>
+    <string name="mode">Mode de fonctionnement</string>
+    <string name="mode_root">Mode Super-Utilisateur</string>
+    <string name="mode_root_desc">Utiliser le mode Super-Utilisateur</string>
+    <string name="sorting">Tri</string>
+    <string name="sorting_type">Type de tri</string>
+    <string name="sorting_desc">Choisir la façon de trier les fichiers et dossiers</string>
+</resources>
