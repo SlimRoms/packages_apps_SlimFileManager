@@ -16,22 +16,44 @@
 -->
 
 <resources>
-    <string name="app_name">Menedżer plików Slim</string>
-    <string name="about">O aplikacji menedżer plików slim</string>
+    <string name="app_name">SLIMowy menadżer plikow</string>
+    <string name="about">O aplikacji SLIMowy menedżer plików</string>
     <string name="media_dialog">Podgląd mediów</string>
     <string name="dir_info">Informacje o folderze</string>
     <string name="manager_act">Zarządzanie telefonem</string>
+    <string name="play">Odtwórz</string>
+    <string name="close">Zamknij</string>
     <string name="backup_all">Zrób kopię zapasową wszystkiego</string>
     <string name="email_dev">Autor wiadomości</string>
     <string name="dev_website">Autor strony</string>
     <string name="folder_count">Liczba folderów</string>
+    <string name="file_count">Liczba plików</string>
+    <string name="last_modified">Data ostatniej modyfikacji:</string>
+    <string name="total_size">Całkowity rozmiar</string>
     <string name="used_size">Używany rozmiar</string>
+    <string name="back">Wstecz</string>
     <string name="zip_folder">Folder zip</string>
+    <string name="path_string">Ścieżka prowadzi tutaj</string>
+    <string name="create">Utwórz</string>
+    <string name="cancel">Anuluj</string>
+    <string name="path_desc">Ścieżka jest</string>
+    <string name="attach">Załącz</string>
+    <string name="delete">Usuń</string>
+    <string name="copy">Kopiuj</string>
+    <string name="move">Przenieś</string>
     <string name="display">Wyświetl</string>
+    <string name="text_color">Kolor tekstu</string>
     <string name="text_color_desc">Zmień preferowany kolor</string>
+    <string name="hidden_files">Pokaż ukryte pliki/foldery</string>
     <string name="hidden_files_desc">Wyświetlanie plików i folderów zaczynających się (czasem) </string>
+    <string name="image_preview">Pokaż podgląd obrazu</string>
+    <string name="image_preview_desc">Wyświetl miniatury plików obrazów</string>
     <string name="storage_banner">Pokaż pasek przechowywania</string>
     <string name="storage_banner_desc">Pokaż informacje o zasobach karty Sd</string>
+    <string name="mode">Tryb pracy</string>
     <string name="mode_root">Tryb ROOT</string>
     <string name="mode_root_desc">Pracuj w trybie ROOT</string>
+    <string name="sorting">Sortowanie</string>
+    <string name="sorting_type">Typ sortowania</string>
+    <string name="sorting_desc">Wybierz sposób sortowania plików i folderów</string>
 </resources>
