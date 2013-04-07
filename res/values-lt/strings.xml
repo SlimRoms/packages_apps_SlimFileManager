@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ * Copyright (C) 2012 Slimroms
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *                        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+-->
+
+<resources>
+    <string name="app_name">Slim Failų tvarkyklė</string>
+    <string name="about">Apie Slim Failų tvarkyklę</string>
+    <string name="media_dialog">Medijos peržiūra</string>
+    <string name="dir_info">Aplanko informacija</string>
+    <string name="manager_act">Telefono valdymas</string>
+    <string name="play">Paleisti</string>
+    <string name="close">Uždaryti</string>
+    <string name="backup_all">Visų failų atsarginė kopija</string>
+    <string name="email_dev">El. pašto kūrėjas</string>
+    <string name="dev_website">Kūrėjo puslapis</string>
+    <string name="folder_count">Aplankų skaičius</string>
+    <string name="file_count">Failų skaičius</string>
+    <string name="last_modified">Pastarasis pakeistas</string>
+    <string name="total_size">Bendras dydis</string>
+    <string name="used_size">Naudojamas dydis</string>
+    <string name="back">Atgal</string>
+    <string name="zip_folder">Archyvuotas aplankas</string>
+    <string name="path_string">Kelias eina čia</string>
+    <string name="create">Sukurti</string>
+    <string name="cancel">Atšaukti</string>
+    <string name="path_desc">Kelias yra</string>
+    <string name="attach">Pridėti</string>
+    <string name="delete">Ištrinti</string>
+    <string name="copy">Kopijuoti</string>
+    <string name="move">Perkelti</string>
+    <string name="display">Rodymas</string>
+    <string name="text_color">Teksto spalva</string>
+    <string name="text_color_desc">Pakeisti pageidaujamą teksto spalvą</string>
+    <string name="hidden_files">Rodyti paslėptus failus/aplankus</string>
+    <string name="hidden_files_desc">Rodyti failus ir aplankus, kurie prasideda (taškas)</string>
+    <string name="image_preview">Rodyti paveikslėlio peržiūrą</string>
+    <string name="image_preview_desc">Rodyti paveikslėlių miniatiūras</string>
+    <string name="storage_banner">Rodyti talpyklos info</string>
+    <string name="storage_banner_desc">Rodyti SD kortelės talpyklos informaciją</string>
+    <string name="mode">Darbo režimas</string>
+    <string name="mode_root">Specialiosios prieigos režimas</string>
+    <string name="mode_root_desc">Dirbti specialiosios prieigos režimu</string>
+    <string name="sorting">Rūšiavimas</string>
+    <string name="sorting_type">Rūšiavimo tipas</string>
+    <string name="sorting_desc">Pasirinkite, kaip norite rūšiuoti failus ir aplankus</string>
+</resources>
