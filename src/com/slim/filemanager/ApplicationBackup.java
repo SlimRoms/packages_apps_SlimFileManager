@@ -90,7 +90,7 @@ public class ApplicationBackup extends ListActivity implements OnClickListener {
                 case FINISH_PROGRESS:
                     mDialog.cancel();
                     Toast.makeText(ApplicationBackup.this,
-                                   "Applications have been backed up",
+                                   R.string.backup_success,
                                    Toast.LENGTH_SHORT).show();
                     break;
             }
@@ -119,7 +119,7 @@ public class ApplicationBackup extends ListActivity implements OnClickListener {
     @Override
     public void onClick(View view) {
         mDialog = ProgressDialog.show(ApplicationBackup.this,
-                                        "Backing up applications",
+                                        getApplicationContext().getString(R.string.backup_progress),
                                         "", true, false);
 
         Thread all = new Thread(new BackgroundWork(mAppList));
@@ -138,7 +138,7 @@ public class ApplicationBackup extends ListActivity implements OnClickListener {
                 mAppList.add(appInfo);
         }
 
-        mAppLabel.setText("You have " +mAppList.size() + " downloaded apps");
+        mAppLabel.setText(getApplicationContext().getString(R.string.downloaded_app_count,mAppList.size()));
     }
 
 
@@ -197,7 +197,7 @@ public class ApplicationBackup extends ListActivity implements OnClickListener {
 
                     msg = new Message();
                     msg.what = SET_PROGRESS;
-                    msg.obj = i + " out of " + len + " apps backed up";
+                    msg.obj = i + " " + getApplicationContext().getString(R.string.backup_count, i, len);
                     mHandler.sendMessage(msg);
 
                 } catch (FileNotFoundException e) {

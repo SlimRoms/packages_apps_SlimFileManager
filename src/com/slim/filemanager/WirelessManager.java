@@ -44,11 +44,13 @@ public class WirelessManager extends Activity {
     private Button state_button;
     private Button back_button;
     private WifiManager wifi;
+    private Context mContext;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.info_layout);
+        mContext = getApplicationContext();
 
         wifi = (WifiManager)getSystemService(Context.WIFI_SERVICE);
         TextView[] titles = new TextView[6];
@@ -63,22 +65,26 @@ public class WirelessManager extends Activity {
          */
         int[] right_views = {R.id.dirs_label, R.id.files_label, R.id.time_stamp,
                              R.id.total_size, R.id.free_space};
-        String[] labels = {"Signal strength", "WIFI State", "ip address",
-                          "mac address", "SSID", "link speed"};
+        String[] labels = {mContext.getString(R.string.wifi_label_signal_strength),
+                            mContext.getString(R.string.wifi_label_state),
+                            mContext.getString(R.string.wifi_label_ip_addr),
+                            mContext.getString(R.string.wifi_label_mac_addr),
+                            mContext.getString(R.string.wifi_label_ssid),
+                            mContext.getString(R.string.wifi_label_link_speed)};
 
         for (int i = 0; i < 5; i++) {
             titles[i] = (TextView)findViewById(left_views[i]);
             titles[i].setText(labels[i]);
 
             data_labels[i] = (TextView)findViewById(right_views[i]);
-            data_labels[i].setText("N/A");
+            data_labels[i].setText(mContext.getString(R.string.wifi_not_applicable));
         }
 
         name_label = (TextView)findViewById(R.id.name_label);
         enable_label = (TextView)findViewById(R.id.path_label);
         state_button = (Button)findViewById(R.id.back_button);
         back_button = (Button)findViewById(R.id.zip_button);
-        back_button.setText(" Back ");
+        back_button.setText(mContext.getString(R.string.wifi_back));
 
         state_button.setOnClickListener(new ButtonHandler());
         back_button.setOnClickListener(new ButtonHandler());
@@ -96,24 +102,24 @@ public class WirelessManager extends Activity {
         boolean enabled = wifi.isWifiEnabled();
 
         name_label.setText(info.getSSID());
-        enable_label.setText(enabled ?"Your wifi is enabled" :"Your wifi is not enabled");
-        state_button.setText(enabled ?"Disable wifi" : "Enable wifi");
+        enable_label.setText(enabled ? mContext.getString(R.string.wifi_is_enabled) : mContext.getString(R.string.wifi_not_enabled));
+        state_button.setText(enabled ? mContext.getString(R.string.disable_wifi) : mContext.getString(R.string.enable_wifi));
 
         switch(state) {
             case WifiManager.WIFI_STATE_ENABLED:
-                data_labels[WIFISTATE].setText(" Enabled");
+                data_labels[WIFISTATE].setText(" " + mContext.getString(R.string.wifi_enabled));
                 break;
             case WifiManager.WIFI_STATE_DISABLED:
-                data_labels[WIFISTATE].setText(" Disabled");
+                data_labels[WIFISTATE].setText(" " + mContext.getString(R.string.wifi_disabled));
                 break;
             case WifiManager.WIFI_STATE_DISABLING:
-                data_labels[WIFISTATE].setText(" Being Disabled");
+                data_labels[WIFISTATE].setText(" " + mContext.getString(R.string.wifi_disabling));
                 break;
             case WifiManager.WIFI_STATE_ENABLING:
-                data_labels[WIFISTATE].setText(" Being Enabled");
+                data_labels[WIFISTATE].setText(" " + mContext.getString(R.string.wifi_enabling));
                 break;
             case WifiManager.WIFI_STATE_UNKNOWN:
-                data_labels[WIFISTATE].setText(" Unknown");
+                data_labels[WIFISTATE].setText(" " + mContext.getString(R.string.wifi_unknown));
                 break;
         }
         if(enabled) {
@@ -121,13 +127,13 @@ public class WirelessManager extends Activity {
             data_labels[MACADD].setText(info.getMacAddress());
             data_labels[SSID].setText(info.getSSID());
             data_labels[LINKSPD].setText(info.getLinkSpeed() + " Mbps");
-            data_labels[SSTRENGTH].setText("strength " + strength);
+            data_labels[SSTRENGTH].setText(mContext.getString(R.string.wifi_strength) + " " + strength);
         }else {
-            data_labels[IPADD].setText("N/A");
+            data_labels[IPADD].setText(mContext.getString(R.string.wifi_not_applicable));
             data_labels[MACADD].setText(info.getMacAddress());
-            data_labels[SSID].setText("N/A");
-            data_labels[LINKSPD].setText("N/A");
-            data_labels[SSTRENGTH].setText("N/A");
+            data_labels[SSID].setText(mContext.getString(R.string.wifi_not_applicable));
+            data_labels[LINKSPD].setText(mContext.getString(R.string.wifi_not_applicable));
+            data_labels[SSTRENGTH].setText(mContext.getString(R.string.wifi_not_applicable));
         }
     }
 
@@ -135,13 +141,14 @@ public class WirelessManager extends Activity {
 
         public void onClick(View v) {
 
+            Context mContext = v.getContext();
             if(v.getId() == R.id.back_button) {
                 if(wifi.isWifiEnabled()){
                     wifi.setWifiEnabled(false);
-                    state_button.setText("Enable wifi");
+                    state_button.setText(mContext.getString(R.string.enable_wifi));
                 }else {
                     wifi.setWifiEnabled(true);
-                    state_button.setText("Disable wifi");
+                    state_button.setText(mContext.getString(R.string.disable_wifi));
                     get_wifi();
                 }
             }else if(v.getId() == R.id.zip_button)

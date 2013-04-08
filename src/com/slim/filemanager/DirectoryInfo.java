@@ -85,7 +85,7 @@ public class DirectoryInfo extends Activity {
         private int mDirCount = 0;
 
         protected void onPreExecute(){
-            dialog = ProgressDialog.show(DirectoryInfo.this, "", "Calculating information...", true, true);
+            dialog = ProgressDialog.show(DirectoryInfo.this, "", getApplicationContext().getString(R.string.calculating), true, true);
         }
 
         protected Long doInBackground(String... vals) {
@@ -143,8 +143,8 @@ public class DirectoryInfo extends Activity {
 
             mNameLabel.setText(dir.getName());
             mPathLabel.setText(dir.getAbsolutePath());
-            mDirLabel.setText(mDirCount + " folders ");
-            mFileLabel.setText(mFileCount + " files ");
+            mDirLabel.setText(mDirCount + " " + getApplicationContext().getString(R.string.folders) + " ");
+            mFileLabel.setText(mFileCount + " " + getApplicationContext().getString(R.string.files) + " ");
             mTotalLabel.setText(mDisplaySize);
             mTimeLabel.setText(new Date(dir.lastModified()) + " ");
 

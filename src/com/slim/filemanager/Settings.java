@@ -21,6 +21,7 @@ package com.slim.filemanager;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -72,12 +73,18 @@ public class Settings extends Activity {
         color_bt.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+                Context mContext = view.getContext();
                 AlertDialog.Builder builder = new AlertDialog.Builder(Settings.this);
-                CharSequence[] options = {"White", "Magenta", "Yellow", "Red", "Cyan",
-                                          "Blue", "Green"};
+                CharSequence[] options = {mContext.getString(R.string.white),
+                                            mContext.getString(R.string.magenta),
+                                            mContext.getString(R.string.yellow),
+                                            mContext.getString(R.string.red),
+                                            mContext.getString(R.string.cyan),
+                                            mContext.getString(R.string.blue),
+                                            mContext.getString(R.string.green)};
                 int index = ((color_state & 0x00ffffff) << 2) % options.length;
 
-                builder.setTitle("Change text color");
+                builder.setTitle(mContext.getString(R.string.change_color_title));
                 builder.setIcon(R.drawable.color);
                 builder.setSingleChoiceItems(options, index, new DialogInterface.OnClickListener() {
                     @Override
@@ -179,10 +186,15 @@ public class Settings extends Activity {
         sort_bt.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+                Context mContext = view.getContext();
                 AlertDialog.Builder builder = new AlertDialog.Builder(Settings.this);
-                CharSequence[] options = {"None", "Alphabetical", "Type", "Size", "Folders-Files"};
+                CharSequence[] options = {mContext.getString(R.string.sort_by_none),
+                                            mContext.getString(R.string.sort_by_alphabetical),
+                                            mContext.getString(R.string.sort_by_type),
+                                            mContext.getString(R.string.sort_by_size),
+                                            mContext.getString(R.string.sort_by_folders_files)};
 
-                builder.setTitle("Sort by...");
+                builder.setTitle(mContext.getString(R.string.sort_by_title));
                 builder.setIcon(R.drawable.filter);
                 builder.setSingleChoiceItems(options, sort_state, new DialogInterface.OnClickListener() {
                     @Override

@@ -306,18 +306,18 @@ public class EventHandler implements OnClickListener {
                 if (mFileMang.getCurrentDir() != "/") {
                     if(multi_select_flag) {
                         mDelegate.killMultiSelect(true);
-                        Toast.makeText(mContext, "Multi-select is now off",
+                        Toast.makeText(mContext, R.string.multi_select_off,
                                        Toast.LENGTH_SHORT).show();
                     }
 
                     stopThumbnailThread();
                     updateDirectory(mFileMang.getPreviousDir());
                     if(mPathLabel != null)
-                        mPathLabel.setText(mFileMang.getCurrentDir());
+                        mPathLabel.setText(mContext.getString(R.string.path) + ": " + mFileMang.getCurrentDir());
                     if (mRemountLabel != null) {
                         try {
                             Log.d(TAG, "mounted: " + RootTools.getMountedAs(mFileMang.getCurrentDir()));
-                            mRemountLabel.setText("mounted: " + RootTools.getMountedAs(mFileMang.getCurrentDir()));
+                            mRemountLabel.setText(mContext.getString(R.string.mounted) + ": " + RootTools.getMountedAs(mFileMang.getCurrentDir()));
                         } catch (Exception e) {
                             Log.e(TAG, e.getMessage());
                         }
@@ -328,18 +328,18 @@ public class EventHandler implements OnClickListener {
             case R.id.home_button:
                 if(multi_select_flag) {
                     mDelegate.killMultiSelect(true);
-                    Toast.makeText(mContext, "Multi-select is now off",
+                    Toast.makeText(mContext, R.string.multi_select_off,
                                    Toast.LENGTH_SHORT).show();
                 }
 
                 stopThumbnailThread();
                 updateDirectory(mFileMang.setHomeDir(ApplicationBackup.SDCARDLOC));
                 if(mPathLabel != null)
-                    mPathLabel.setText(mFileMang.getCurrentDir());
+                    mPathLabel.setText(mContext.getString(R.string.path) + ": " + mFileMang.getCurrentDir());
                 if (mRemountLabel != null) {
                     try {
                         Log.d(TAG, "mounted: " + RootTools.getMountedAs(mFileMang.getCurrentDir()));
-                        mRemountLabel.setText("mounted: " + RootTools.getMountedAs(mFileMang.getCurrentDir()));
+                        mRemountLabel.setText(mContext.getString(R.string.mounted) + ": " + RootTools.getMountedAs(mFileMang.getCurrentDir()));
                     } catch (Exception e) {
                         Log.e(TAG, e.getMessage());
                     }
@@ -379,20 +379,20 @@ public class EventHandler implements OnClickListener {
                     Log.d(TAG, "Mounted as ["+RootTools.getMountedAs(mFileMang.getCurrentDir())+"]");
                     if (RootTools.remount(mFileMang.getCurrentDir(), RootTools.getMountedAs(mFileMang.getCurrentDir()).equals("ro") ? "RW" : "RO")) {
                         Toast.makeText(mContext,
-                                "Successfully remounted as "  + RootTools.getMountedAs(mFileMang.getCurrentDir()),
+                                mContext.getString(R.string.remount_success) + " "  + RootTools.getMountedAs(mFileMang.getCurrentDir()),
                                 Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(mContext, "Remount Failed!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, R.string.remount_error, Toast.LENGTH_SHORT).show();
                     }
                 } catch (Exception e) {
                     Log.d(TAG, e.getMessage());
                 }
                 if(mPathLabel != null)
-                    mPathLabel.setText(mFileMang.getCurrentDir());
+                    mPathLabel.setText(mContext.getString(R.string.path) + ": " + mFileMang.getCurrentDir());
                 if (mRemountLabel != null) {
                     try {
                         Log.d(TAG, "mounted: " + RootTools.getMountedAs(mFileMang.getCurrentDir()));
-                        mRemountLabel.setText("mounted: " + RootTools.getMountedAs(mFileMang.getCurrentDir()));
+                        mRemountLabel.setText(mContext.getString(R.string.mounted) + ": " + RootTools.getMountedAs(mFileMang.getCurrentDir()));
                     } catch (Exception e) {
                         Log.e(TAG, e.getMessage());
                     }
@@ -441,8 +441,8 @@ public class EventHandler implements OnClickListener {
                 if(v.getId() == R.id.hidden_move)
                     delete_after_copy = true;
 
-                mInfoLabel.setText("Holding " + mMultiSelectData.size() +
-                                   " file(s)");
+                mInfoLabel.setText(mContext.getString(R.string.holding_file) + " " + mMultiSelectData.size() +
+                                   " " + mContext.getString(R.string.files));
 
                 mDelegate.killMultiSelect(false);
                 break;
@@ -814,15 +814,15 @@ public class EventHandler implements OnClickListener {
                     display_size = String.format("%.2f bytes ", (double)size);
 
                 if(file.isHidden())
-                    mViewHolder.bottomView.setText("(hidden) | " + display_size +" | "+ permission);
+                    mViewHolder.bottomView.setText(mContext.getString(R.string.hidden) + " | " + display_size + " | " + permission);
                 else
-                    mViewHolder.bottomView.setText(display_size +" | "+ permission);
+                    mViewHolder.bottomView.setText(display_size + " | " + permission);
 
             } else {
                 if(file.isHidden())
-                    mViewHolder.bottomView.setText("(hidden) | " + num_items + " items | " + permission);
+                    mViewHolder.bottomView.setText(mContext.getString(R.string.hidden) + " | " + num_items + " items | " + permission);
                 else
-                    mViewHolder.bottomView.setText(num_items + " items | " + permission);
+                    mViewHolder.bottomView.setText(num_items + " " + mContext.getString(R.string.items) + " | " + permission);
             }
 
             mViewHolder.topView.setText(file.getName());
@@ -975,7 +975,7 @@ public class EventHandler implements OnClickListener {
             switch(type) {
                 case SEARCH_TYPE:
                     if(len == 0) {
-                        Toast.makeText(mContext, "Couldn't find " + file_name,
+                        Toast.makeText(mContext, mContext.getString(R.string.could_not_find_error) + " " + file_name,
                                             Toast.LENGTH_SHORT).show();
 
                     } else {
@@ -1012,10 +1012,10 @@ public class EventHandler implements OnClickListener {
                     }
 
                     if(copy_rtn == 0)
-                        Toast.makeText(mContext, "File successfully copied and pasted",
+                        Toast.makeText(mContext, R.string.file_copy_success,
                                             Toast.LENGTH_SHORT).show();
                     else
-                        Toast.makeText(mContext, "Copy pasted failed", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, R.string.file_copy_error, Toast.LENGTH_SHORT).show();
 
                     pr_dialog.dismiss();
                     mInfoLabel.setText("");
@@ -1047,7 +1047,7 @@ public class EventHandler implements OnClickListener {
                         multi_select_flag = false;
                     }
                     if (delete_rtn < 0) {
-                        Toast.makeText(mContext, "Delete failed", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, R.string.delete_error, Toast.LENGTH_SHORT).show();
                     }
 
                     stopThumbnailThread();

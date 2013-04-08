@@ -19,13 +19,22 @@
     <string name="zip_folder">Zip Folder</string>
     <string name="path_string">Path goes here</string>
     <string name="create">Create</string>
+    <string name="rename">Rename</string>
     <string name="cancel">Cancel</string>
     <string name="path_desc">Path is</string>
+    <string name="path">Path</string>
     <string name="attach">Attach</string>
     <string name="delete">Delete</string>
     <string name="copy">Copy</string>
     <string name="move">Move</string>
+    <string name="search">Search</string>
+    <string name="settings">Settings</string>
+    <string name="exit">Exit</string>
     <string name="display">Display</string>
+    <string name="extract">Extract</string>
+    <string name="warning">Warning!</string>
+    <string name="mounted">Mounted</string>
+    <string name="create_dir">Create directory</string>
     <string name="text_color">Text Color</string>
     <string name="text_color_desc">Change the preferred text color</string>
     <string name="hidden_files">Show hidden files/folders</string>
@@ -40,4 +49,107 @@
     <string name="sorting">Sorting</string>
     <string name="sorting_type">Sorting type</string>
     <string name="sorting_desc">Choose how to sort files and folders</string>
+    <string name="sort_by_title">Sort by..."</string>
+    <string name="created">created</string>
+    <string name="rename_target">renamed to</string>
+    <string name="search_summary">Search for a file</string>
+    <string name="multi_select_off">Multi-select off</string>
+    <string name="exit_confirm">Press back again to Exit</string>
+    <string name="hidden">(hidden)</string>
+    <string name="avail_mem">Available memory</string>
+    <string name="num_processes">Number of processes</string>
+    <string name="audio_file">Audio file</string>
+    <string name="calculating">Calculating information...</string>
+    <string name="empty">Empty</string>
+    <string name="white">White</string>
+    <string name="magenta">Magenta</string>
+    <string name="yellow">Yellow</string>
+    <string name="red">Red</string>
+    <string name="cyan">Cyan</string>
+    <string name="blue">Blue</string>
+    <string name="green">Green</string>
+    <string name="change_color_title">Change text color</string>
+    <string name="sort_by_none">None</string>
+    <string name="sort_by_alphabetical">Alphabetical</string>
+    <string name="sort_by_type">Type</string>
+    <string name="sort_by_size">Size</string>
+    <string name="sort_by_folders_files">Folders-Files</string>
+
+    <string name="folder_read_error">Insufficient permissions to read folder</string>
+    <string name="unzip_error">Insufficient permissions to unzip here</string>
+    <string name="create_dir_error">Insufficient permissions to create directory</string>
+    <string name="rename_error">could not be renamed</string>
+    <string name="could_not_find_error">Could not find</string>
+    <string name="delete_error">Delete failed</string>
+
+    <string name="file_copy_success">File successfully copied and pasted</string>
+    <string name="file_copy_error">Copy/Paste Failed</string>
+    <string name="remount_success">Successfully remounted as</string>
+    <string name="remount_error">Remount failed!</string>
+    <string name="select_email_app">Select email application...</string>
+    <string name="email_error">Error starting email application</string>
+    <string name="website_error">Error opening website</string>
+    <string name="process_error">Failed to launch process</string>
+    <string name="backup_progress">Backing up applications</string>
+    <string name="backup_success">Applications have been backed up</string>
+    <string name="downloaded_app_count">You have %s downloaded apps</string>
+    <string name="backup_count">%1$s out of %2$s apps backed up</string>
+
+    <string name="extract_here">Extract here</string>
+    <string name="extract_to">Extract to...</string>
+    <string name="holding_file">Holding</string>
+    <string name="folders">folder(s)</string>
+    <string name="files">file(s)</string>
+    <string name="items">items</string>
+    <string name="holding_to_extract">to extract</string>
+    <string name="pdf_error">Missing PDF reader</string>
+    <string name="html_error">Missing HTML viewer</string>
+    <string name="generic_error">Missing application for filetype</string>
+    <string name="new_dir">New Directory</string>
+    <string name="free_space">Free Space</string>
+
+    <string name="folder_operations_title">Folder Operations</string>
+    <string name="folder_delete">Delete Folder</string>
+    <string name="folder_rename">Rename Folder</string>
+    <string name="folder_copy">Copy Folder</string>
+    <string name="folder_cut">Move(Cut) Folder</string>
+    <string name="folder_zip">ZIP Folder</string>
+    <string name="folder_paste">Paste into Folder</string>
+    <string name="folder_extract">Extract here</string>
+
+    <string name="file_operations_title">File Operations</string>
+    <string name="file_delete">Delete File</string>
+    <string name="file_rename">Rename File</string>
+    <string name="file_copy">Copy File</string>
+    <string name="file_cut">Move(Cut) File</string>
+    <string name="file_email">Email File</string>
+
+    <string name="confirm_delete">Are you sure you want to delete</string>
+
+    <string name="help_text">If you have any questions or comments, please email the developer or visit the SlimRoms web page.\n\nThank you\n\n</string>
+
+    <string name="proc_options">Process Options</string>
+    <string name="proc_details">Details</string>
+    <string name="proc_launch">Launch</string>
+
+    <string name="wifi_is_enabled">Your wifi is enabled</string>
+    <string name="wifi_not_enabled">Your wifi is not enabled</string>
+    <string name="disable_wifi">Disable wifi</string>
+    <string name="enable_wifi">Enable wifi</string>
+    <string name="wifi_disabled">Disabled</string>
+    <string name="wifi_enabled">Enabled</string>
+    <string name="wifi_disabling">Being Disabled</string>
+    <string name="wifi_enabling">Being Enabled</string>
+    <string name="wifi_unknown">Unknown</string>
+    <string name="wifi_strength">Strength</string>
+    <string name="wifi_not_applicable">N/A</string>
+    <string name="wifi_back">Back</string>
+
+    <string name="wifi_label_signal_strength">Signal Strength</string>
+    <string name="wifi_label_state">WIFI State</string>
+    <string name="wifi_label_ip_addr">IP Address</string>
+    <string name="wifi_label_mac_addr">MAC Address</string>
+    <string name="wifi_label_ssid">SSID</string>
+    <string name="wifi_label_link_speed">Link Speed</string>
+
 </resources>

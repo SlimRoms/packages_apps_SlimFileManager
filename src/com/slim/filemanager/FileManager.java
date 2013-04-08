@@ -39,6 +39,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import android.content.Context;
 import android.os.PatternMatcher;
 import android.util.Log;
 import com.stericson.RootTools.Command;
@@ -74,6 +75,7 @@ public class FileManager {
     private Stack<String> mPathStack;
     private ArrayList<String> mDirContent;
     private boolean isDir = false;
+    private Context mContext;
 
     private final String TAG = "SFM-FileManager";
     /**
@@ -87,6 +89,11 @@ public class FileManager {
 
         mPathStack.push("/");
         mPathStack.push(mPathStack.peek() + "sdcard");
+    }
+
+    public FileManager(Context inContext) {
+        this();
+        mContext = inContext;
     }
 
     /**
@@ -723,7 +730,7 @@ public class FileManager {
             }
 
         } else {
-            mDirContent.add("Empty");
+            mDirContent.add(mContext.getString(R.string.empty));
         }
         return mDirContent;
     }

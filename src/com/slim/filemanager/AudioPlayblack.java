@@ -56,7 +56,7 @@ public class AudioPlayblack extends Activity {
         music_path = getIntent().getExtras().getString("MUSIC PATH");
         music_name = music_path.substring(music_path.lastIndexOf("/") + 1, music_path.length());
 
-        label.setText("Audio file: " + music_name);
+        label.setText(getApplicationContext().getString(R.string.audio_file) + ": " + music_name);
     }
 
     private void close() {

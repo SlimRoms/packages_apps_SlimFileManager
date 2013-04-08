@@ -31,7 +31,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 public class HelpManager extends Activity implements OnClickListener {
-    private static final String[] EMAIL = {"nexesdevelopment@gmail.com"};
+    private static final String[] EMAIL = {"hcp@slimroms.net"};
     private static final String WEB = "http://slimroms.net";
 
     @Override
@@ -40,9 +40,7 @@ public class HelpManager extends Activity implements OnClickListener {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.help_layout);
 
-        String text = "SlimFileManager: If you have any questions or "
-                        +"comments, please email the developer or visit "
-                        +"the SlimRoms web page.\n\nThank you\n\n";
+        String text = getApplicationContext().getString(R.string.app_name) + ": " + getApplicationContext().getString(R.string.help_text);
 
         TextView label = (TextView)findViewById(R.id.help_top_label);
         label.setText(text);
@@ -64,10 +62,10 @@ public class HelpManager extends Activity implements OnClickListener {
                 i.setType("message/rfc822");
                 i.putExtra(Intent.EXTRA_EMAIL, EMAIL);
                 try {
-                    startActivity(Intent.createChooser(i, "Email using..."));
+                    startActivity(Intent.createChooser(i, view.getContext().getString(R.string.select_email_app)));
 
                 } catch(ActivityNotFoundException e) {
-                    Toast.makeText(this, "Sorry, could not start the email", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.email_error, Toast.LENGTH_SHORT).show();
                 }
             break;
 
@@ -78,7 +76,7 @@ public class HelpManager extends Activity implements OnClickListener {
                     startActivity(i);
 
                 } catch(ActivityNotFoundException e) {
-                    Toast.makeText(this, "Sorry, could not open the website", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.website_error, Toast.LENGTH_SHORT).show();
                 }
                 break;
         }
