@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <string name="app_name">Slim File Manager</string>
+    <string name="about">Despre Slim File Manager</string>
+    <string name="media_dialog">Previzualizare media</string>
+    <string name="dir_info">Informații dosar</string>
+    <string name="manager_act">Setări telefon</string>
+    <string name="play">Rulează</string>
+    <string name="close">Închide</string>
+    <string name="backup_all">Copie de siguranță</string>
+    <string name="email_dev">Trimite e-mail la dezvoltator</string>
+    <string name="dev_website">Site-ul dezvoltatorului</string>
+    <string name="folder_count">Număr de dosare</string>
+    <string name="file_count">Număr de fișiere</string>
+    <string name="last_modified">Ultima modificare</string>
+    <string name="total_size">Dimensiune totală</string>
+    <string name="used_size">Spațiu utilizat</string>
+    <string name="back">Înapoi</string>
+    <string name="zip_folder">Arhivează dosar</string>
+    <string name="path_string">Calea merge aici</string>
+    <string name="create">Creaţi</string>
+    <string name="cancel">Anulaţi</string>
+    <string name="path_desc">Calea este</string>
+    <string name="attach">Ataşaţi</string>
+    <string name="delete">Ştergeţi</string>
+    <string name="copy">Copiaţi</string>
+    <string name="move">Mutaţi</string>
+    <string name="display">Afişare</string>
+    <string name="text_color">Culoarea textului</string>
+    <string name="text_color_desc">Schimbați culoarea textului</string>
+    <string name="hidden_files">Arată fişierele/dosarele ascunse</string>
+    <string name="hidden_files_desc">Afișați fișierele și dosarele care încep cu . (punct)</string>
+    <string name="image_preview">Previzualizare imagine</string>
+    <string name="image_preview_desc">Afişare miniaturi pentru fișiere imagine</string>
+    <string name="storage_banner">Arata informații stocare</string>
+    <string name="storage_banner_desc">Afișează informaţii despre cardul SD</string>
+    <string name="mode">Modul de operare</string>
+    <string name="mode_root">Modul Root</string>
+    <string name="mode_root_desc">Efectuează operaţii in modul Root</string>
+    <string name="sorting">Se sortează</string>
+    <string name="sorting_type">Tipul de sortare</string>
+    <string name="sorting_desc">Alegeţi modul de sortare al fişierelor şi dosarelor</string>
+</resources>
