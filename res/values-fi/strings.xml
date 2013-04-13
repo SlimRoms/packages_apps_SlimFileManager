@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <string name="app_name">Slim Tiedostonhallinta</string>
+    <string name="about">Tietoja Slim tiedostonhallinnasta</string>
+    <string name="media_dialog">Media esikatselu</string>
+    <string name="dir_info">Kansiotiedot</string>
+    <string name="manager_act">Puhelimen hallinta</string>
+    <string name="play">Toista</string>
+    <string name="close">Sulje</string>
+    <string name="backup_all">Varmuuskopioi kaikku</string>
+    <string name="email_dev">Lähetä sähköpostia kehittäjälle</string>
+    <string name="dev_website">Kehittäjän kotisivu</string>
+    <string name="folder_count">Hakemistojen määrä</string>
+    <string name="file_count">Tiedostojen määrä</string>
+    <string name="last_modified">Viimeksi muokattu</string>
+    <string name="total_size">Koko yhteensä</string>
+    <string name="used_size">Käytetty tila</string>
+    <string name="back">Takaisin</string>
+    <string name="zip_folder">Zip kansio</string>
+    <string name="path_string">Tiedostopolku</string>
+    <string name="create">Luo</string>
+    <string name="cancel">Peruuta</string>
+    <string name="path_desc">Polku on</string>
+    <string name="attach">Liitä</string>
+    <string name="delete">Poista</string>
+    <string name="copy">Kopioi</string>
+    <string name="move">Siirrä</string>
+    <string name="display">Näyttö</string>
+    <string name="text_color">Tekstiväri</string>
+    <string name="text_color_desc">Ensisijainen tekstivärin muuttaminen</string>
+    <string name="hidden_files">Näytä piilotetut tiedostot ja kansiot</string>
+    <string name="hidden_files_desc">Näyttää tiedostot ja kansiot, jotka alkavat a:lla</string>
+    <string name="image_preview">Näytä esikatselukuva</string>
+    <string name="image_preview_desc">Näytä esikatselukuva kuvatiedostoista</string>
+    <string name="storage_banner">Näytä tallennuspaikan tieto</string>
+    <string name="storage_banner_desc">Näyttää muistikortin tiedot</string>
+    <string name="mode">Toimintatila</string>
+    <string name="mode_root">Root-tila</string>
+    <string name="mode_root_desc">Toimi Root-tilassa</string>
+    <string name="sorting">Lajittelu</string>
+    <string name="sorting_type">Lajittelutapa</string>
+    <string name="sorting_desc">Valitse, miten tiedostot ja kansiot järjestetään</string>
+</resources>
