@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <string name="app_name">מנהל הקבצים</string>
+    <string name="about">אודות מנהל הקבצים</string>
+    <string name="media_dialog">תצוגה מקדימה של מדיה</string>
+    <string name="dir_info">מידע על תיקיות</string>
+    <string name="manager_act">ניהול הטלפון</string>
+    <string name="play">נגן</string>
+    <string name="close">סגור</string>
+    <string name="backup_all">גבה הכל</string>
+    <string name="email_dev">מפתח דואר אלקטרוני</string>
+    <string name="folder_count">מספר התיקיות</string>
+    <string name="file_count">מספר הקבצים</string>
+    <string name="last_modified">שונה לאחרונה</string>
+    <string name="total_size">סה\"כ גודל</string>
+    <string name="used_size">גודל בשימוש</string>
+    <string name="back">חזור</string>
+    <string name="create">צור</string>
+    <string name="delete">מחק</string>
+    <string name="copy">העתק</string>
+    <string name="move">העבר</string>
+    <string name="text_color">צבע טקסט</string>
+    <string name="text_color_desc">לשנות את צבע הטקסט המועדף</string>
+    <string name="hidden_files">הצג קבצים/תיקיות מוסתרות</string>
+    <string name="image_preview">הצג תצוגה מקדימה של תמונה</string>
+    <string name="sorting">מיון</string>
+    <string name="sorting_type">סוג המיון</string>
+</resources>
