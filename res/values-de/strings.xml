@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <resources>
     <string name="app_name">Slim Dateimanager</string>
     <string name="about">Über Slim Dateimanager</string>
@@ -34,8 +35,10 @@
     <string name="image_preview_desc">Zeigt ein Vorschaubild für Bilder</string>
     <string name="storage_banner">Zeige SD-Karten Infos</string>
     <string name="storage_banner_desc">Zeige Informationen zum Speicher der SD-Karte</string>
+    <string name="mode">Betriebsmodus</string>
+    <string name="mode_root">Root Modus</string>
+    <string name="mode_root_desc">In Root Modus betreiben</string>
     <string name="sorting">Sortierung</string>
     <string name="sorting_type">Art der Sortierung</string>
     <string name="sorting_desc">Wähle, wie die Dateien und Ordner sortiert werden</string>
-
 </resources>
