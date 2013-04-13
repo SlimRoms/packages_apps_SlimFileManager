@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <string name="app_name">Slim文件管理器</string>
+    <string name="about">关于Slim文件管理器</string>
+    <string name="media_dialog">多媒体预览</string>
+    <string name="dir_info">文件夹信息</string>
+    <string name="manager_act">手机管理</string>
+    <string name="play">播放</string>
+    <string name="close">关闭</string>
+    <string name="backup_all">全部备份</string>
+    <string name="email_dev">联系开发者（电子邮件）</string>
+    <string name="dev_website">开发人员网站</string>
+    <string name="folder_count">文件夹数量</string>
+    <string name="file_count">文件数量</string>
+    <string name="last_modified">最后修改</string>
+    <string name="total_size">总大小</string>
+    <string name="used_size">已用大小</string>
+    <string name="back">返回</string>
+    <string name="zip_folder">压缩文件夹</string>
+    <string name="path_string">解压至当前文件夹</string>
+    <string name="create">创建</string>
+    <string name="cancel">取消</string>
+    <string name="path_desc">选择路径</string>
+    <string name="attach">附件</string>
+    <string name="delete">删除</string>
+    <string name="copy">复制</string>
+    <string name="move">移动</string>
+    <string name="display">显示</string>
+    <string name="text_color">文本颜色</string>
+    <string name="text_color_desc">更改首选的文本颜色</string>
+    <string name="hidden_files">显示隐藏文件/文件夹</string>
+    <string name="hidden_files_desc">显示以点（.）开头的文件和文件夹</string>
+    <string name="image_preview">显示图像预览</string>
+    <string name="image_preview_desc">显示图像文件的缩略图</string>
+    <string name="storage_banner">显示盘符</string>
+    <string name="storage_banner_desc">显示SD卡存储信息</string>
+    <string name="mode">操作模式</string>
+    <string name="mode_root">root模式</string>
+    <string name="mode_root_desc">在root模式下操作</string>
+    <string name="sorting">排序</string>
+    <string name="sorting_type">排序类型</string>
+    <string name="sorting_desc">选择文件和文件夹的排序方式</string>
+</resources>
