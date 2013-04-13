@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <string name="app_name">Chương trình quản lý file</string>
+    <string name="about">Thông tin chương trình</string>
+    <string name="media_dialog">Xem trước các file hình</string>
+    <string name="dir_info">Thông tin thư mục</string>
+    <string name="manager_act">Quản lý điện thoại</string>
+    <string name="play">Chơi</string>
+    <string name="close">Tắt</string>
+    <string name="backup_all">Sao lưu tất cả</string>
+    <string name="email_dev">Gởi email tới nhà phát triển</string>
+    <string name="dev_website">Website của nhà phát triển</string>
+    <string name="folder_count">Số thư mục</string>
+    <string name="file_count">Số file</string>
+    <string name="last_modified">Lần chỉnh sửa mới nhất</string>
+    <string name="total_size">Tổng dung lượng</string>
+    <string name="used_size">Dung lượng đã dùng</string>
+    <string name="back">Quay lại</string>
+    <string name="zip_folder">Nén thư mục</string>
+    <string name="path_string">Chọn đường dẫn</string>
+    <string name="create">Tạo</string>
+    <string name="cancel">Hủy</string>
+    <string name="path_desc">Đường dẫn là</string>
+    <string name="attach">Đính kèm</string>
+    <string name="delete">Xóa</string>
+    <string name="copy">Sao chép</string>
+    <string name="move">Di chuyển</string>
+    <string name="display">Hiển thị</string>
+    <string name="text_color">Màu chữ</string>
+    <string name="text_color_desc">Thay đổi màu chữ ưa dùng</string>
+    <string name="hidden_files">Hiện file/thư mục ẩn</string>
+    <string name="hidden_files_desc">Hiện file/thư mục bắt đầu bằng dấu (.)</string>
+    <string name="image_preview">Hiện trước nội dung hình</string>
+    <string name="image_preview_desc">Hiện trước hình (nhỏ)</string>
+    <string name="storage_banner">Hiện tên phân vùng</string>
+    <string name="storage_banner_desc">Hiện thông tin dung lượng thẻ nhớ</string>
+    <string name="mode_root">Chế độ Root</string>
+    <string name="sorting">Sắp xếp</string>
+    <string name="sorting_type">Kiểu sắp xếp</string>
+    <string name="sorting_desc">Chọn cách sắp xếp file và thư mục</string>
+</resources>
