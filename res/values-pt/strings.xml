@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <string name="app_name">Slim File Manager</string>
+    <string name="about">Sobre o Slim File Manager</string>
+    <string name="media_dialog">Visualização de multimedia</string>
+    <string name="dir_info">Informação da pasta</string>
+    <string name="manager_act">Administração do telefone</string>
+    <string name="play">Reproduzir</string>
+    <string name="close">Fechar</string>
+    <string name="folder_count">Número de pastas</string>
+    <string name="file_count">Número de ficheiros</string>
+    <string name="last_modified">Última modificação</string>
+    <string name="total_size">Tamanho total</string>
+    <string name="back">Voltar</string>
+    <string name="create">Criar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="attach">Anexar</string>
+    <string name="delete">Eliminar</string>
+    <string name="copy">Copiar</string>
+    <string name="move">Mover</string>
+    <string name="display">Mostrar</string>
+    <string name="text_color">Cor do texto</string>
+    <string name="text_color_desc">Alterar a cor do texto preferida</string>
+    <string name="hidden_files">Mostrar ficheiros/pastas ocultos</string>
+    <string name="image_preview">Mostrar pré-visualização da imagem</string>
+    <string name="storage_banner_desc">Mostrar informações do armazenamento do cartão sd</string>
+    <string name="mode">Modo de operação</string>
+    <string name="sorting">Ordenando</string>
+    <string name="sorting_desc">Escolher como ordenar ficheiros e pastas</string>
+</resources>
