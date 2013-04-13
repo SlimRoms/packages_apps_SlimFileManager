@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <string name="app_name">Explorador de Archivos Slim</string>
+    <string name="about">Acerca de Explorador de Archivos Slim</string>
+    <string name="media_dialog">Vista previa</string>
+    <string name="dir_info">Información de la carpeta</string>
+    <string name="manager_act">Gestión del teléfono</string>
+    <string name="play">Reproducir</string>
+    <string name="close">Cerrar</string>
+    <string name="backup_all">Copia de seguridad de todo</string>
+    <string name="email_dev">Enviar un e-mail al desarrollador</string>
+    <string name="dev_website">Sitio web del desarrollador</string>
+    <string name="folder_count">Número de carpetas</string>
+    <string name="file_count">Número de archivos</string>
+    <string name="last_modified">Modificado por última vez</string>
+    <string name="total_size">Tamaño total</string>
+    <string name="used_size">Tamaño utilizado</string>
+    <string name="back">Atrás</string>
+    <string name="zip_folder">Carpeta comprimida zip</string>
+    <string name="path_string">La ruta conduce aquí</string>
+    <string name="create">Crear</string>
+    <string name="cancel">Cancelar</string>
+    <string name="path_desc">La ruta de acceso es</string>
+    <string name="attach">Adjuntar</string>
+    <string name="delete">Eliminar</string>
+    <string name="copy">Copiar</string>
+    <string name="move">Mover</string>
+    <string name="display">Pantalla</string>
+    <string name="text_color">Color del texto</string>
+    <string name="text_color_desc">Cambiar el color de texto preferido</string>
+    <string name="hidden_files">Mostrar archivos y carpetas ocultos</string>
+    <string name="hidden_files_desc">Mostrar archivos y carpetas que comienzan con un (punto)</string>
+    <string name="image_preview">Mostrar vista previa de imagen</string>
+    <string name="image_preview_desc">Mostrar una imagen en miniatura para archivos de imagen</string>
+    <string name="storage_banner">Mostrar banner de almacenamiento</string>
+    <string name="storage_banner_desc">Mostrar información de almacenamiento de la tarjeta SD</string>
+    <string name="mode">Modo de funcionamiento</string>
+    <string name="mode_root">Modo administrador</string>
+    <string name="mode_root_desc">Operar en modo administrador</string>
+    <string name="sorting">Ordenación</string>
+    <string name="sorting_type">Tipo de ordenación</string>
+    <string name="sorting_desc">Seleccione cómo desea ordenar archivos y carpetas</string>
+</resources>
