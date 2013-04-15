@@ -19,13 +19,22 @@
     <string name="zip_folder">Сжать папку в zip</string>
     <string name="path_string">Путь</string>
     <string name="create">Создать</string>
+	<string name="rename">Переименовать</string>
     <string name="cancel">Отмена</string>
     <string name="path_desc">Путь:</string>
+	<string name="path">Путь</string>
     <string name="attach">Прикрепить</string>
     <string name="delete">Удалить</string>
     <string name="copy">Копировать</string>
     <string name="move">Переместить</string>
+	<string name="search">Поиск</string>
+	<string name="settings">Настройки</string>
+	<string name="exit">Выход</string>
     <string name="display">Отобразить</string>
+	<string name="extract">Извлечь</string>
+	<string name="warning">Внимание!</string>
+	<string name="mounted">Смонтировано</string>
+	<string name="create_dir">Создать директорию</string>
     <string name="text_color">Цвет текста</string>
     <string name="text_color_desc">Изменить цвет текста</string>
     <string name="hidden_files">Показывать скрытые файлы/папки</string>
@@ -40,4 +49,105 @@
     <string name="sorting">Сортировка</string>
     <string name="sorting_type">Тип сортировки</string>
     <string name="sorting_desc">Выбрать, как сортируются файлы и папки</string>
+	
+    <string name="sort_by_title">Сортировать по..."</string>
+    <string name="created">создано</string>
+    <string name="rename_target">переименовано в</string>
+    <string name="search_summary">Поиск файла</string>
+    <string name="multi_select_off">Мультивыбор выкл</string>
+    <string name="exit_confirm">Нажмите Назад еще раз, чтобы выйти</string>
+    <string name="hidden">(скрыто)</string>
+    <string name="avail_mem">Доступная память</string>
+    <string name="num_processes">Количество процессов</string>
+    <string name="audio_file">Аудио файл</string>
+    <string name="calculating">Подсчет информации...</string>
+    <string name="empty">Пусто</string>
+    <string name="white">Белый</string>
+    <string name="magenta">Пурпурный</string>
+    <string name="yellow">Желтый</string>
+    <string name="red">Красный</string>
+    <string name="cyan">Голубой</string>
+    <string name="blue">Синий</string>
+    <string name="green">Зеленый</string>
+    <string name="change_color_title">Изменить цвет текста</string>
+    <string name="sort_by_none">Нет</string>
+    <string name="sort_by_alphabetical">Алфавит</string>
+    <string name="sort_by_type">Тип</string>
+    <string name="sort_by_size">Размер</string>
+    <string name="sort_by_folders_files">Папки-файлы</string>
+
+    <string name="folder_read_error">Недостаточно прав для чтения папки</string>
+    <string name="unzip_error">Недостаточно прав для распаковки сюда</string>
+    <string name="create_dir_error">Недостаточно прав для создания директории</string>
+    <string name="rename_error">нельзя переименовать</string>
+    <string name="could_not_find_error">Не найдено</string>
+    <string name="delete_error">Удаление невозможно</string>
+
+    <string name="file_copy_success">Файл успешно скопирован в буфер и вставлен</string>
+    <string name="file_copy_error">Невозможно скопировать/вставить</string>
+    <string name="remount_success">Успешно перемонтировано как</string>
+    <string name="remount_error">Перемонтирование невозможно!</string>
+    <string name="select_email_app">Выбрать приложение почты...</string>
+    <string name="email_error">Ошибка загрузки почтового клиента</string>
+    <string name="website_error">Ошибка открытия сайта</string>
+    <string name="process_error">Невозможно запустить процесс</string>
+    <string name="backup_progress">Резервирование приложений</string>
+    <string name="backup_success">Резервная копия приложения создана</string>
+    <string name="downloaded_app_count">У вас %s скачанных приложений</string>
+    <string name="backup_count">%1$s из %2$s зарезервировано</string>
+
+    <string name="extract_here">Извлечь здесь</string>
+    <string name="extract_to">Извлечь в...</string>
+    <string name="holding_file">Заблокировано</string>
+    <string name="folders">папки(-ки)</string>
+    <string name="files">файл(ы)</string>
+    <string name="items">пункты</string>
+    <string name="holding_to_extract">для распаковки</string>
+    <string name="pdf_error">Читалка PDF отсутствует</string>
+    <string name="html_error">Просмотрщик HTML отсутствует</string>
+    <string name="generic_error">Не найдено приложение для указанного типа</string>
+    <string name="new_dir">Новая директория</string>
+    <string name="free_space">Свободное место</string>
+
+    <string name="folder_operations_title">Операции с папками</string>
+    <string name="folder_delete">Удалить папку</string>
+    <string name="folder_rename">Переименовать папку</string>
+    <string name="folder_copy">Скопировать папку</string>
+    <string name="folder_cut">Переместить (вырезать) папку</string>
+    <string name="folder_zip">Сжать папку в ZIP</string>
+    <string name="folder_paste">Вставить в папку</string>
+    <string name="folder_extract">Извлечь здесь</string>
+
+    <string name="file_operations_title">Операции с файлами</string>
+    <string name="file_delete">Удалить файл</string>
+    <string name="file_rename">Переименовать файл</string>
+    <string name="file_copy">Скопировать файл</string>
+    <string name="file_cut">Переместить (вырезать) файл</string>
+    <string name="file_email">Отправить файл</string>
+
+    <string name="confirm_delete">Вы уверены, что хотите удалить</string>
+
+    <string name="help_text">Если у вас есть вопросы или предложения, пожалуйста, напишите разработчику или посетите сайт SlimRoms.\n\nСпасибо\n\n</string>
+
+    <string name="proc_options">Настройки процессов</string>
+    <string name="proc_details">Подробности</string>
+    <string name="proc_launch">Запустить</string>
+
+    <string name="wifi_is_enabled">Ваш WiFi включен</string>
+    <string name="wifi_not_enabled">Ваш WiFi выключен</string>
+    <string name="disable_wifi">Отключить WiFi</string>
+    <string name="enable_wifi">Включить WiFi</string>
+    <string name="wifi_disabled">Отключено</string>
+    <string name="wifi_enabled">Включено</string>
+    <string name="wifi_disabling">Отключается</string>
+    <string name="wifi_enabling">Включается</string>
+    <string name="wifi_unknown">Неизвестно</string>
+    <string name="wifi_strength">Сила</string>
+    <string name="wifi_back">Назад</string>
+
+    <string name="wifi_label_signal_strength">Сила сигнала</string>
+    <string name="wifi_label_state">Состояние WiFi</string>
+    <string name="wifi_label_ip_addr">IP-адрес</string>
+    <string name="wifi_label_mac_addr">MAC-адрес</string>
+    <string name="wifi_label_link_speed">Скорость точки</string>
 </resources>
