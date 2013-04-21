@@ -1,19 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
- * Copyright (C) 2012 Slimroms
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *                        http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
--->
 
 <resources>
     <string name="app_name">Slim File Manager</string>
@@ -29,31 +14,132 @@
     <string name="folder_count">Numero di cartelle</string>
     <string name="file_count">Numero di file</string>
     <string name="last_modified">Ultima modifica</string>
-    <string name="total_size">Dimensione totale</string>
-    <string name="used_size">Dimensioni usata</string>
+    <string name="total_size">Dimensioni totali</string>
+    <string name="used_size">Dimensioni utilizzate</string>
     <string name="back">Indietro</string>
-    <string name="zip_folder">Cartella zip</string>
+    <string name="zip_folder">Cartella Zip</string>
     <string name="path_string">Percorso va qui</string>
     <string name="create">Crea</string>
+    <string name="rename">Rinomina</string>
     <string name="cancel">Annulla</string>
     <string name="path_desc">Il percorso è</string>
-    <string name="attach">Allega</string>
+    <string name="path">Percorso</string>
+    <string name="attach">Incolla</string>
     <string name="delete">Elimina</string>
     <string name="copy">Copia</string>
     <string name="move">Sposta</string>
+    <string name="search">Cerca</string>
+    <string name="settings">Impostazioni</string>
+    <string name="exit">Esci</string>
     <string name="display">Schermo</string>
+    <string name="extract">Estrai</string>
+    <string name="warning">Attenzione!</string>
+    <string name="mounted">Montato</string>
+    <string name="create_dir">Crea directory</string>
     <string name="text_color">Colore del testo</string>
     <string name="text_color_desc">Cambiare il colore del testo preferito</string>
-    <string name="hidden_files">Visualizza i file e le cartelle nascoste</string>
-    <string name="hidden_files_desc">Visualizzare i file e le cartelle che iniziano con (frase)</string>
+    <string name="hidden_files">Visualizza file e cartelle nascoste</string>
+    <string name="hidden_files_desc">Visualizza file e cartelle che iniziano con (frase)</string>
     <string name="image_preview">Visualizza l\'anteprima dell\'immagine</string>
-    <string name="image_preview_desc">Visualizzare un\'anteprima per i file di immagine</string>
+    <string name="image_preview_desc">Visualizza un\'anteprima per le immagini</string>
     <string name="storage_banner">Visualizza Banner di archiviazione</string>
-    <string name="storage_banner_desc">Visualizzare informazioni sull\'archiviazione della scheda SD</string>
+    <string name="storage_banner_desc">Visualizza informazioni sull\'archiviazione della scheda SD</string>
     <string name="mode">Modalità di funzionamento</string>
     <string name="mode_root">Modalità root</string>
     <string name="mode_root_desc">Opera in modalità Root</string>
-    <string name="sorting">Ordinati</string>
+    <string name="sorting">Ordinamento</string>
     <string name="sorting_type">Tipo di ordinamento</string>
     <string name="sorting_desc">Scegli come ordinare i file e le cartelle</string>
+    <string name="sort_by_title">Ordina per...\"</string>
+    <string name="created">creato</string>
+    <string name="rename_target">rinominato in</string>
+    <string name="search_summary">Cerca un file</string>
+    <string name="multi_select_off">Multi selezione off</string>
+    <string name="exit_confirm">Premi esci di nuovo per uscire</string>
+    <string name="hidden">(nascosto)</string>
+    <string name="avail_mem">Memoria disponibile</string>
+    <string name="num_processes">Numero di processi</string>
+    <string name="audio_file">File audio</string>
+    <string name="calculating">Calcolo informazioni...</string>
+    <string name="empty">Vuoto</string>
+    <string name="white">Bianco</string>
+    <string name="magenta">Magenta</string>
+    <string name="yellow">Giallo</string>
+    <string name="red">Rosso</string>
+    <string name="cyan">Ciano</string>
+    <string name="blue">Blu</string>
+    <string name="green">Verde</string>
+    <string name="change_color_title">Cambia colore testo</string>
+    <string name="sort_by_none">Nessuno</string>
+    <string name="sort_by_alphabetical">Alfabetico</string>
+    <string name="sort_by_type">Tipo</string>
+    <string name="sort_by_size">Dimensione</string>
+    <string name="sort_by_folders_files">Cartelle-Files</string>
+    <string name="folder_read_error">Autorizzazioni insufficienti per leggere la cartella</string>
+    <string name="unzip_error">Autorizzazioni insufficienti per decomprimere qui</string>
+    <string name="create_dir_error">Autorizzazioni insufficienti per creare directory</string>
+    <string name="rename_error">potrebbe non essere rinominato</string>
+    <string name="could_not_find_error">Non trova</string>
+    <string name="delete_error">Eliminazione non riuscita</string>
+    <string name="file_copy_success">File copiato e incollato con successo</string>
+    <string name="file_copy_error">Copia/incolla non riuscita</string>
+    <string name="remount_success">Rimontato correttamente come</string>
+    <string name="remount_error">Remount fallito!</string>
+    <string name="select_email_app">Selezionare l\'applicazione di posta elettronica...</string>
+    <string name="email_error">Errore nell\'avvio dell\'applicazione email</string>
+    <string name="website_error">Errore nell\'apertura del sito web</string>
+    <string name="process_error">Impossibile avviare il processo</string>
+    <string name="backup_progress">Backup applicazioni</string>
+    <string name="backup_success">Backup apllicazioni avvenuto</string>
+    <string name="downloaded_app_count">Hai %s applicazioni scaricate</string>
+    <string name="backup_count">Backup di %1$s su %2$s applicazioni</string>
+    <string name="extract_here">Estrai qui</string>
+    <string name="extract_to">Estrai su...</string>
+    <string name="holding_file">Trattenendo</string>
+    <string name="folders">cartella(e)</string>
+    <string name="files">file(s)</string>
+    <string name="items">elementi</string>
+    <string name="holding_to_extract">per estrarre</string>
+    <string name="pdf_error">Lettore PDF mancante</string>
+    <string name="html_error">Visualizzatore HTML mancante</string>
+    <string name="generic_error">Applicazione mancante per filetype</string>
+    <string name="new_dir">Nuova Directory</string>
+    <string name="free_space">Spazio libero</string>
+    <string name="folder_operations_title">Operazioni sulle cartelle</string>
+    <string name="folder_delete">Elimina cartella</string>
+    <string name="folder_rename">Rinomina cartella</string>
+    <string name="folder_copy">Copia cartella</string>
+    <string name="folder_cut">Sposta(Taglia) cartella</string>
+    <string name="folder_zip">Cartella ZIP</string>
+    <string name="folder_paste">Incolla nella cartella</string>
+    <string name="folder_extract">Estrai qui</string>
+    <string name="file_operations_title">Operazioni su file</string>
+    <string name="file_delete">Elimina File</string>
+    <string name="file_rename">Rinomina file</string>
+    <string name="file_copy">Copia file</string>
+    <string name="file_cut">Sposta(Taglia) file</string>
+    <string name="file_email">Email file</string>
+    <string name="confirm_delete">Sei sicuro di voler eliminare?</string>
+    <string name="help_text">Se hai domande o commenti, per favore invia una mail allo sviluppatore o visita il sito internet SlimRoms.\n\nGrazie\n\n</string>
+    <string name="proc_options">Opzioni processo</string>
+    <string name="proc_details">Dettagli</string>
+    <string name="proc_launch">Avvia</string>
+    <string name="wifi_is_enabled">Il wifi è attivato</string>
+    <string name="wifi_not_enabled">Il wifi non è abilitato</string>
+    <string name="disable_wifi">Disabilita wifi</string>
+    <string name="enable_wifi">Attiva wifi</string>
+    <string name="wifi_disabled">Disattivato</string>
+    <string name="wifi_enabled">Attivato</string>
+    <string name="wifi_disabling">Sto disabilitando</string>
+    <string name="wifi_enabling">Sto abilitando</string>
+    <string name="wifi_unknown">Sconosciuto</string>
+    <string name="wifi_strength">Intensità</string>
+    <string name="wifi_not_applicable">N/A</string>
+    <string name="wifi_back">Indietro</string>
+    <string name="wifi_label_signal_strength">Intensità segnale</string>
+    <string name="wifi_label_state">Stato WIFI</string>
+    <string name="wifi_label_ip_addr">Indirizzo IP</string>
+    <string name="wifi_label_mac_addr">MAC Address</string>
+    <string name="wifi_label_ssid">SSID</string>
+    <string name="wifi_label_link_speed">Velocità collegamento</string>
 </resources>
