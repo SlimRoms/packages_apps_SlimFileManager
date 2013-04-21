@@ -1,19 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
- * Copyright (C) 2012 Slimroms
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *                        http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
--->
 
 <resources>
     <string name="app_name">Slim Správce souborů</string>
@@ -35,25 +20,126 @@
     <string name="zip_folder">Zazipovat složku</string>
     <string name="path_string">Umístění</string>
     <string name="create">Vytvořit</string>
+    <string name="rename">Přejmenovat</string>
     <string name="cancel">Zrušit</string>
     <string name="path_desc">Cesta je</string>
+    <string name="path">Cesta</string>
     <string name="attach">Příloha</string>
     <string name="delete">Smazat</string>
     <string name="copy">Kopírovat</string>
     <string name="move">Přesunout</string>
+    <string name="search">Hledat</string>
+    <string name="settings">Nastavení</string>
+    <string name="exit">Ukončit</string>
     <string name="display">Zobrazení</string>
+    <string name="extract">Rozbalit</string>
+    <string name="warning">Varování!</string>
+    <string name="mounted">Připojeno jako</string>
+    <string name="create_dir">Vytvořit adresář</string>
     <string name="text_color">Barva textu</string>
     <string name="text_color_desc">Změnit upřednostňovanou barvu textu</string>
-    <string name="hidden_files">Zobrazit skryté soubory a složky</string>
-    <string name="hidden_files_desc">Zobrazit soubory a složky, jejichž název začíná tečkou</string>
+    <string name="hidden_files">Zobrazovat skryté soubory a složky</string>
+    <string name="hidden_files_desc">Zobrazovat soubory a složky, jejichž název začíná tečkou</string>
     <string name="image_preview">Zobrazovat náhled obrázku</string>
     <string name="image_preview_desc">Zobrazovat náhledy obrázkových souborů</string>
     <string name="storage_banner">Zobrazovat informace o úložišti</string>
-    <string name="storage_banner_desc">Zobrazit řádek s informacemi o SD kartě</string>
+    <string name="storage_banner_desc">Zobrazit informace o SD kartě</string>
     <string name="mode">Operační režim</string>
     <string name="mode_root">Režim ROOT</string>
     <string name="mode_root_desc">Pracovat v režimu ROOT</string>
     <string name="sorting">Řazení</string>
     <string name="sorting_type">Typ řazení</string>
     <string name="sorting_desc">Zvolte způsob řazení souborů a složek</string>
+    <string name="sort_by_title">Seřadit podle...\"</string>
+    <string name="created">vytvořen</string>
+    <string name="rename_target">přejmenován na</string>
+    <string name="search_summary">Hledat soubor</string>
+    <string name="multi_select_off">Vícenásobný výběr vypnutý</string>
+    <string name="exit_confirm">Stiskněte znovu Zpět pro ukončení</string>
+    <string name="hidden">(skryté)</string>
+    <string name="avail_mem">Dostupná paměť</string>
+    <string name="num_processes">Počet procesů</string>
+    <string name="audio_file">Zvukový soubor</string>
+    <string name="calculating">Výpočet informací...</string>
+    <string name="empty">Prázdné</string>
+    <string name="white">Bílá</string>
+    <string name="magenta">Purpurová</string>
+    <string name="yellow">Žlutá</string>
+    <string name="red">Červená</string>
+    <string name="cyan">Azurová</string>
+    <string name="blue">Modrá</string>
+    <string name="green">Zelená</string>
+    <string name="change_color_title">Změnit barvu textu</string>
+    <string name="sort_by_none">Žádné</string>
+    <string name="sort_by_alphabetical">Abecedně</string>
+    <string name="sort_by_type">Typ</string>
+    <string name="sort_by_size">Velikost</string>
+    <string name="sort_by_folders_files">Složky-Soubory</string>
+    <string name="folder_read_error">Nedostatečná oprávnění ke čtení složky</string>
+    <string name="unzip_error">Nedostatečná oprávnění pro rozbalení zde</string>
+    <string name="create_dir_error">Nedostatečná oprávnění k vytvoření adresáře</string>
+    <string name="rename_error">nelze přejmenovat</string>
+    <string name="could_not_find_error">Nelze najít</string>
+    <string name="delete_error">Odstranění se nezdařilo</string>
+    <string name="file_copy_success">Soubor úspěšně zkopírován a vložen</string>
+    <string name="file_copy_error">Kopírování/Vložení se nezdařilo</string>
+    <string name="remount_success">Úspěšně připojen jako</string>
+    <string name="remount_error">Připojení selhalo!</string>
+    <string name="select_email_app">Vyberte e-mailovou aplikaci...</string>
+    <string name="email_error">Chyba spouštění E-mailové aplikace</string>
+    <string name="website_error">Chyba při otevírání stránky</string>
+    <string name="process_error">Nepodařilo se spustit proces</string>
+    <string name="backup_progress">Zálohování aplikací</string>
+    <string name="backup_success">Aplikace byly zazálohovány</string>
+    <string name="downloaded_app_count">Máte %s stažených aplikací</string>
+    <string name="backup_count">Zazálohováno %1$s z %2$s aplikací</string>
+    <string name="extract_here">Rozbalit zde</string>
+    <string name="extract_to">Rozbalit do...</string>
+    <string name="holding_file">Držení</string>
+    <string name="folders">složek</string>
+    <string name="files">souborů</string>
+    <string name="items">položek</string>
+    <string name="holding_to_extract">k rozbalení</string>
+    <string name="pdf_error">Chybí čtečka PDF</string>
+    <string name="html_error">Chybí prohlížeč HTML</string>
+    <string name="generic_error">Chybí aplikace pro tento typ souboru</string>
+    <string name="new_dir">Nový adresář</string>
+    <string name="free_space">Volné místo</string>
+    <string name="folder_operations_title">Operace se složkami</string>
+    <string name="folder_delete">Smazat složku</string>
+    <string name="folder_rename">Přejmenovat složku</string>
+    <string name="folder_copy">Kopírovat složku</string>
+    <string name="folder_cut">Přesunout složku</string>
+    <string name="folder_zip">Zazipovat složku</string>
+    <string name="folder_paste">Vložit do složky</string>
+    <string name="folder_extract">Rozbalit zde</string>
+    <string name="file_operations_title">Operace se soubory</string>
+    <string name="file_delete">Smazat soubor</string>
+    <string name="file_rename">Přejmenovat soubor</string>
+    <string name="file_copy">Kopírovat soubor</string>
+    <string name="file_cut">Přesunout soubor</string>
+    <string name="file_email">Poslat E-mailem</string>
+    <string name="confirm_delete">Opravdu chcete odstranit</string>
+    <string name="help_text">Máte-li nějaké dotazy či připomínky, napište prosím e-mail vývojáři nebo navštivte web SlimRoms.\n\nDěkujeme\n\n</string>
+    <string name="proc_options">Možnosti procesů</string>
+    <string name="proc_details">Podrobnosti</string>
+    <string name="proc_launch">Spustit</string>
+    <string name="wifi_is_enabled">Wifi zapnutá</string>
+    <string name="wifi_not_enabled">Wifi vypnutá</string>
+    <string name="disable_wifi">Vypnout wifi</string>
+    <string name="enable_wifi">Zapnout Wifi</string>
+    <string name="wifi_disabled">Vypnutá</string>
+    <string name="wifi_enabled">Zapnutá</string>
+    <string name="wifi_disabling">Vypínání</string>
+    <string name="wifi_enabling">Zapínání</string>
+    <string name="wifi_unknown">Neznámé</string>
+    <string name="wifi_strength">Síla</string>
+    <string name="wifi_not_applicable">N/A</string>
+    <string name="wifi_back">Zpět</string>
+    <string name="wifi_label_signal_strength">Síla signálu</string>
+    <string name="wifi_label_state">Stav Wifi</string>
+    <string name="wifi_label_ip_addr">Adresa IP</string>
+    <string name="wifi_label_mac_addr">Adresa MAC</string>
+    <string name="wifi_label_ssid">SSID</string>
+    <string name="wifi_label_link_speed">Rychlost připojení</string>
 </resources>
