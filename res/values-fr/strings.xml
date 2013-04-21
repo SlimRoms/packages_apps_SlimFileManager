@@ -1,19 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
- * Copyright (C) 2012 Slimroms
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *                                                http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
--->
 
 <resources>
     <string name="app_name">Gestionnaire de fichiers Slim</string>
@@ -35,13 +20,21 @@
     <string name="zip_folder">Compresser le dossier</string>
     <string name="path_string">Insérer ici le chemin d\'accès</string>
     <string name="create">Créer</string>
+    <string name="rename">Renommer</string>
     <string name="cancel">Annuler</string>
     <string name="path_desc">Les chemin d\'accès est</string>
+    <string name="path">Chemin d\'accès</string>
     <string name="attach">Pièce jointe</string>
     <string name="delete">Supprimer</string>
     <string name="copy">Copier</string>
     <string name="move">Déplacer</string>
+    <string name="search">Chercher</string>
+    <string name="settings">Paramètres</string>
+    <string name="exit">Quitter</string>
     <string name="display">Affichage</string>
+    <string name="extract">Extraire</string>
+    <string name="warning">Attention!</string>
+    <string name="create_dir">Créer répertoire</string>
     <string name="text_color">Couleur du texte</string>
     <string name="text_color_desc">Changer la couleur préférée du texte</string>
     <string name="hidden_files">Afficher les fichiers/dossiers cachés</string>
@@ -56,4 +49,86 @@
     <string name="sorting">Tri</string>
     <string name="sorting_type">Type de tri</string>
     <string name="sorting_desc">Choisir la façon de trier les fichiers et dossiers</string>
+    <string name="sort_by_title">Trier par...\"</string>
+    <string name="created">Créé</string>
+    <string name="rename_target">renommé en</string>
+    <string name="search_summary">Chercher un fichier</string>
+    <string name="exit_confirm">Pressez retour une deuxième fois pour quitter</string>
+    <string name="hidden">(caché)</string>
+    <string name="avail_mem">Mémoire disponible</string>
+    <string name="num_processes">Nombre de processus</string>
+    <string name="audio_file">Fichier audio</string>
+    <string name="calculating">Calcul des informations...</string>
+    <string name="empty">Vide</string>
+    <string name="white">Blanc</string>
+    <string name="magenta">Magenta</string>
+    <string name="yellow">Jaune</string>
+    <string name="red">Rouge</string>
+    <string name="cyan">Cyan</string>
+    <string name="blue">Bleu</string>
+    <string name="green">Vert</string>
+    <string name="change_color_title">Changer la couleur du texte</string>
+    <string name="sort_by_none">Aucun</string>
+    <string name="sort_by_alphabetical">Orde alphabétique</string>
+    <string name="sort_by_type">Type</string>
+    <string name="sort_by_size">Taille</string>
+    <string name="sort_by_folders_files">Répertoires-fichiers</string>
+    <string name="folder_read_error">Autorisations insuffisantes pour lire ce répertoire</string>
+    <string name="unzip_error">Autorisations insuffisantes pour décompresser ici</string>
+    <string name="create_dir_error">Autorisations insuffisantes pour créer le répertoire</string>
+    <string name="rename_error">n\'a pas pu être renommé</string>
+    <string name="delete_error">Echec de la suppresion</string>
+    <string name="file_copy_success">Fichier copié et collé avec succès</string>
+    <string name="file_copy_error">Echec du copier/coller</string>
+    <string name="select_email_app">Sélectionnez l\'application de messagerie électronique...</string>
+    <string name="email_error">Erreur de démarage de l\'application de messagerie électronique</string>
+    <string name="website_error">Erreur d\'ouverture du site</string>
+    <string name="process_error">Impossible de démarrer le processus</string>
+    <string name="backup_progress">Sauvegarde des applications</string>
+    <string name="backup_success">Les applications ont été sauvegardées</string>
+    <string name="downloaded_app_count">Vous avez %s applications téléchargées</string>
+    <string name="backup_count">%1$s applications sur %2$s ont été sauvegardées</string>
+    <string name="extract_here">Extraire ici</string>
+    <string name="extract_to">Extraire vers...</string>
+    <string name="folders">Répertoire(s)</string>
+    <string name="files">Fichier(s)</string>
+    <string name="items">éléments</string>
+    <string name="holding_to_extract">pour extraire</string>
+    <string name="pdf_error">Lecteur de PDF introuvable</string>
+    <string name="html_error">Visionneuse HTML introuvable</string>
+    <string name="new_dir">Nouveau répertoire</string>
+    <string name="free_space">Espace libre</string>
+    <string name="folder_operations_title">Opérations sur le dossier</string>
+    <string name="folder_delete">Supprimer le dossier</string>
+    <string name="folder_rename">Renommer le dossier</string>
+    <string name="folder_copy">Copier le dossier</string>
+    <string name="folder_cut">Déplacer(Couper) le dossier</string>
+    <string name="folder_zip">Dossier ZIP</string>
+    <string name="folder_paste">Coller dans le dossier</string>
+    <string name="folder_extract">Extraire ici</string>
+    <string name="file_operations_title">Opérations sur les fichiers</string>
+    <string name="file_delete">Supprimer le fichier</string>
+    <string name="file_rename">Renommer le fichier</string>
+    <string name="file_copy">Copier le fichier</string>
+    <string name="file_cut">Déplacer(Couper) le fichier</string>
+    <string name="file_email">Envoyer le fichier</string>
+    <string name="confirm_delete">Êtes-vous sûr de vouloir supprimer</string>
+    <string name="help_text">Si vous avec des questions ou commentaires, veuillez envoyer un courriel aux développeurs ou visiter le site web de SlimRoms. \n\nMerci.\n\n</string>
+    <string name="proc_options">Options du processus</string>
+    <string name="proc_details">Détails</string>
+    <string name="proc_launch">Lancer</string>
+    <string name="wifi_is_enabled">Votre connexion wifi est activée</string>
+    <string name="wifi_not_enabled">Votre connexion wifi n\'est pas activée</string>
+    <string name="disable_wifi">Désactiver le wifi</string>
+    <string name="enable_wifi">Activer le wifi</string>
+    <string name="wifi_disabled">Désactivé</string>
+    <string name="wifi_enabled">Activé</string>
+    <string name="wifi_unknown">Inconnu</string>
+    <string name="wifi_strength">Force</string>
+    <string name="wifi_back">Retour</string>
+    <string name="wifi_label_signal_strength">Force du signal</string>
+    <string name="wifi_label_ip_addr">Adresse IP</string>
+    <string name="wifi_label_mac_addr">Adresse MAC</string>
+    <string name="wifi_label_ssid">SSID</string>
+    <string name="wifi_label_link_speed">Vitesse de connexion</string>
 </resources>
