@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <string name="app_name">مدير ملفات \"سليم\"</string>
+    <string name="about">حول مدير ملفات \"سليم\"</string>
+    <string name="media_dialog">معاينة وسائل الإعلام</string>
+    <string name="dir_info">معلومات المجلد</string>
+    <string name="manager_act">إدارة الهاتف</string>
+    <string name="play">تشغيل</string>
+    <string name="close">اغلاق</string>
+    <string name="backup_all">النسخ الاحتياطي</string>
+    <string name="email_dev">مطور البريد الإلكتروني</string>
+    <string name="dev_website">مطور الموقع</string>
+    <string name="folder_count">عدد المجلدات</string>
+    <string name="file_count">عدد الملفات</string>
+    <string name="last_modified">تم تعديله مؤخراً</string>
+    <string name="total_size">الحجم الإجمالي</string>
+    <string name="used_size">المساحة المستخدمة</string>
+    <string name="back">رجوع</string>
+    <string name="zip_folder">مجلد مضغوط</string>
+    <string name="path_string">المسار في هذا الموضع</string>
+    <string name="create">إنشاء</string>
+    <string name="cancel">إلغاء</string>
+    <string name="path_desc">المسار</string>
+    <string name="attach">إرفاق</string>
+    <string name="delete">حذف</string>
+    <string name="copy">نسخ</string>
+    <string name="move">نقل</string>
+    <string name="display">عرض</string>
+    <string name="text_color">لون النص</string>
+    <string name="text_color_desc">تغيير لون النص المفضل</string>
+    <string name="hidden_files">إظهار الملفات والمجلدات المخفية</string>
+    <string name="hidden_files_desc">عرض الملفات والمجلدات التي تبدأ ب(نقطة)</string>
+    <string name="image_preview">إظهار معاينة الصورة</string>
+    <string name="image_preview_desc">عرض صورة مصغرة لملفات الصور</string>
+    <string name="storage_banner">إظهار شعار التخزين</string>
+    <string name="storage_banner_desc">عرض معلومات مخزن ذاكرة SD</string>
+    <string name="mode">وضع التشغيل</string>
+    <string name="mode_root">وضع الجذر</string>
+    <string name="mode_root_desc">العمل في وضع الجذر</string>
+    <string name="sorting">التصنيف</string>
+    <string name="sorting_type">نوع التصنيف</string>
+    <string name="sorting_desc">اختر كيفية فرز الملفات والمجلدات</string>
+    <string name="wifi_back">رجوع</string>
+</resources>
