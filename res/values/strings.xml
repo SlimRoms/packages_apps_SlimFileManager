@@ -122,7 +122,7 @@
     <string name="file_rename">Rename File</string>
     <string name="file_copy">Copy File</string>
     <string name="file_cut">Move(Cut) File</string>
-    <string name="file_email">Email File</string>
+    <string name="file_email">Share File</string>
 
     <string name="confirm_delete">Are you sure you want to delete</string>
 
