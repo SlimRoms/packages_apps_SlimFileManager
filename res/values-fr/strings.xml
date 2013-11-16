@@ -2,8 +2,8 @@
 
 <resources>
     <string name="app_name">Gestionnaire de fichiers Slim</string>
-    <string name="about">A propos du gestionnaire de fichiers</string>
-    <string name="media_dialog">Apreçu multimédia</string>
+    <string name="about">À propos du gestionnaire de fichiers</string>
+    <string name="media_dialog">Aperçu multimédia</string>
     <string name="dir_info">Informations sur le dossier</string>
     <string name="manager_act">Gestion du téléphone</string>
     <string name="play">Lire</string>
@@ -22,7 +22,7 @@
     <string name="create">Créer</string>
     <string name="rename">Renommer</string>
     <string name="cancel">Annuler</string>
-    <string name="path_desc">Les chemin d\'accès est</string>
+    <string name="path_desc">Le chemin d\'accès est</string>
     <string name="path">Chemin d\'accès</string>
     <string name="attach">Pièce jointe</string>
     <string name="delete">Supprimer</string>
@@ -33,7 +33,7 @@
     <string name="exit">Quitter</string>
     <string name="display">Affichage</string>
     <string name="extract">Extraire</string>
-    <string name="warning">Attention!</string>
+    <string name="warning">Attention !</string>
     <string name="create_dir">Créer répertoire</string>
     <string name="text_color">Couleur du texte</string>
     <string name="text_color_desc">Changer la couleur préférée du texte</string>
@@ -69,7 +69,7 @@
     <string name="green">Vert</string>
     <string name="change_color_title">Changer la couleur du texte</string>
     <string name="sort_by_none">Aucun</string>
-    <string name="sort_by_alphabetical">Orde alphabétique</string>
+    <string name="sort_by_alphabetical">Ordre alphabétique</string>
     <string name="sort_by_type">Type</string>
     <string name="sort_by_size">Taille</string>
     <string name="sort_by_folders_files">Répertoires-fichiers</string>
@@ -77,11 +77,11 @@
     <string name="unzip_error">Autorisations insuffisantes pour décompresser ici</string>
     <string name="create_dir_error">Autorisations insuffisantes pour créer le répertoire</string>
     <string name="rename_error">n\'a pas pu être renommé</string>
-    <string name="delete_error">Echec de la suppresion</string>
+    <string name="delete_error">Échec de la suppression</string>
     <string name="file_copy_success">Fichier copié et collé avec succès</string>
-    <string name="file_copy_error">Echec du copier/coller</string>
+    <string name="file_copy_error">Échec du copier/coller</string>
     <string name="select_email_app">Sélectionnez l\'application de messagerie électronique...</string>
-    <string name="email_error">Erreur de démarage de l\'application de messagerie électronique</string>
+    <string name="email_error">Erreur de démarrage de l\'application de messagerie électronique</string>
     <string name="website_error">Erreur d\'ouverture du site</string>
     <string name="process_error">Impossible de démarrer le processus</string>
     <string name="backup_progress">Sauvegarde des applications</string>
@@ -117,10 +117,10 @@
     <string name="proc_options">Options du processus</string>
     <string name="proc_details">Détails</string>
     <string name="proc_launch">Lancer</string>
-    <string name="wifi_is_enabled">Votre connexion wifi est activée</string>
-    <string name="wifi_not_enabled">Votre connexion wifi n\'est pas activée</string>
-    <string name="disable_wifi">Désactiver le wifi</string>
-    <string name="enable_wifi">Activer le wifi</string>
+    <string name="wifi_is_enabled">Votre connexion Wi-Fi est activée</string>
+    <string name="wifi_not_enabled">Votre connexion Wi-Fi n\'est pas activée</string>
+    <string name="disable_wifi">Désactiver le Wi-Fi</string>
+    <string name="enable_wifi">Activer le Wi-Fi</string>
     <string name="wifi_disabled">Désactivé</string>
     <string name="wifi_enabled">Activé</string>
     <string name="wifi_unknown">Inconnu</string>
