@@ -24,86 +24,86 @@ import android.util.Log;
 
 public class LinuxShell {
 
-	public static String getCmdPath(String path) {
-		return path.replace(" ", "\\ ").replace("'", "\\'");
-	}
+    public static String getCmdPath(String path) {
+        return path.replace(" ", "\\ ").replace("'", "\\'");
+    }
 
-	public static BufferedReader execute(String cmd) {
-		BufferedReader reader = null;
-		try {
-			Process process = Runtime.getRuntime().exec("su");
-			DataOutputStream os = new DataOutputStream(
-					process.getOutputStream());
-			os.writeBytes(cmd + "\n");
-			os.writeBytes("exit\n");
-			reader = new BufferedReader(new InputStreamReader(
-					process.getInputStream()));
-			String err = (new BufferedReader(new InputStreamReader(
-					process.getErrorStream()))).readLine();
-			os.flush();
+    public static BufferedReader execute(String cmd) {
+        BufferedReader reader = null;
+        try {
+            Process process = Runtime.getRuntime().exec("su");
+            DataOutputStream os = new DataOutputStream(
+                    process.getOutputStream());
+            os.writeBytes(cmd + "\n");
+            os.writeBytes("exit\n");
+            reader = new BufferedReader(new InputStreamReader(
+                    process.getInputStream()));
+            String err = (new BufferedReader(new InputStreamReader(
+                    process.getErrorStream()))).readLine();
+            os.flush();
 
-			if (process.waitFor() != 0 || (!"".equals(err) && null != err)) {
-				Log.e("Root Error", err);
-				return null;
-			}
+            if (process.waitFor() != 0 || (!"".equals(err) && null != err)) {
+                Log.e("Root Error", err);
+                return null;
+            }
 
-			return reader;
+            return reader;
 
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	public static boolean isRoot() {
-		boolean retval = false;
-		Process suProcess;
+    public static boolean isRoot() {
+        boolean retval = false;
+        Process suProcess;
 
-		try {
-			suProcess = Runtime.getRuntime().exec("su");
+        try {
+            suProcess = Runtime.getRuntime().exec("su");
 
-			DataOutputStream os = new DataOutputStream(
-					suProcess.getOutputStream());
-			BufferedReader osRes = new BufferedReader(new InputStreamReader(
-					suProcess.getInputStream()));
+            DataOutputStream os = new DataOutputStream(
+                    suProcess.getOutputStream());
+            BufferedReader osRes = new BufferedReader(new InputStreamReader(
+                    suProcess.getInputStream()));
 
-			if (null != os && null != osRes) {
-				// Getting the id of the current user to check if this is root
-				os.writeBytes("id\n");
-				os.flush();
+            if (null != os && null != osRes) {
+                // Getting the id of the current user to check if this is root
+                os.writeBytes("id\n");
+                os.flush();
 
-				String currUid = osRes.readLine();
-				boolean exitSu = false;
-				if (null == currUid) {
-					retval = false;
-					exitSu = false;
-					Log.e("ROOT", "Can't get root access or denied by user");
-				} else if (true == currUid.contains("uid=0")) {
-					retval = true;
-					exitSu = true;
-				} else {
-					retval = false;
-					exitSu = true;
-					Log.e("ROOT", "Root access rejected: " + currUid);
-				}
+                String currUid = osRes.readLine();
+                boolean exitSu = false;
+                if (null == currUid) {
+                    retval = false;
+                    exitSu = false;
+                    Log.e("ROOT", "Can't get root access or denied by user");
+                } else if (true == currUid.contains("uid=0")) {
+                    retval = true;
+                    exitSu = true;
+                } else {
+                    retval = false;
+                    exitSu = true;
+                    Log.e("ROOT", "Root access rejected: " + currUid);
+                }
 
-				if (exitSu) {
-					os.writeBytes("exit\n");
-					os.flush();
-				}
-			}
-		} catch (Exception e) {
-			// Can't get root !
+                if (exitSu) {
+                    os.writeBytes("exit\n");
+                    os.flush();
+                }
+            }
+        } catch (Exception e) {
+            // Can't get root !
 
-			retval = false;
-			Log.d("ROOT", "Root access rejected [" + e.getClass().getName()
-					+ "] : " + e.getMessage());
-		}
-		return retval;
-	}
+            retval = false;
+            Log.d("ROOT", "Root access rejected [" + e.getClass().getName()
+                    + "] : " + e.getMessage());
+        }
+        return retval;
+    }
 }

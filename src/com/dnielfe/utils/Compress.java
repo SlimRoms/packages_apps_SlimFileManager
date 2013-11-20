@@ -9,43 +9,43 @@ import java.util.zip.ZipOutputStream;
 
 public class Compress {
 
-	private static final int BUFFER = 2048;
+    private static final int BUFFER = 2048;
 
-	private String[] _files;
-	private String _zipFile;
+    private String[] _files;
+    private String _zipFile;
 
-	public Compress(String[] files, String zipFile) {
-		_files = files;
-		_zipFile = zipFile;
-	}
+    public Compress(String[] files, String zipFile) {
+        _files = files;
+        _zipFile = zipFile;
+    }
 
-	public void zip(String location) {
-		try {
-			BufferedInputStream origin = null;
-			FileOutputStream dest = new FileOutputStream(_zipFile);
+    public void zip(String location) {
+        try {
+            BufferedInputStream origin = null;
+            FileOutputStream dest = new FileOutputStream(_zipFile);
 
-			ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(
-					dest));
+            ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(
+                    dest));
 
-			byte data[] = new byte[BUFFER];
+            byte data[] = new byte[BUFFER];
 
-			for (int i = 0; i < _files.length; i++) {
-				
-				FileInputStream fi = new FileInputStream(_files[i]);
-				origin = new BufferedInputStream(fi, BUFFER);
-				ZipEntry entry = new ZipEntry(_files[i].substring(_files[i]
-						.lastIndexOf(location) + 1));
-				out.putNextEntry(entry);
-				int count;
-				while ((count = origin.read(data, 0, BUFFER)) != -1) {
-					out.write(data, 0, count);
-				}
-				origin.close();
-			}
+            for (int i = 0; i < _files.length; i++) {
+                
+                FileInputStream fi = new FileInputStream(_files[i]);
+                origin = new BufferedInputStream(fi, BUFFER);
+                ZipEntry entry = new ZipEntry(_files[i].substring(_files[i]
+                        .lastIndexOf(location) + 1));
+                out.putNextEntry(entry);
+                int count;
+                while ((count = origin.read(data, 0, BUFFER)) != -1) {
+                    out.write(data, 0, count);
+                }
+                origin.close();
+            }
 
-			out.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+            out.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

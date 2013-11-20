@@ -33,103 +33,103 @@ import android.widget.TextView;
 
 public class InfoDialog extends Activity {
 
-	private static File file3;
-	private String infopath;
-	private TextView mNameLabel, mPathLabel, mTimeLabel, mSizeLabel,
-			mPermissionLabel;
+    private static File file3;
+    private String infopath;
+    private TextView mNameLabel, mPathLabel, mTimeLabel, mSizeLabel,
+            mPermissionLabel;
 
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.details);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.details);
 
-		Intent i = getIntent();
-		if (i != null) {
-			if (i.getAction() != null
-					&& i.getAction().equals(Intent.ACTION_VIEW)) {
-				infopath = i.getData().getPath();
+        Intent i = getIntent();
+        if (i != null) {
+            if (i.getAction() != null
+                    && i.getAction().equals(Intent.ACTION_VIEW)) {
+                infopath = i.getData().getPath();
 
-				if (infopath == null)
-					infopath = "";
-			} else {
-				infopath = i.getExtras().getString("FILE_NAME");
-			}
-		}
+                if (infopath == null)
+                    infopath = "";
+            } else {
+                infopath = i.getExtras().getString("FILE_NAME");
+            }
+        }
 
-		file3 = new File(infopath);
+        file3 = new File(infopath);
 
-		mNameLabel = (TextView) findViewById(R.id.name_label);
-		mPathLabel = (TextView) findViewById(R.id.path_label);
-		mTimeLabel = (TextView) findViewById(R.id.time_stamp);
-		mSizeLabel = (TextView) findViewById(R.id.total_size);
-		mPermissionLabel = (TextView) findViewById(R.id.permission1);
+        mNameLabel = (TextView) findViewById(R.id.name_label);
+        mPathLabel = (TextView) findViewById(R.id.path_label);
+        mTimeLabel = (TextView) findViewById(R.id.time_stamp);
+        mSizeLabel = (TextView) findViewById(R.id.total_size);
+        mPermissionLabel = (TextView) findViewById(R.id.permission1);
 
-		// Set up Button
-		Button button1 = (Button) findViewById(R.id.quit);
-		button1.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				InfoDialog.this.finish();
-			}
-		});
+        // Set up Button
+        Button button1 = (Button) findViewById(R.id.quit);
+        button1.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                InfoDialog.this.finish();
+            }
+        });
 
-		new BackgroundWork().execute(infopath);
-	}
+        new BackgroundWork().execute(infopath);
+    }
 
-	private class BackgroundWork extends AsyncTask<String, Void, String> {
-		final int KB = 1024;
-		final int MG = KB * KB;
-		final int GB = MG * KB;
-		long size = 0;
-		private String mDisplaySize;
-		FileUtils flmg = new FileUtils();
+    private class BackgroundWork extends AsyncTask<String, Void, String> {
+        final int KB = 1024;
+        final int MG = KB * KB;
+        final int GB = MG * KB;
+        long size = 0;
+        private String mDisplaySize;
+        FileUtils flmg = new FileUtils();
 
-		protected void onPreExecute() {
-			mNameLabel.setText(file3.getName());
-			mPathLabel.setText(file3.getAbsolutePath());
-			mPermissionLabel.setText(getFilePermissions(file3));
-		}
+        protected void onPreExecute() {
+            mNameLabel.setText(file3.getName());
+            mPathLabel.setText(file3.getAbsolutePath());
+            mPermissionLabel.setText(getFilePermissions(file3));
+        }
 
-		protected String doInBackground(String... vals) {
+        protected String doInBackground(String... vals) {
 
-			if (!file3.canRead()) {
-				mDisplaySize = "---";
-				return mDisplaySize;
-			}
+            if (!file3.canRead()) {
+                mDisplaySize = "---";
+                return mDisplaySize;
+            }
 
-			if (file3.isFile()) {
-				size = file3.length();
-			} else {
-				size = flmg.getDirSize(vals[0]);
-			}
+            if (file3.isFile()) {
+                size = file3.length();
+            } else {
+                size = flmg.getDirSize(vals[0]);
+            }
 
-			if (size > GB)
-				mDisplaySize = String.format("%.2f GB", (double) size / GB);
-			else if (size < GB && size > MG)
-				mDisplaySize = String.format("%.2f MB", (double) size / MG);
-			else if (size < MG && size > KB)
-				mDisplaySize = String.format("%.2f KB", (double) size / KB);
-			else
-				mDisplaySize = String.format("%.2f B", (double) size);
+            if (size > GB)
+                mDisplaySize = String.format("%.2f GB", (double) size / GB);
+            else if (size < GB && size > MG)
+                mDisplaySize = String.format("%.2f MB", (double) size / MG);
+            else if (size < MG && size > KB)
+                mDisplaySize = String.format("%.2f KB", (double) size / KB);
+            else
+                mDisplaySize = String.format("%.2f B", (double) size);
 
-			return mDisplaySize;
-		}
+            return mDisplaySize;
+        }
 
-		protected void onPostExecute(String result) {
-			SimpleDateFormat sdf1 = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+        protected void onPostExecute(String result) {
+            SimpleDateFormat sdf1 = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 
-			mTimeLabel.setText(sdf1.format(file3.lastModified()));
-			mSizeLabel.setText(result);
-		}
-	}
+            mTimeLabel.setText(sdf1.format(file3.lastModified()));
+            mSizeLabel.setText(result);
+        }
+    }
 
-	private static String getFilePermissions(File file) {
-		String per = "";
+    private static String getFilePermissions(File file) {
+        String per = "";
 
-		per += file.isDirectory() ? "d" : "-";
-		per += file.canRead() ? "r" : "-";
-		per += file.canWrite() ? "w" : "-";
-		per += file.canExecute() ? "x" : "-";
+        per += file.isDirectory() ? "d" : "-";
+        per += file.canRead() ? "r" : "-";
+        per += file.canWrite() ? "w" : "-";
+        per += file.canExecute() ? "x" : "-";
 
-		return per;
-	}
+        return per;
+    }
 }
