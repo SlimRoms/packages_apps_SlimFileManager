@@ -27,7 +27,8 @@
     <string name="create">Oluştur</string>
     <string name="createbookmark">Yer imi oluştur</string>
     <string name="created">" Oluşturuldu"</string>
-    <string name="createmsg">Gizli dosya oluşturmak için metinden önce nokta koy.</string>
+    <string name="createmsg">Gizli dosya oluşturmak için metinden önce nokta koy.
+</string>
     <string name="createnewfolder">Yeni Klasör oluştur</string>
     <string name="defaultdir">Varsayılan Dizin</string>
     <string name="delete">Sil</string>
@@ -112,7 +113,6 @@
     <string name="version">"Sürüm "</string>
     <string name="video">Video</string>
     <string name="viewmode">Görünüm Biçimi</string>
-    <string name="xdaforum">XDA Forum</string>
     <string name="zipfolder">Sıkıştırma Klasörü</string>
     <string name="zipping">Sıkıştırıyor</string>
 

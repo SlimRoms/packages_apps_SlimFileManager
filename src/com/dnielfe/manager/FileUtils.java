@@ -413,7 +413,7 @@ public class FileUtils {
             intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, name);
             intent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE,
                     Intent.ShortcutIconResource.fromContext(main,
-                            R.drawable.ic_launcher));
+                            R.drawable.ic_shortcut));
             intent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
             main.sendBroadcast(intent);
 

@@ -253,14 +253,12 @@ public final class Main extends ListActivity {
 
             @Override
             public void onDrawerClosed(View view) {
-                mActionBar.setDisplayShowTitleEnabled(false);
                 mActionBar.setCustomView(mActionView);
                 invalidateOptionsMenu();
             }
 
             @Override
             public void onDrawerOpened(View drawerView) {
-                mActionBar.setDisplayShowTitleEnabled(true);
                 mActionBar.setCustomView(null);
                 invalidateOptionsMenu();
             }
