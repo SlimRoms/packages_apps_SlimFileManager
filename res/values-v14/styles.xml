@@ -2,5 +2,7 @@
 <resources>
 
     <style name="AppBaseTheme" parent="android:Theme.Holo.Light"></style>
+	
+	<style name="AppBaseTheme1" parent="android:Theme.Holo.Light.Dialog"></style>
 
 </resources>
