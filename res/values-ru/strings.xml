@@ -114,5 +114,6 @@
     <string name="viewmode">Вид списка</string>
     <string name="zipfolder">Сжать папку в ZIP-архив</string>
     <string name="zipping">Сжатие в ZIP-архив</string>
+    <string name="xdaforum">Спасибо разработчику D1FE</string>
 
 </resources>
