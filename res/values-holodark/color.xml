@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="gray">#888</color>
+    <color name="light">#0f0f0f</color>
+    <color name="holoblue">@android:color/holo_blue_light</color>
+    <color name="transparent">#000000FF</color>
+
+</resources>
