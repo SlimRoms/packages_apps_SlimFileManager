@@ -546,10 +546,12 @@ public class EventHandler {
                 }
 
             } else if (file != null && file.isDirectory()) {
-                if (file.canRead() && file.list().length > 0)
+                String[] files = file.list();
+                if (file.canRead() && files != null && files.length > 0) {
                     mViewHolder.icon.setImageResource(R.drawable.folder_full);
-                else
+                } else {
                     mViewHolder.icon.setImageResource(R.drawable.folder);
+                }
             }
 
             // Shows the size of File
