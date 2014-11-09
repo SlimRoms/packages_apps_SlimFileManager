@@ -81,7 +81,7 @@
   <string name="packing">Pakowanie</string>
   <string name="paste">Wklej</string>
   <string name="pasteintofolder">Wklej do folderu</string>
-  <string name="permissions">Pozwolenia:</string>
+  <string name="permissions">Uprawnienia:</string>
   <string name="playstore">Play Store</string>
   <string name="pressbackagaintoquit">Naciśnij klawisz powrotu, aby wyjść</string>
   <string name="rename">Zmień nazwę</string>
@@ -112,6 +112,7 @@
   <string name="version">"Wersja "</string>
   <string name="video">Wideo</string>
   <string name="viewmode">Tryb wyświetlania</string>
+  <string name="xdaforum">Dzięki developer\'owi D1FE</string>
   <string name="zipfolder">Spakuj folder do pliku .zip</string>
   <string name="zipping">Pakowanie</string>
 </resources>

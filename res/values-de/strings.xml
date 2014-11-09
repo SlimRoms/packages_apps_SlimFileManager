@@ -27,7 +27,7 @@
   <string name="create">Erstellen</string>
   <string name="createbookmark">Lesezeichen erstellen</string>
   <string name="created">" erstellt"</string>
-  <string name="createmsg">Ein Punkt vor dem Name erstellt einen versteckten Ordner.</string>
+  <string name="createmsg">Um einen versteckten Ordner zu erstellen, einen Punkt vor dem Namen einfügen.</string>
   <string name="createnewfolder">Neuer Ordner</string>
   <string name="defaultdir">Standardverzeichnis</string>
   <string name="delete">Löschen</string>
@@ -81,7 +81,6 @@
   <string name="packing">Verpacken</string>
   <string name="paste">Einfügen</string>
   <string name="pasteintofolder">In Ordner kopieren / verschieben</string>
-  <string name="permissions">Berechtigungen:</string>
   <string name="playstore">Playstore</string>
   <string name="pressbackagaintoquit">Erneut klicken um das Programm zu beenden</string>
   <string name="rename">Umbenennen</string>
@@ -107,12 +106,12 @@
   <string name="uisettings">Oberfläche</string>
   <string name="uninstallapp">Deinstallieren</string>
   <string name="unselectall">Alle abwählen</string>
-  <string name="unzipping">Entpacken</string>
+  <string name="unzipping">Wird extrahiert</string>
   <string name="used">Verwendet:</string>
   <string name="version">"Version "</string>
   <string name="video">Video</string>
   <string name="viewmode">Ansichtsmodus</string>
-  <string name="xdaforum">Danke an den Entwickler D1FE</string>
+  <string name="xdaforum">Dank an den Entwickler D1FE</string>
   <string name="zipfolder">Ordner komprimieren</string>
   <string name="zipping">Komprimieren</string>
 </resources>
