@@ -81,6 +81,7 @@
   <string name="packing">Verpacken</string>
   <string name="paste">Einfügen</string>
   <string name="pasteintofolder">In Ordner kopieren / verschieben</string>
+  <string name="permissions">Berechtigungen:</string>
   <string name="playstore">Playstore</string>
   <string name="pressbackagaintoquit">Erneut klicken um das Programm zu beenden</string>
   <string name="rename">Umbenennen</string>

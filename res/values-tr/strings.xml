@@ -82,6 +82,7 @@
   <string name="packing">Paketleniyor</string>
   <string name="paste">Yapıştır</string>
   <string name="pasteintofolder">Klasöre yapıştır</string>
+  <string name="permissions">izinler:</string>
   <string name="playstore">Playstore</string>
   <string name="pressbackagaintoquit">Çıkmak için Geri tuşuna bas</string>
   <string name="rename">Yeniden adlandır</string>
@@ -112,6 +113,7 @@
   <string name="version">"Sürüm "</string>
   <string name="video">Video</string>
   <string name="viewmode">Görünüm Biçimi</string>
+  <string name="xdaforum">Geliştirici D1Fe\'ye Teşekkürler</string>
   <string name="zipfolder">Sıkıştırma Klasörü</string>
   <string name="zipping">Sıkıştırıyor</string>
 </resources>

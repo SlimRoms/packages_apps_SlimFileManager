@@ -81,6 +81,7 @@
   <string name="packing">Comprimendo</string>
   <string name="paste">Incolla</string>
   <string name="pasteintofolder">Incolla nella Cartella</string>
+  <string name="permissions">Permessi:</string>
   <string name="playstore">Playstore</string>
   <string name="pressbackagaintoquit">Premi indietro unaltra volta per uscire</string>
   <string name="rename">Rinomina</string>
@@ -111,6 +112,7 @@
   <string name="version">"Versione "</string>
   <string name="video">Video</string>
   <string name="viewmode">Modalità Vista</string>
+  <string name="xdaforum">Grazie a D1FE per lo sviluppo</string>
   <string name="zipfolder">Comprimi Cartella</string>
   <string name="zipping">Comprimendo</string>
 </resources>
