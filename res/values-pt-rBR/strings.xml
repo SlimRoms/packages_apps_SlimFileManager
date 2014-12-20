@@ -38,8 +38,8 @@
   <string name="detailed">Detalhado</string>
   <string name="details">Detalhes</string>
   <string name="dir_info">Informação da Pasta</string>
-  <string name="drawer_open">Open navigation drawer</string>
-  <string name="drawer_close">Close navigation drawer</string>
+  <string name="drawer_open">Abrir gaveta de navegação</string>
+  <string name="drawer_close">Fechar gaveta de navegação</string>
   <string name="error">Erro</string>
   <string name="extract">Extract</string>
   <string name="extractto">Extract to</string>
@@ -81,6 +81,7 @@
   <string name="packing">Packing</string>
   <string name="paste">Paste</string>
   <string name="pasteintofolder">Colar na Pasta</string>
+  <string name="permissions">Permissões:</string>
   <string name="playstore">Play Store</string>
   <string name="pressbackagaintoquit">Pressione novamente para sair</string>
   <string name="rename">Renomear</string>
@@ -111,6 +112,7 @@
   <string name="version">"Versão"</string>
   <string name="video">Vídeo</string>
   <string name="viewmode">Visualização</string>
+  <string name="xdaforum">Obrigado ao desenvolvedor D1FE</string>
   <string name="zipfolder">Pasta Zip</string>
   <string name="zipping">Fechando</string>
 </resources>

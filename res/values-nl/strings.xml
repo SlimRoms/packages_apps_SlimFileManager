@@ -81,6 +81,7 @@
   <string name="packing">Inpakken</string>
   <string name="paste">Plakken</string>
   <string name="pasteintofolder">Plakken in Map</string>
+  <string name="permissions">Bevoegdheden:</string>
   <string name="playstore">Playstore</string>
   <string name="pressbackagaintoquit">Tik nogmaals terug om af te sluiten</string>
   <string name="rename">Hernoem</string>
@@ -111,6 +112,7 @@
   <string name="version">"Versie "</string>
   <string name="video">Video</string>
   <string name="viewmode">Weergavemodus</string>
+  <string name="xdaforum">Dank aan ontwikkelaar D1FE</string>
   <string name="zipfolder">Zip bestand maken</string>
   <string name="zipping">Inpakken</string>
 </resources>
