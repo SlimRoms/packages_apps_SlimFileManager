@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="sort_mode_entries" translatable="false">
+        <item>@string/sort_mode_name</item>
+        <item>@string/sort_mode_size</item>
+        <item>@string/sort_mode_type</item>
+    </string-array>
+
+    <string-array name="sort_mode_values" translatable="false">
+        <item>sort_mode_name</item>
+        <item>sort_mode_size</item>
+        <item>sort_mode_type</item>
+    </string-array>
+
+</resources>

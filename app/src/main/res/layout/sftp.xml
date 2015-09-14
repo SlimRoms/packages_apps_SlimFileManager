@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@android:id/list"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/scrollFrame"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="24dp"
+        android:paddingLeft="@dimen/activity_side_padding"
+        android:paddingRight="@dimen/activity_side_padding"
+        android:paddingTop="8dp">
+
+        <TextView
+            style="@style/FormEntryLabel"
+            android:text="@string/host" />
+
+        <EditText
+            android:id="@+id/host"
+            style="@style/FormEntryInput"
+            android:hint="@string/host"
+            android:inputType="textUri"
+            android:nextFocusDown="@+id/port">
+            <requestFocus />
+        </EditText>
+
+        <TextView
+            style="@style/FormEntryLabel"
+            android:text="@string/port" />
+
+        <EditText
+            android:id="@+id/port"
+            style="@style/FormEntryInput"
+            android:hint="@string/port"
+            android:inputType="number"
+            android:nextFocusDown="@+id/user"
+            android:text="@string/defaultSshPort" />
+
+        <TextView
+            style="@style/FormEntryLabel"
+            android:text="@string/username" />
+
+        <EditText
+            android:id="@+id/user"
+            style="@style/FormEntryInput"
+            android:hint="@string/username"
+            android:nextFocusDown="@+id/password" />
+
+        <CheckBox
+            android:id="@+id/checkUseKey"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:fontFamily="sans-serif-light"
+            android:singleLine="true"
+            android:text="@string/use_ssh_key"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/passwordLabel"
+            style="@style/FormEntryLabel"
+            android:text="@string/password" />
+
+        <EditText
+            android:id="@+id/pass"
+            style="@style/FormEntryInput"
+            android:hint="@string/password_hint"
+            android:inputType="textPassword"
+            android:nextFocusDown="@+id/initialPath" />
+
+        <LinearLayout
+            android:id="@+id/sshKeyFrame"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <TextView
+                style="@style/FormEntryLabel"
+                android:text="@string/ssh_key_path" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/sshKeyPath"
+                    style="@style/FormEntryInput"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_toStartOf="@+id/browseSshKey"
+                    android:hint="@string/ssh_key_path_desc"
+                    android:inputType="textUri" />
+
+                <Button
+                    android:id="@+id/browseSshKey"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="end|right"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginStart="4dp"
+                    android:text="@string/browse"
+                    tools:ignore="RtlHardcoded" />
+
+            </RelativeLayout>
+
+            <TextView
+                style="@style/FormEntryLabel"
+                android:text="@string/ssh_key_passphrase" />
+
+            <EditText
+                android:id="@+id/sshKeyPassphrase"
+                style="@style/FormEntryInput"
+                android:hint="@string/password_hint"
+                android:inputType="text" />
+
+        </LinearLayout>
+
+        <TextView
+            style="@style/FormEntryLabel"
+            android:text="@string/initial_path" />
+
+        <EditText
+            android:id="@+id/initialPath"
+            style="@style/FormEntryInput"
+            android:hint="@string/initial_path_hint"
+            android:inputType="text" />
+
+        <Button
+            android:id="@+id/testConnection"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/button_height"
+            android:layout_marginTop="16dp"
+            android:enabled="false"
+            android:fontFamily="sans-serif-light"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="@string/test_connection"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+</ScrollView>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/SlimFileManager.iml" filepath="$PROJECT_DIR$/SlimFileManager.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sftp/sftp.iml" filepath="$PROJECT_DIR$/sftp/sftp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/slimpluginframework/slimpluginframework.iml" filepath="$PROJECT_DIR$/slimpluginframework/slimpluginframework.iml" />
+    </modules>
+  </component>
+</project>

@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    android:padding="8dp">
+
+    <LinearLayout
+        android:id="@+id/owner_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:labelFor="@+id/owner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|center_vertical"
+            android:ellipsize="end"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:singleLine="true"
+            android:text="@string/owner"
+            android:textIsSelectable="false"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/owner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|center_vertical"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:text="@string/blank" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/group_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp">
+
+        <TextView
+            android:labelFor="@+id/group"
+            android:id="@+id/permission_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|center_vertical"
+            android:ellipsize="end"
+            android:gravity="start|center_vertical"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:singleLine="true"
+            android:text="@string/group"
+            android:textIsSelectable="false"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|center_vertical"
+            android:ellipsize="end"
+            android:gravity="start|center_vertical"
+            android:singleLine="true"
+            android:text="@string/blank" />
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp">
+
+        <View
+            android:layout_weight="1"
+            android:layout_width="70dp"
+            android:layout_height="1dp" />
+
+        <TextView
+            android:layout_weight="1"
+            android:layout_width="@dimen/item_height"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:text="@string/read"
+            android:textIsSelectable="false" />
+
+        <TextView
+            android:layout_weight="1"
+            android:layout_width="@dimen/item_height"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:text="@string/write"
+            android:textIsSelectable="false" />
+
+        <TextView
+            android:layout_weight="1"
+            android:layout_width="@dimen/item_height"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:text="@string/execute"
+            android:textIsSelectable="false" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_weight="2"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="@string/owner"
+            android:textIsSelectable="false" />
+
+        <CheckBox
+            android:id="@+id/uread"
+            android:layout_weight="1"
+            android:layout_width="@dimen/item_height"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+
+        <CheckBox
+            android:layout_weight="1"
+            android:id="@+id/uwrite"
+            android:layout_width="@dimen/item_height"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+
+        <CheckBox
+            android:layout_weight="1"
+            android:id="@+id/uexecute"
+            android:layout_width="@dimen/item_height"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_weight="2"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="@string/group"
+            android:textIsSelectable="false" />
+
+        <CheckBox
+            android:layout_weight="1"
+            android:id="@+id/gread"
+            android:layout_width="@dimen/item_height"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+
+        <CheckBox
+            android:layout_weight="1"
+            android:id="@+id/gwrite"
+            android:layout_width="@dimen/item_height"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+
+        <CheckBox
+            android:layout_weight="1"
+            android:id="@+id/gexecute"
+            android:layout_width="@dimen/item_height"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_weight="2"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="@string/other"
+            android:textIsSelectable="false" />
+
+        <CheckBox
+            android:layout_weight="1"
+            android:id="@+id/oread"
+            android:layout_width="@dimen/item_height"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+
+        <CheckBox
+            android:layout_weight="1"
+            android:id="@+id/owrite"
+            android:layout_width="@dimen/item_height"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+
+        <CheckBox
+            android:layout_weight="1"
+            android:id="@+id/oexecute"
+            android:layout_width="@dimen/item_height"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+    </LinearLayout>
+
+</LinearLayout>

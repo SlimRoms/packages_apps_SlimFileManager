@@ -1,0 +1,94 @@
+<resources>
+    <string name="app_name">SlimFileManager</string>
+
+    <string name="blank" translatable="false">---</string>
+
+    <!-- Shortcuts -->
+    <string name="root_title">Root</string>
+    <string name="sdcard_title">SD Card</string>
+    <string name="downloads_title">Downloads</string>
+    <string name="dcim_title">DCIM</string>
+
+    <!-- Actions -->
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+    <string name="apply">Apply</string>
+    <string name="copy">Copy</string>
+    <string name="move">Move</string>
+    <string name="rename">Rename</string>
+    <string name="share">Share</string>
+    <string name="zip">Zip</string>
+    <string name="search">Search</string>
+    <string name="create">Create</string>
+    <string name="done">Done</string>
+
+    <string name="create_folder">Add Folder</string>
+    <string name="create_file">Add File</string>
+    <string name="folder_name_hint">Folder name</string>
+    <string name="file_name_hint">File name</string>
+    <string name="folder_exists">Folder exists</string>
+    <string name="file_exists">File exists</string>
+    <string name="unable_to_create_file">Cannot create file.</string>
+
+    <string name="destination_file_exists">Destination file exists</string>
+    <string name="source_title">"Source: "</string>
+    <string name="destination_title">"Destination: "</string>
+    <string name="replace">Replace</string>
+    <string name="replace_all">Replace All</string>
+    <string name="skip">Skip</string>
+    <string name="skip_all">Skip All</string>
+
+    <string name="delete_dialog_title">"Delete files ?"</string>
+
+    <string name="error">Error</string>
+    <string name="host">Host</string>
+    <string name="port">Port</string>
+    <string name="defaultSshPort">22</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="use_ssh_key">Use SSH Key</string>
+    <string name="ssh_key_path">SSH Key Path</string>
+    <string name="ssh_key_path_desc" translatable="false">e.g. /var/www/id_rsa</string>
+    <string name="ssh_key_passphrase">SSH Key Passphrase</string>
+    <string name="password_hint" translatable="false">* * * * * * * *</string>
+    <string name="browse">Browse</string>
+    <string name="initial_path">Initial Path</string>
+    <string name="initial_path_hint">Initial path (e.g. /var/www)</string>
+    <string name="test_connection">Test Connection</string>
+    <string name="error_retry">Error, Retry</string>
+    <string name="testing_connection">Testing connection…</string>
+    <string name="successful">Successful!</string>
+
+    <string name="action_settings">Settings</string>
+
+    <string name="icon_description">Item icon</string>
+
+    <string name="enable_root_title">Enable root</string>
+
+    <string name="delete_dialog_message">"This cannot be undone!"</string>
+    <string name="back_confirm">Press back again to exit.</string>
+
+    <!-- app theme -->
+    <string name="theme_title">Theme</string>
+    <string name="dark">Dark</string>
+    <string name="light">Light</string>
+
+    <!-- permissions-->
+    <string name="permissions">Permissions</string>
+    <string name="owner">Owner</string>
+    <string name="group">Group</string>
+    <string name="other">Other</string>
+    <string name="read">Read</string>
+    <string name="write">Write</string>
+    <string name="execute">Execute</string>
+
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+
+    <!-- Sort Mode -->
+    <string name="sort_mode_title">Sort Mode</string>
+    <string name="sort_mode_name">Name</string>
+    <string name="sort_mode_size">Size</string>
+    <string name="sort_mode_type">Type</string>
+
+</resources>

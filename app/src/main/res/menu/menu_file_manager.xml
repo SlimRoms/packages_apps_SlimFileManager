@@ -1,0 +1,27 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" tools:context=".FileManager">
+
+    <item android:id="@+id/action_settings"
+        android:title="@string/action_settings"
+        android:orderInCategory="100"
+        android:showAsAction="never" />
+
+    <item android:id="@+id/close_tab"
+        android:title="Close tab"
+        android:icon="@drawable/close"
+        android:orderInCategory="99"
+        android:showAsAction="always" />
+
+    <item android:id="@+id/add_tab"
+        android:title="Add tab"
+        android:icon="@drawable/add"
+        android:orderInCategory="98"
+        android:showAsAction="always" />
+
+    <item android:id="@+id/search"
+        android:title="@string/search"
+        android:orderInCategory="97"
+        android:actionViewClass="android.widget.SearchView"
+        android:icon="@android:drawable/ic_menu_search"
+        android:showAsAction="always" />
+</menu>

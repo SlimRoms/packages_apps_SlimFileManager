@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <SwitchPreference
+        android:key="enable_root"
+        android:title="@string/enable_root_title" />
+
+    <ListPreference
+        android:key="key_theme"
+        android:title="@string/theme_title"
+        android:summary="%s"/>
+
+    <ListPreference
+        android:key="sort_mode"
+        android:title="@string/sort_mode_title"
+        android:summary="%s"
+        android:defaultValue="sort_mode_name"
+        android:entries="@array/sort_mode_entries"
+        android:entryValues="@array/sort_mode_values" />
+
+</PreferenceScreen>

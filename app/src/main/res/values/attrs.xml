@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="PageIndicator">
+        <attr name="selectedColor" format="integer" />
+
+        <attr name="tabPageIndicatorStyle" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="Icons">
+        <attr name="iconColor" format="integer" />
+    </declare-styleable>
+
+</resources>

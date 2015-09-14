@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.slim.slimfilemanager.widget.TabPageIndicator
+            android:id="@+id/tab_indicator"
+            android:visibility="gone"
+            android:gravity="top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <com.slim.slimfilemanager.widget.PageIndicator
+            android:id="@+id/indicator"
+            android:layout_below="@+id/tab_indicator"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            app:selectedColor="?android:colorPrimaryDark"/>
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/pager"
+            android:layout_below="@+id/indicator"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <com.getbase.floatingactionbutton.FloatingActionsMenu
+            android:id="@+id/float_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="16dp"
+            app:fab_labelStyle="@style/menu_labels_style"
+            app:fab_addButtonColorNormal="?android:colorAccent"
+            app:fab_addButtonColorPressed="?android:colorPrimaryDark"/>
+
+    </RelativeLayout>
+
+    <ListView
+        android:id="@+id/drawer"
+        android:layout_width="@dimen/drawer_width"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="?android:attr/windowBackground"
+        android:clickable="true" />
+
+</android.support.v4.widget.DrawerLayout>
