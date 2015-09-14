@@ -31,6 +31,19 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/paste"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="16dp"
+            app:fab_colorNormal="?android:colorAccent"
+            app:fab_colorPressed="?android:colorPrimaryDark"
+            android:visibility="gone"/>
+
         <com.getbase.floatingactionbutton.FloatingActionsMenu
             android:id="@+id/float_button"
             android:layout_width="wrap_content"

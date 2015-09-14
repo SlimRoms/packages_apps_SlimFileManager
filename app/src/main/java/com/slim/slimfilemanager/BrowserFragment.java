@@ -29,7 +29,6 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.slim.slimfilemanager.multichoice.MultiChoiceViewHolder;
 import com.slim.slimfilemanager.multichoice.MultiSelector;
 import com.slim.slimfilemanager.utils.BackgroundUtils;
@@ -37,7 +36,6 @@ import com.slim.slimfilemanager.utils.FileUtils;
 import com.slim.slimfilemanager.utils.FragmentLifecycle;
 import com.slim.slimfilemanager.utils.IconCache;
 import com.slim.slimfilemanager.utils.MimeUtils;
-import com.slim.slimfilemanager.utils.PasteTask;
 import com.slim.slimfilemanager.utils.PasteTask.SelectedFiles;
 import com.slim.slimfilemanager.utils.SortUtils;
 import com.slim.slimfilemanager.utils.Utils;
@@ -62,8 +60,8 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
     private static final int MENU_SHARE = 1006;
     private static final int MENU_ZIP = 1007;
 
-    private static final int ACTION_ADD_FOLDER = 10001;
-    private static final int ACTION_ADD_FILE = 10002;
+    public static final int ACTION_ADD_FOLDER = 10001;
+    public static final int ACTION_ADD_FILE = 10002;
 
     private static final String ARG_PATH = "path";
 
@@ -75,7 +73,6 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
     private MultiSelector mMultiSelector = new MultiSelector();
 
     private ActionMode mActionMode;
-    private FloatingActionButton mPasteButton;
     private TextView mPath;
     private SearchView mSearchView;
     private ProgressBar mProgress;
@@ -83,7 +80,6 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
     private ViewAdapter mAdapter;
     private ArrayList<Item> mFiles = new ArrayList<>();
 
-    private boolean mMove = false;
     private boolean mExitOnBack = false;
     private boolean mSearching = false;
 
@@ -92,11 +88,10 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
         public String path;
     }
 
-    public static BrowserFragment newInstance(String path, String plugin) {
+    public static BrowserFragment newInstance(String path) {
         BrowserFragment fragment = new BrowserFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PATH, path);
-        args.putString("plugin", plugin);
         fragment.setArguments(args);
         return fragment;
     }
@@ -120,12 +115,12 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
 
     @Override
     public void onResumeFragment() {
-        if (mPasteButton == null) return;
+        /*if (mPasteButton == null) return;
         if (!SelectedFiles.isEmpty()) {
             mPasteButton.setVisibility(View.VISIBLE);
         } else {
             mPasteButton.setVisibility(View.GONE);
-        }
+        }*/
     }
 
     public void onPreferencesChanged() {
@@ -143,30 +138,8 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
         getView().setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
-                    if (mSearchView != null && !mSearchView.isIconified()) {
-                        mSearchView.setIconified(true);
-                        return true;
-                    }
-                    if (!mCurrentPath.equals("/")) {
-                        File file = new File(mCurrentPath);
-                        onClickFile(file.getParent());
-                        mRecyclerView.scrollToPosition(mAdapter.indexOf(file.getName()));
-                        mExitOnBack = false;
-                    } else if (mCurrentPath.equals("/")) {
-                        if (mExitOnBack) {
-                            mActivity.finish();
-                        } else {
-                            Toast.makeText(mContext, getString(R.string.back_confirm),
-                                    Toast.LENGTH_SHORT).show();
-                            mExitOnBack = true;
-                        }
-                    } else {
-                        mExitOnBack = false;
-                    }
-                    return true;
-                }
-                return false;
+                return event.getAction() == KeyEvent.ACTION_UP
+                        && keyCode == KeyEvent.KEYCODE_BACK && onBackPressed();
             }
         });
     }
@@ -209,25 +182,33 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(mAdapter);
 
-
-        mPasteButton = (FloatingActionButton) rootView.findViewById(R.id.paste);
-        mPasteButton.setColorNormal(R.color.primary);
-        mPasteButton.setIcon(R.drawable.paste);
-        mPasteButton.setOnClickListener(this);
-        mPasteButton.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                SelectedFiles.clearAll();
-                mMove = false;
-                //mActionMenu.setVisibility(View.VISIBLE);
-                mPasteButton.setVisibility(View.GONE);
-                return true;
-            }
-        });
-
         filesChanged(mCurrentPath);
 
         return rootView;
+    }
+
+    public boolean onBackPressed() {
+        if (mSearchView != null && !mSearchView.isIconified()) {
+            mSearchView.setIconified(true);
+            return true;
+        }
+        if (!mCurrentPath.equals("/")) {
+            File file = new File(mCurrentPath);
+            onClickFile(file.getParent());
+            mRecyclerView.scrollToPosition(mAdapter.indexOf(file.getName()));
+            mExitOnBack = false;
+        } else if (mCurrentPath.equals("/")) {
+            if (mExitOnBack) {
+                mActivity.finish();
+            } else {
+                Toast.makeText(mContext, getString(R.string.back_confirm),
+                        Toast.LENGTH_SHORT).show();
+                mExitOnBack = true;
+            }
+        } else {
+            mExitOnBack = false;
+        }
+        return true;
     }
 
     ActionMode.Callback mMultiSelect = new ActionMode.Callback() {
@@ -274,9 +255,8 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
                 switch (id) {
                     case MENU_CUT:
                     case MENU_COPY:
-                        if (id == MENU_CUT) mMove = true;
-                        mPasteButton.setVisibility(View.VISIBLE);
-                        //mActionMenu.setVisibility(View.GONE);
+                        if (id == MENU_CUT) mActivity.setMove(true);
+                        mActivity.showPaste(true);
                         break;
                     case MENU_DELETE:
                         showDialog(MENU_DELETE);
@@ -314,13 +294,13 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
 
     @Override
     public void onClick(View v) {
-        if (v == mPasteButton) {
+        /*if (v == mPasteButton) {
             new PasteTask(mContext, mMove, mCurrentPath);
             filesChanged(mCurrentPath);
             mMove = false;
             //mActionMenu.setVisibility(View.VISIBLE);
             mPasteButton.setVisibility(View.GONE);
-        } else if (v.getTag() == ACTION_ADD_FOLDER) {
+        } else*/ if (v.getTag() == ACTION_ADD_FOLDER) {
             showDialog(ACTION_ADD_FOLDER);
         }
     }
@@ -578,7 +558,7 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
         SortUtils.sort(mFiles);
     }
 
-    private void showDialog(int id) {
+    public void showDialog(int id) {
 
         DialogFragment newFragment =
                 MyAlertDialogFragment.newInstance(id);

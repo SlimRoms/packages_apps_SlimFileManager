@@ -21,6 +21,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,23 +38,27 @@ import com.slim.slimfilemanager.settings.SettingsActivity;
 import com.slim.slimfilemanager.settings.SettingsProvider;
 import com.slim.slimfilemanager.utils.FragmentLifecycle;
 import com.slim.slimfilemanager.utils.IconCache;
+import com.slim.slimfilemanager.utils.PasteTask;
 import com.slim.slimfilemanager.widget.PageIndicator;
 import com.slim.slimfilemanager.widget.TabPageIndicator;
 
 public class FileManager extends ThemeActivity {
 
-    SectionsPagerAdapter mSectionsPagerAdapter;
+    private SectionsPagerAdapter mSectionsPagerAdapter;
 
-    BrowserFragment mFragment;
+    private BrowserFragment mFragment;
 
-    ViewPager mViewPager;
-    ListView mDrawer;
-    DrawerLayout mDrawerLayout;
-    ActionBarDrawerToggle mDrawerToggle;
-    DrawerAdapter mDrawerAdapter;
+    private ViewPager mViewPager;
+    private ListView mDrawer;
+    private DrawerLayout mDrawerLayout;
+    private ActionBarDrawerToggle mDrawerToggle;
+    private DrawerAdapter mDrawerAdapter;
+    private ActionMode mActionMode;
     private FloatingActionsMenu mActionMenu;
+    private FloatingActionButton mPasteButton;
 
     int mCurrentPosition;
+    boolean mMove;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -149,6 +154,27 @@ public class FileManager extends ThemeActivity {
         mActionMenu = (FloatingActionsMenu) findViewById(R.id.float_button);
         buildActionButtons();
 
+        mPasteButton = (FloatingActionButton) findViewById(R.id.paste);
+        mPasteButton.setIcon(R.drawable.paste);
+        mPasteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new PasteTask(FileManager.this, mMove, mFragment.getCurrentPath());
+                mFragment.filesChanged(mFragment.getCurrentPath());
+                setMove(false);
+                showPaste(false);
+            }
+        });
+        mPasteButton.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                PasteTask.SelectedFiles.clearAll();
+                setMove(false);
+                showPaste(false);
+                return true;
+            }
+        });
+
         PageIndicator indicator = (PageIndicator) findViewById(R.id.indicator);
         indicator.setViewPager(mViewPager);
 
@@ -162,11 +188,11 @@ public class FileManager extends ThemeActivity {
         button.setColorPressedResId(R.color.primary_dark);
         button.setIcon(R.drawable.add_folder);
         button.setTitle(getString(R.string.create_folder));
-        //button.setTag(ACTION_ADD_FOLDER);
+        button.setTag(BrowserFragment.ACTION_ADD_FOLDER);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //showDialog(ACTION_ADD_FOLDER);
+                mFragment.showDialog(BrowserFragment.ACTION_ADD_FOLDER);
                 mActionMenu.collapseImmediately();
             }
         });
@@ -176,15 +202,29 @@ public class FileManager extends ThemeActivity {
         button.setColorPressedResId(R.color.primary_dark);
         button.setIcon(R.drawable.add_file);
         button.setTitle(getString(R.string.create_file));
-        //button.setTag(ACTION_ADD_FILE);
+        button.setTag(BrowserFragment.ACTION_ADD_FILE);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //BrowserFragment.showDialog(ACTION_ADD_FILE);
+                mFragment.showDialog(BrowserFragment.ACTION_ADD_FILE);
                 mActionMenu.collapseImmediately();
             }
         });
         mActionMenu.addButton(button);
+    }
+
+    public void setMove(boolean move) {
+        mMove = move;
+    }
+
+    public void showPaste(boolean show) {
+        if (show) {
+            mPasteButton.setVisibility(View.VISIBLE);
+            mActionMenu.setVisibility(View.GONE);
+        } else {
+            mActionMenu.setVisibility(View.VISIBLE);
+            mPasteButton.setVisibility(View.GONE);
+        }
     }
 
     public void getExternalSDCard() {
@@ -250,13 +290,13 @@ public class FileManager extends ThemeActivity {
             mTabs = SettingsProvider.getInstance(null).getListString("tabs", mTabs);
             for (String tab : mTabs) {
                 mItems.add(new TabItem(
-                        BrowserFragment.newInstance(tab, "default"), tab));
+                        BrowserFragment.newInstance(tab), tab));
             }
         }
 
         public void addTab(String path) {
                 mItems.add(new TabItem(
-                        BrowserFragment.newInstance(path, "default"), path));
+                        BrowserFragment.newInstance(path), path));
             notifyDataSetChanged();
             mViewPager.setCurrentItem(getCount());
         }
