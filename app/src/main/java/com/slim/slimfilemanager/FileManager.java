@@ -9,6 +9,8 @@ import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.os.Bundle;
 import android.support.v13.app.FragmentStatePagerAdapter;
@@ -80,14 +82,16 @@ public class FileManager extends ThemeActivity {
         mDrawerLayout.setDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
+                if (Float.toString(slideOffset).contains("0.1")) {
+                    mDrawerAdapter.notifyDataSetChanged();
+                    mDrawerAdapter.notifyDataSetInvalidated();
+                    mDrawerLayout.invalidate();
+                }
                 mDrawerToggle.onDrawerSlide(drawerView, slideOffset);
             }
 
             @Override
             public void onDrawerOpened(View drawerView) {
-                mDrawerAdapter.notifyDataSetChanged();
-                mDrawerAdapter.notifyDataSetInvalidated();
-                mDrawerLayout.invalidate();
                 mDrawerToggle.onDrawerOpened(drawerView);
             }
 
@@ -429,6 +433,7 @@ public class FileManager extends ThemeActivity {
             } else {
                 holder.title.setTextColor(getTextColor());
             }
+            updatePlus(holder.plus);
             holder.plus.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -437,6 +442,12 @@ public class FileManager extends ThemeActivity {
                 }
             });
             return convertView;
+        }
+
+        private void updatePlus(ImageView view) {
+            Drawable d = view.getDrawable().mutate();
+            d.setColorFilter(getTextColor(), PorterDuff.Mode.MULTIPLY);
+            view.setImageDrawable(d);
         }
 
         public void addItem(String title, String path) {
