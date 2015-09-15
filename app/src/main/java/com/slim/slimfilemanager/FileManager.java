@@ -9,8 +9,11 @@ import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.StateListDrawable;
 import android.os.Environment;
 import android.os.Bundle;
 import android.support.v13.app.FragmentStatePagerAdapter;
@@ -20,6 +23,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.StateSet;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -395,13 +399,15 @@ public class FileManager extends ThemeActivity {
 
         public class ViewHolder {
 
+            View view;
             TextView title;
             ImageView plus;
 
-            public ViewHolder(View view) {
-                title = (TextView) view.findViewById(R.id.title);
-                plus = (ImageView) view.findViewById(R.id.add_tab);
-                view.setTag(this);
+            public ViewHolder(View v) {
+                title = (TextView) v.findViewById(R.id.title);
+                plus = (ImageView) v.findViewById(R.id.add_tab);
+                v.setTag(this);
+                view = v;
             }
         }
 
@@ -425,14 +431,17 @@ public class FileManager extends ThemeActivity {
                 holder = (ViewHolder) convertView.getTag();
             }
 
+            holder.view.setBackground(getAccentStateDrawable(mContext));
+
             holder.title.setText(mItems.get(position).title);
             if (getPath(position).equalsIgnoreCase(
                     ((BrowserFragment) mSectionsPagerAdapter.getItem(
                             mViewPager.getCurrentItem())).getCurrentPath())) {
-                holder.title.setTextColor(getResources().getColor(R.color.accent));
+                holder.view.setActivated(true);
             } else {
-                holder.title.setTextColor(getTextColor());
+                holder.view.setActivated(false);
             }
+            holder.view.jumpDrawablesToCurrentState();
             updatePlus(holder.plus);
             holder.plus.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -484,6 +493,22 @@ public class FileManager extends ThemeActivity {
             } else {
                 return getResources().getColor(R.color.primary_text_dark);
             }
+        }
+
+        private Drawable getAccentStateDrawable(Context context) {
+            Drawable colorDrawable = new ColorDrawable(getAccentColor(context));
+
+            StateListDrawable stateListDrawable = new StateListDrawable();
+            stateListDrawable.addState(new int[]{android.R.attr.state_activated}, colorDrawable);
+            stateListDrawable.addState(StateSet.WILD_CARD, null);
+
+            return stateListDrawable;
+        }
+
+        @SuppressWarnings("deprecation")
+        private int getAccentColor(Context context) {
+            int c = context.getResources().getColor(R.color.accent);
+            return Color.argb(99, Color.red(c), Color.green(c), Color.blue(c));
         }
     }
 

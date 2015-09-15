@@ -13,8 +13,4 @@ public class FileManagerApplication extends Application {
         SettingsProvider.getInstance(getApplicationContext());
         LeakCanary.install(this);
     }
-
-    public void getEventHandler() {
-
-    }
 }
