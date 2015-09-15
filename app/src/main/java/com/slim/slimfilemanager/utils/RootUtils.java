@@ -63,6 +63,25 @@ public class RootUtils {
         return null;
     }
 
+    public static BufferedReader runCommandError(String cmd) {
+        if (!isRootAvailable()) return null;
+        BufferedReader reader;
+        try {
+            Process process = Runtime.getRuntime().exec("su");
+            DataOutputStream os = new DataOutputStream(
+                    process.getOutputStream());
+            os.writeBytes(cmd + "\n");
+            os.writeBytes("exit\n");
+            reader = new BufferedReader(new InputStreamReader(
+                    process.getErrorStream()));
+            os.flush();
+            return reader;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public static boolean copyFile(String old, String newDir) {
         if (!isRootAvailable()) return false;
         try {
@@ -136,6 +155,32 @@ public class RootUtils {
         }
         return true;
     }
+
+    public static boolean createFile(File file) {
+        if (!isRootAvailable()) return false;
+        remountSystem("rw");
+        runCommand("touch " + file.getPath());
+        remountSystem("ro");
+        return true;
+    }
+
+    public static boolean createFolder(File folder) {
+        if (!isRootAvailable()) return false;
+        remountSystem("rw");
+        runCommand("mkdir " + folder.getPath());
+        remountSystem("ro");
+        return true;
+    }
+
+    /*public static boolean exists(File file) {
+        try {
+            BufferedReader reader = runCommandError("test -d " + file.getPath());
+            return reader != null && reader.read() == 0;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }*/
 
     public static boolean isRootAvailable() {
         return findBinary("su") && isSuEnabled();

@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -75,7 +76,31 @@ public class FileManager extends ThemeActivity {
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
                 R.string.drawer_open, R.string.drawer_close);
 
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
+        //mDrawerLayout.setDrawerListener(mDrawerToggle);
+        mDrawerLayout.setDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                mDrawerToggle.onDrawerSlide(drawerView, slideOffset);
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                mDrawerAdapter.notifyDataSetChanged();
+                mDrawerAdapter.notifyDataSetInvalidated();
+                mDrawerLayout.invalidate();
+                mDrawerToggle.onDrawerOpened(drawerView);
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                mDrawerToggle.onDrawerClosed(drawerView);
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+
+            }
+        });
         mDrawerToggle.syncState();
         mDrawerAdapter = new DrawerAdapter(this);
         mDrawer.setAdapter(mDrawerAdapter);
@@ -92,8 +117,8 @@ public class FileManager extends ThemeActivity {
         mDrawer.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //mFragment.filesChanged(mDrawerAdapter.getPath(position));
-                mSectionsPagerAdapter.addTab(mDrawerAdapter.getPath(position));
+                mFragment.filesChanged(mDrawerAdapter.getPath(position));
+                //mSectionsPagerAdapter.addTab(mDrawerAdapter.getPath(position));
                 mDrawerLayout.closeDrawers();
             }
         });
@@ -306,8 +331,8 @@ public class FileManager extends ThemeActivity {
         }
 
         public void addTab(String path) {
-                mItems.add(new TabItem(
-                        BrowserFragment.newInstance(path), path));
+            mItems.add(new TabItem(
+                    BrowserFragment.newInstance(path), path));
             notifyDataSetChanged();
             mViewPager.setCurrentItem(getCount());
         }
@@ -356,6 +381,7 @@ public class FileManager extends ThemeActivity {
         }
     }
 
+    @SuppressWarnings("deprecation")
     public class DrawerAdapter extends BaseAdapter {
 
         public class DrawerItem {
@@ -366,9 +392,11 @@ public class FileManager extends ThemeActivity {
         public class ViewHolder {
 
             TextView title;
+            ImageView plus;
 
             public ViewHolder(View view) {
                 title = (TextView) view.findViewById(R.id.title);
+                plus = (ImageView) view.findViewById(R.id.add_tab);
                 view.setTag(this);
             }
         }
@@ -381,7 +409,7 @@ public class FileManager extends ThemeActivity {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
             ViewHolder holder;
 
             if (convertView == null) {
@@ -394,6 +422,20 @@ public class FileManager extends ThemeActivity {
             }
 
             holder.title.setText(mItems.get(position).title);
+            if (getPath(position).equalsIgnoreCase(
+                    ((BrowserFragment) mSectionsPagerAdapter.getItem(
+                            mViewPager.getCurrentItem())).getCurrentPath())) {
+                holder.title.setTextColor(getResources().getColor(R.color.accent));
+            } else {
+                holder.title.setTextColor(getTextColor());
+            }
+            holder.plus.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mSectionsPagerAdapter.addTab(getPath(position));
+                    mDrawerLayout.closeDrawer(mDrawer);
+                }
+            });
             return convertView;
         }
 
@@ -422,6 +464,15 @@ public class FileManager extends ThemeActivity {
         @Override
         public int getCount() {
             return mItems.size();
+        }
+
+        private int getTextColor() {
+            if (SettingsProvider.getInstance(FileManager.this)
+                    .getInt(SettingsProvider.THEME, R.style.AppTheme) == R.style.AppTheme) {
+                return getResources().getColor(R.color.primary_text);
+            } else {
+                return getResources().getColor(R.color.primary_text_dark);
+            }
         }
     }
 

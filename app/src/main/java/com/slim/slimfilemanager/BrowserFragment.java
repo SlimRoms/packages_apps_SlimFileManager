@@ -31,6 +31,7 @@ import android.widget.Toast;
 
 import com.slim.slimfilemanager.multichoice.MultiChoiceViewHolder;
 import com.slim.slimfilemanager.multichoice.MultiSelector;
+import com.slim.slimfilemanager.settings.SettingsProvider;
 import com.slim.slimfilemanager.utils.BackgroundUtils;
 import com.slim.slimfilemanager.utils.FileUtils;
 import com.slim.slimfilemanager.utils.FragmentLifecycle;
@@ -664,15 +665,28 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
                                 }
                                 if (id == ACTION_ADD_FOLDER) {
                                     if (!newFolder.exists()) {
-                                        dismiss = newFolder.mkdirs();
+                                        if (!newFolder.mkdirs()) {
+                                            if (SettingsProvider.getInstance(null).getBoolean(
+                                                    SettingsProvider.KEY_ENABLE_ROOT, false)
+                                                    && RootUtils.isRootAvailable()) {
+                                                if (!RootUtils.createFolder(newFolder)) {
+                                                    Toast.makeText(getOwner().getActivity(),
+                                                            R.string.unable_to_create_folder,
+                                                            Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        }
                                     }
                                 } else if (id == ACTION_ADD_FILE) {
                                     try {
-                                        if (!newFolder.exists())
-                                        if (!newFolder.createNewFile()) {
-                                            Toast.makeText(getOwner().mContext,
-                                                    R.string.unable_to_create_file,
-                                                    Toast.LENGTH_SHORT).show();
+                                        if (!newFolder.exists()) {
+                                            if (!newFolder.createNewFile()) {
+                                                if (!RootUtils.createFile(newFolder)) {
+                                                    Toast.makeText(getOwner().mContext,
+                                                            R.string.unable_to_create_file,
+                                                            Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
                                         }
                                         dismiss = true;
                                     } catch (IOException e) {
@@ -694,7 +708,7 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
         }
     }
 
-    @Override
+    /*@Override
     public final void setUserVisibleHint(boolean isVisibleToUser) {
         final boolean needUpdate = isVisibleToUser != getUserVisibleHint();
         super.setUserVisibleHint(isVisibleToUser);
@@ -705,7 +719,7 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
             }
             //onInvisible()
         }
-    }
+    }*/
 
     public class SearchTask extends AsyncTask<String, Integer, Void> {
 
