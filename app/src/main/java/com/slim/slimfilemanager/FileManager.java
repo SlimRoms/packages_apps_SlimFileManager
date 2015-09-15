@@ -2,16 +2,13 @@ package com.slim.slimfilemanager;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ResolveInfo;
 import android.os.Environment;
 import android.os.Bundle;
 import android.support.v13.app.FragmentStatePagerAdapter;
@@ -21,7 +18,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -53,7 +49,6 @@ public class FileManager extends ThemeActivity {
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerAdapter mDrawerAdapter;
-    private ActionMode mActionMode;
     private FloatingActionsMenu mActionMenu;
     private FloatingActionButton mPasteButton;
 
@@ -72,15 +67,6 @@ public class FileManager extends ThemeActivity {
         if (getActionBar() != null) {
             getActionBar().setDisplayHomeAsUpEnabled(true);
             getActionBar().setHomeButtonEnabled(true);
-        }
-
-        Intent intent = new Intent();
-        intent.setAction("com.slim.slimfilemanager.plugins.SERVICE");
-
-        List<ResolveInfo> services = getPackageManager().queryIntentServices(intent, 0);
-        for (ResolveInfo info : services) {
-            ComponentName cmp = new ComponentName(info.serviceInfo.packageName, info.serviceInfo.name);
-            Log.d("TEST", cmp.flattenToString());
         }
 
         // setup drawer
@@ -113,7 +99,6 @@ public class FileManager extends ThemeActivity {
         });
 
         mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
-
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -180,6 +165,19 @@ public class FileManager extends ThemeActivity {
 
         TabPageIndicator tabPageIndicator = (TabPageIndicator) findViewById(R.id.tab_indicator);
         tabPageIndicator.setViewPager(mViewPager);
+
+        if (savedInstanceState == null) {
+            mDrawerLayout.openDrawer(mDrawer);
+            mDrawerToggle.syncState();
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        setCurrentlyDisplayedFragment((BrowserFragment) mSectionsPagerAdapter.getItem(
+                SettingsProvider.getInstance(null).getInt("current_tab", 0)));
     }
 
     private void buildActionButtons() {
@@ -192,6 +190,7 @@ public class FileManager extends ThemeActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d("TEST", "path=" + mFragment.getCurrentPath());
                 mFragment.showDialog(BrowserFragment.ACTION_ADD_FOLDER);
                 mActionMenu.collapseImmediately();
             }
@@ -206,6 +205,7 @@ public class FileManager extends ThemeActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d("TEST", "path=" + mFragment.getCurrentPath());
                 mFragment.showDialog(BrowserFragment.ACTION_ADD_FILE);
                 mActionMenu.collapseImmediately();
             }
@@ -230,6 +230,17 @@ public class FileManager extends ThemeActivity {
     public void getExternalSDCard() {
         final String rawSecondaryStoragesStr = System.getenv("SECONDARY_STORAGE");
         Log.d("TEST", "secondary= " + rawSecondaryStoragesStr);
+        String[] sec = rawSecondaryStoragesStr.split(File.pathSeparator);
+        for (String s : sec) {
+            if (s.toLowerCase().contains("usb")) {
+                mDrawerAdapter.addItem("USB OTG", s);
+            } else if (s.toLowerCase().contains("sdcard1")) {
+                if (new File(s).exists() && new File(s).isDirectory()
+                        && new File(s).list().length > 0) {
+                    mDrawerAdapter.addItem("External SD", s);
+                }
+            }
+        }
     }
 
     @Override
@@ -316,7 +327,7 @@ public class FileManager extends ThemeActivity {
 
         @Override
         public Fragment getItem(int position) {
-            setCurrentlyDisplayedFragment(mItems.get(position).fragment);
+            //setCurrentlyDisplayedFragment(mItems.get(position).fragment);
             return mItems.get(position).fragment;
         }
 

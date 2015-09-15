@@ -16,7 +16,7 @@ public class SettingsFragment extends PreferenceFragment {
 
         addPreferencesFromResource(R.xml.preferences);
 
-        if (!RootUtils.isRooted()) {
+        if (!RootUtils.isRootAvailable()) {
             getPreferenceScreen().removePreference(
                     findPreference(SettingsProvider.KEY_ENABLE_ROOT));
         }

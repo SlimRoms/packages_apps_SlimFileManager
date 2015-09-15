@@ -37,6 +37,7 @@ import com.slim.slimfilemanager.utils.FragmentLifecycle;
 import com.slim.slimfilemanager.utils.IconCache;
 import com.slim.slimfilemanager.utils.MimeUtils;
 import com.slim.slimfilemanager.utils.PasteTask.SelectedFiles;
+import com.slim.slimfilemanager.utils.RootUtils;
 import com.slim.slimfilemanager.utils.SortUtils;
 import com.slim.slimfilemanager.utils.Utils;
 import com.slim.slimfilemanager.widget.DividerItemDecoration;
@@ -437,15 +438,21 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
 
     protected void filesChanged(String file) {
         if (mExitOnBack) mExitOnBack = false;
-        if (!new File(file).exists()) {
+        File newPath = new File(file);
+        if (!newPath.exists()) {
+            return;
+        }
+        if (!newPath.canRead() && !RootUtils.isRootAvailable()) {
+            Toast.makeText(mContext, "Root is required to view folder.", Toast.LENGTH_SHORT).show();
+        }
+        List<String> files = Utils.listFiles(file);
+        if (files == null) {
             return;
         }
         mPath.setText(new File(file).getAbsolutePath());
         mCurrentPath = file;
         if (!mFiles.isEmpty()) mFiles.clear();
         mAdapter.notifyDataSetChanged();
-        List<String> files = Utils.listFiles(file);
-        if (files == null) return;
         for (String s : files) {
             Item item = new Item();
             item.name = new File(s).getName();
@@ -694,7 +701,7 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
         if (needUpdate) {
             if (isVisibleToUser) {
                 // onVisible()
-                mActivity.setCurrentlyDisplayedFragment(this);
+                //mActivity.setCurrentlyDisplayedFragment(this);
             }
             //onInvisible()
         }

@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.net.Uri;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.util.ArrayList;
 
@@ -96,5 +98,24 @@ public class Utils {
             displaySize = String.valueOf(size) + " bytes";
         }
         return displaySize;
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public static String getProperty(String name) {
+        String value = null;
+        try {
+            Class c = Class.forName("android.os.SystemProperties");
+            Method m = c.getMethod("get", String.class);
+            value = (String) m.invoke(null, name);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return value;
     }
 }

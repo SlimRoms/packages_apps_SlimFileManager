@@ -120,7 +120,7 @@ public class FileUtils {
             } else if (target.exists() && !target.delete()) {
                 if (SettingsProvider.getInstance(null)
                         .getBoolean(SettingsProvider.KEY_ENABLE_ROOT, false)
-                        && RootUtils.isRooted()) {
+                        && RootUtils.isRootAvailable()) {
                     return RootUtils.deleteFile(path);
                 }
             }
@@ -252,7 +252,8 @@ public class FileUtils {
         try {
             boolean useRoot = false;
             if (!file.canWrite() && SettingsProvider.getInstance(null)
-                    .getBoolean(SettingsProvider.KEY_ENABLE_ROOT, false) && RootUtils.isRooted()) {
+                    .getBoolean(SettingsProvider.KEY_ENABLE_ROOT, false)
+                    && RootUtils.isRootAvailable()) {
                 useRoot = true;
                 RootUtils.remountSystem("rw");
             }
@@ -276,7 +277,8 @@ public class FileUtils {
         try {
             boolean useSu = false;
             if (!file.canWrite() && SettingsProvider.getInstance(null)
-                    .getBoolean(SettingsProvider.KEY_ENABLE_ROOT, false) && RootUtils.isRooted()) {
+                    .getBoolean(SettingsProvider.KEY_ENABLE_ROOT, false)
+                    && RootUtils.isRootAvailable()) {
                 useSu = true;
                 RootUtils.remountSystem("rw");
             }

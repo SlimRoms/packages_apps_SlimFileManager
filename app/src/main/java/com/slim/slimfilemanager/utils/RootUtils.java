@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public class RootUtils {
 
     public static ArrayList<String> listFiles(String path, boolean showHidden) {
-        if (!isRooted()) return null;
+        if (!isRootAvailable()) return null;
         ArrayList<String> mDirContent = new ArrayList<>();
         BufferedReader in;
 
@@ -38,7 +38,7 @@ public class RootUtils {
     }
 
     public static BufferedReader runCommand(String cmd) {
-        if (!isRooted()) return null;
+        if (!isRootAvailable()) return null;
         BufferedReader reader;
         try {
             Process process = Runtime.getRuntime().exec("su");
@@ -64,7 +64,7 @@ public class RootUtils {
     }
 
     public static boolean copyFile(String old, String newDir) {
-        if (!isRooted()) return false;
+        if (!isRootAvailable()) return false;
         try {
             boolean remounted = false;
             if (!new File(newDir).canWrite()) {
@@ -83,7 +83,7 @@ public class RootUtils {
     }
 
     public static boolean moveFile(String old, String newDir) {
-        if (!isRooted()) return false;
+        if (!isRootAvailable()) return false;
         try {
             boolean remounted = false;
             if (!new File(newDir).canWrite()) {
@@ -102,7 +102,7 @@ public class RootUtils {
     }
 
     public static boolean remountSystem(String mountType) {
-        if (!isRooted()) return false;
+        if (!isRootAvailable()) return false;
         BufferedReader reader = runCommand("busybox mount -o remount," + mountType + " /system \n");
         try {
             if (reader != null) reader.close();
@@ -114,7 +114,7 @@ public class RootUtils {
     }
 
     public static boolean deleteFile(String path) {
-        if (!isRooted()) return false;
+        if (!isRootAvailable()) return false;
         try {
             boolean remounted = false;
             if (!new File(path).canWrite()) {
@@ -137,8 +137,8 @@ public class RootUtils {
         return true;
     }
 
-    public static boolean isRooted() {
-        return findBinary("su");
+    public static boolean isRootAvailable() {
+        return findBinary("su") && isSuEnabled();
     }
 
 
@@ -156,4 +156,13 @@ public class RootUtils {
         return found;
     }
 
+    public static boolean isSuEnabled() {
+        int value = 0;
+        try {
+            value = Integer.valueOf(Utils.getProperty("persist.sys.root_access"));
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
+        return (value == 1 || value == 3);
+    }
 }
