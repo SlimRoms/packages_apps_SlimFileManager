@@ -14,6 +14,7 @@ import android.os.Environment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -190,6 +191,7 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
     }
 
     public boolean onBackPressed() {
+        Log.d("TEST", mCurrentPath);
         if (mSearchView != null && !mSearchView.isIconified()) {
             mSearchView.setIconified(true);
             return true;
@@ -605,8 +607,14 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     for (String file : SelectedFiles.getFiles()) {
-                                        FileUtils.deleteFile(file);
-                                        getOwner().removeFile(file);
+                                        if (FileUtils.deleteFile(file)) {
+                                            getOwner().removeFile(file);
+                                        } else {
+                                            Toast.makeText(getOwner().mContext,
+                                                    "Failed to delete file: "
+                                                            + new File(file).getName(),
+                                                    Toast.LENGTH_SHORT).show();
+                                        }
                                     }
                                     SelectedFiles.clearAll();
                                     dialog.dismiss();

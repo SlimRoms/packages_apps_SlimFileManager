@@ -94,13 +94,13 @@ public class FileUtils {
         File target = new File(path);
 
         if (target.isFile() && target.canWrite()) {
-            return target.delete();
+            if (target.delete()) return true;
         } else {
             if (target.isDirectory() && target.canRead()) {
                 String[] file_list = target.list();
 
                 if (file_list != null && file_list.length == 0) {
-                    return target.delete();
+                    if (target.delete()) return true;
                 } else if (file_list != null && file_list.length > 0) {
 
                     for (String aFile_list : file_list) {
@@ -110,19 +110,18 @@ public class FileUtils {
                         if (temp_f.isDirectory())
                             return deleteFile(temp_f.getAbsolutePath());
                         else if (temp_f.isFile()) {
-                            return temp_f.delete();
+                            if (temp_f.delete()) return true;
                         }
                     }
                 }
 
                 if (target.exists())
-                    return target.delete();
-            } else if (target.exists() && !target.delete()) {
-                if (SettingsProvider.getInstance(null)
-                        .getBoolean(SettingsProvider.KEY_ENABLE_ROOT, false)
-                        && RootUtils.isRootAvailable()) {
-                    return RootUtils.deleteFile(path);
-                }
+                    if (target.delete()) return true;
+            }
+            if (SettingsProvider.getInstance(null)
+                    .getBoolean(SettingsProvider.KEY_ENABLE_ROOT, false)
+                    && RootUtils.isRootAvailable()) {
+                return RootUtils.deleteFile(path);
             }
         }
         return false;

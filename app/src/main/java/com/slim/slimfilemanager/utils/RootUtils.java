@@ -122,7 +122,7 @@ public class RootUtils {
 
     public static boolean remountSystem(String mountType) {
         if (!isRootAvailable()) return false;
-        BufferedReader reader = runCommand("busybox mount -o remount," + mountType + " /system \n");
+        BufferedReader reader = runCommand("mount -o remount," + mountType + " /system \n");
         try {
             if (reader != null) reader.close();
         } catch (IOException e) {
@@ -135,25 +135,21 @@ public class RootUtils {
     public static boolean deleteFile(String path) {
         if (!isRootAvailable()) return false;
         try {
-            boolean remounted = false;
-            if (!new File(path).canWrite()) {
-                remountSystem("rw");
-                remounted = true;
-            }
+            remountSystem("rw");
 
             if (new File(path).isDirectory()) {
-                runCommand("rm -f -r \"" + path + "\"\n");
+                runCommand("rm -rf '" + path + "'\n");
             } else {
-                runCommand("rm -r \"" + path + "\"\n");
+                runCommand("rm -rf '" + path + "'\n");
             }
-            if (remounted) {
-                remountSystem("ro");
-            }
+            Log.d("TEST", "file-" + path);
+
+            remountSystem("ro");
         } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
-        return true;
+        return !new File(path).exists();
     }
 
     public static boolean createFile(File file) {
