@@ -178,7 +178,10 @@ public class FileManager extends ThemeActivity {
             @Override
             public void onClick(View v) {
                 new PasteTask(FileManager.this, mMove, mFragment.getCurrentPath());
-                mFragment.filesChanged(mFragment.getCurrentPath());
+                for (TabItem item : mSectionsPagerAdapter.getItems()) {
+                    item.fragment.filesChanged(item.fragment.getCurrentPath());
+                }
+                //mFragment.filesChanged(mFragment.getCurrentPath());
                 setMove(false);
                 showPaste(false);
             }

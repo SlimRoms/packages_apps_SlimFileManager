@@ -39,6 +39,7 @@ import com.slim.slimfilemanager.utils.FragmentLifecycle;
 import com.slim.slimfilemanager.utils.IconCache;
 import com.slim.slimfilemanager.utils.MimeUtils;
 import com.slim.slimfilemanager.utils.PasteTask.SelectedFiles;
+import com.slim.slimfilemanager.utils.PermissionsDialog;
 import com.slim.slimfilemanager.utils.RootUtils;
 import com.slim.slimfilemanager.utils.SortUtils;
 import com.slim.slimfilemanager.utils.Utils;
@@ -657,7 +658,6 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
                             if (v.getId() == R.id.cancel) {
                                 dismiss();
                             } else if (v.getId() == R.id.create) {
-                                boolean dismiss = false;
                                 File newFolder = new File(getOwner().getCurrentPath()
                                         + File.separator
                                         + folderName.getText().toString());
@@ -688,23 +688,26 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
                                 } else if (id == ACTION_ADD_FILE) {
                                     try {
                                         if (!newFolder.exists()) {
-                                            if (!newFolder.createNewFile()) {
-                                                if (!RootUtils.createFile(newFolder)) {
+                                            if (newFolder.getParentFile().canWrite()) {
+                                                if (!newFolder.createNewFile()) {
                                                     Toast.makeText(getOwner().mContext,
                                                             R.string.unable_to_create_file,
                                                             Toast.LENGTH_SHORT).show();
                                                 }
+                                            } else if (!RootUtils.createFile(newFolder)) {
+                                                Toast.makeText(getOwner().mContext,
+                                                        R.string.unable_to_create_file,
+                                                        Toast.LENGTH_SHORT).show();
                                             }
                                         }
-                                        dismiss = true;
                                     } catch (IOException e) {
-                                        dismiss = false;
+                                        e.printStackTrace();
                                     }
                                 }
-                                if (dismiss) {
+                                if (newFolder.exists()) {
                                     getOwner().addFile(newFolder.getPath());
-                                    dismiss();
                                 }
+                                dismiss();
                             }
                         }
                     };

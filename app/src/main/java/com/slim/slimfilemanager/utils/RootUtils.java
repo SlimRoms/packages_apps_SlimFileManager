@@ -104,20 +104,14 @@ public class RootUtils {
     public static boolean moveFile(String old, String newDir) {
         if (!isRootAvailable()) return false;
         try {
-            boolean remounted = false;
-            if (!new File(newDir).canWrite()) {
-                remounted = true;
-                remountSystem("rw");
-            }
-            runCommand("mv -fr " + old + " " + newDir);
-            if (remounted) {
-                remountSystem("ro");
-            }
+            remountSystem("rw");
+            runCommand("mv -f " + old + " " + newDir);
+            remountSystem("ro");
         } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
-        return true;
+        return new File(newDir).exists();
     }
 
     public static boolean remountSystem(String mountType) {
@@ -155,7 +149,8 @@ public class RootUtils {
     public static boolean createFile(File file) {
         if (!isRootAvailable()) return false;
         remountSystem("rw");
-        runCommand("touch " + file.getPath());
+        Log.d("TEST", "create - " + file.getAbsolutePath());
+        runCommand("touch " + file.getAbsolutePath());
         remountSystem("ro");
         return true;
     }

@@ -68,7 +68,7 @@ public class FileUtils {
         File file = new File(f);
         File folder = new File(fol);
 
-        if (file.canRead() && folder.isDirectory()
+        if (file.canWrite() && folder.isDirectory()
                 && folder.canWrite()) {
             if (file.isFile()) {
                 String file_name = file.getName();
@@ -84,7 +84,8 @@ public class FileUtils {
                 for (String fil : files) if (!moveFile(f + "/" + fil, dir)) return false;
             }
         } else if (SettingsProvider.getInstance(null)
-                .getBoolean(SettingsProvider.KEY_ENABLE_ROOT, false)) {
+                .getBoolean(SettingsProvider.KEY_ENABLE_ROOT, false)
+                && RootUtils.isRootAvailable()) {
             return RootUtils.moveFile(f, fol);
         }
         return false;

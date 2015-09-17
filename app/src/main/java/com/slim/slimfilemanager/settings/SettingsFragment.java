@@ -5,13 +5,9 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
-import android.util.Log;
 
 import com.slim.slimfilemanager.R;
 import com.slim.slimfilemanager.utils.RootUtils;
-
-import java.io.BufferedReader;
-import java.io.IOException;
 
 public class SettingsFragment extends PreferenceFragment {
 

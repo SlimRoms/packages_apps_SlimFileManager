@@ -1,4 +1,4 @@
-package com.slim.slimfilemanager;
+package com.slim.slimfilemanager.utils;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -9,6 +9,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 
+import com.slim.slimfilemanager.R;
 import com.slim.slimfilemanager.utils.FileUtils;
 import com.slim.slimfilemanager.utils.Permissions;
 
