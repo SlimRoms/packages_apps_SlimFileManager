@@ -5,6 +5,7 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.slim.slimfilemanager.R;
 
@@ -49,16 +50,20 @@ public class PasteTask implements View.OnClickListener {
     }
 
     private void processFiles() {
+        boolean failed = false;
         if (mExistingFiles.isEmpty()) {
             if (mProcess.isEmpty()) return;
             for (String path : mProcess) {
                 if (!TextUtils.isEmpty(path)) {
                     if (mMove) {
-                        FileUtils.moveFile(path, mLocation);
+                        failed = !FileUtils.moveFile(path, mLocation);
                     } else {
-                        FileUtils.copyFile(path, mLocation);
+                        failed = !FileUtils.copyFile(path, mLocation);
                     }
                 }
+            }
+            if (failed) {
+                Toast.makeText(mContext, "Failed.", Toast.LENGTH_SHORT).show();
             }
         } else {
             String key = mExistingFiles.keySet().iterator().next();

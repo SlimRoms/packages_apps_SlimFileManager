@@ -174,7 +174,7 @@ public class RootUtils {
     }*/
 
     public static boolean isRootAvailable() {
-        return findBinary("su") && isSuEnabled();
+        return findBinary("su");
     }
 
 
