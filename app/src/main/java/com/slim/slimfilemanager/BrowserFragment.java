@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -377,11 +376,12 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
     @Override
     public boolean onQueryTextChange(String newText) {
         if (mSearchView != null && !mSearchView.isIconified()) {
-            FileUtils.setQuery(newText);
             mFiles.clear();
             mAdapter.notifyDataSetChanged();
             if (!TextUtils.isEmpty(newText)) {
-                new SearchTask().execute(newText);
+                mProgress.setVisibility(View.VISIBLE);
+                searchForFile(mCurrentPath, newText);
+                mProgress.setVisibility(View.GONE);
             }
         }
         return true;
@@ -416,29 +416,31 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
         }
     }
 
-    public class UpdateListRunnable implements Runnable {
+    public void searchForFile(String dir, String query) {
+        File root_dir = new File(dir);
+        File[] list = root_dir.listFiles();
 
-        File file;
+        if (list != null && root_dir.canRead()) {
+            if (list.length == 0) return;
 
-        @Override
-        public void run() {
-            if (file.exists()) {
-                Item item = new Item();
-                item.path = file.getPath();
-                item.name = file.getName();
-                mFiles.add(item);
-                mAdapter.notifyItemInserted(mFiles.indexOf(item));
+            for (File check : list) {
+                String name = check.getName();
+
+                if (check.isFile() && name.toLowerCase().
+                        contains(query.toLowerCase())) {
+                    Log.d("TEST", "dir = " + dir + " , name = " + name);
+                    addFile(check.getPath());
+                } else if(check.isDirectory()) {
+                    if (name.toLowerCase().contains(query.toLowerCase())) {
+                        addFile(check.getPath());
+                    }
+                    if (check.canRead() && !dir.equals("/")) {
+                        searchForFile(check.getAbsolutePath(), query);
+                    }
+                }
             }
         }
-
-        public UpdateListRunnable init(String path) {
-            file = new File(path);
-            return this;
-
-        }
     }
-
-    UpdateListRunnable mUpdateListRunnable = new UpdateListRunnable();
 
     protected void filesChanged(String file) {
         if (mExitOnBack) mExitOnBack = false;
@@ -731,29 +733,6 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
             //onInvisible()
         }
     }*/
-
-    public class SearchTask extends AsyncTask<String, Integer, Void> {
-
-            String mQuery;
-            String mDir;
-
-            protected void onPreExecute() {
-                mProgress.setVisibility(View.VISIBLE);
-                mFiles.clear();
-                mAdapter.notifyDataSetChanged();
-            }
-
-            protected Void doInBackground(String... s) {
-                mQuery = s[0];
-                mDir = mCurrentPath;
-                FileUtils.searchForFile(mDir, mQuery, mUpdateListRunnable, mActivity);
-                return null;
-            }
-
-            protected void onPostExecute(Void v) {
-                mProgress.setVisibility(View.GONE);
-            }
-    }
 
     public class BrowserViewHolder extends MultiChoiceViewHolder
             implements View.OnClickListener, View.OnLongClickListener {

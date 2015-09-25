@@ -265,15 +265,20 @@ public class FileManager extends ThemeActivity {
 
     public void getExternalSDCard() {
         final String rawSecondaryStoragesStr = System.getenv("SECONDARY_STORAGE");
-        Log.d("TEST", "secondary= " + rawSecondaryStoragesStr);
+        if (TextUtils.isEmpty(rawSecondaryStoragesStr)) return;
         String[] sec = rawSecondaryStoragesStr.split(File.pathSeparator);
-        for (String s : sec) {
-            if (s.toLowerCase().contains("usb")) {
-                mDrawerAdapter.addItem("USB OTG", s);
-            } else if (s.toLowerCase().contains("sdcard1")) {
-                if (new File(s).exists() && new File(s).isDirectory()
-                        && new File(s).list().length > 0) {
-                    mDrawerAdapter.addItem("External SD", s);
+        if (sec.length > 0) {
+            for (String s : sec) {
+                if (s.toLowerCase().contains("usb")) {
+                    if (new File(s).exists() && new File(s).isDirectory()
+                            && new File(s).list().length > 0){
+                        mDrawerAdapter.addItem("USB OTG", s);
+                    }
+                } else if (s.toLowerCase().contains("sdcard1")) {
+                    if (new File(s).exists() && new File(s).isDirectory()
+                            && new File(s).list().length > 0) {
+                        mDrawerAdapter.addItem("External SD", s);
+                    }
                 }
             }
         }

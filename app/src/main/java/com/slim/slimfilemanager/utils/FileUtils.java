@@ -128,41 +128,6 @@ public class FileUtils {
         return false;
     }
 
-    public static String mQuery;
-
-    public static void setQuery(String query) {
-        mQuery = query;
-    }
-
-    public static void searchForFile(String dir, String query,
-                                     BrowserFragment.UpdateListRunnable r, Activity a) {
-        File root_dir = new File(dir);
-        String[] list = root_dir.list();
-
-        if (list != null && root_dir.canRead()) {
-            if (list.length == 0) return;
-
-            for (String file : list) {
-                if (!TextUtils.isEmpty(mQuery) && !mQuery.equals(query)) {
-                    return;
-                }
-                File check = new File(dir + "/" + file);
-                String name = check.getName();
-
-                if (check.isFile() && name.toLowerCase().
-                        contains(query.toLowerCase())) {
-                    a.runOnUiThread(r.init(check.getPath()));
-                } else if(check.isDirectory()) {
-                    if (name.toLowerCase().contains(query.toLowerCase())) {
-                        a.runOnUiThread(r.init(check.getPath()));
-                    } else if (check.canRead() && !dir.equals("/")) {
-                        searchForFile(check.getAbsolutePath(), query, r, a);
-                    }
-                }
-            }
-        }
-    }
-
     public static String[] getFileProperties(File file) {
         BufferedReader in;
         String[] info = null;
