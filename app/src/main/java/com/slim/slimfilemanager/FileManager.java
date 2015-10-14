@@ -2,6 +2,9 @@ package com.slim.slimfilemanager;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -210,7 +213,7 @@ public class FileManager extends ThemeActivity implements View.OnClickListener {
         super.onStart();
 
         setCurrentlyDisplayedFragment((BrowserFragment) mSectionsPagerAdapter.getItem(
-                SettingsProvider.getInt(this, "current_tab", 0)));
+                mViewPager.getCurrentItem()));
     }
 
     private void buildActionButtons() {
@@ -232,10 +235,10 @@ public class FileManager extends ThemeActivity implements View.OnClickListener {
     }
 
     public void onClick(View v) {
-        if (v.getTag() == BrowserFragment.ACTION_ADD_FILE) {
+        if (v.getTag().equals(BrowserFragment.ACTION_ADD_FILE)) {
             mFragment.showDialog(BrowserFragment.ACTION_ADD_FILE);
             mActionMenu.collapseImmediately();
-        } else if (v.getTag() == BrowserFragment.ACTION_ADD_FOLDER) {
+        } else if (v.getTag().equals(BrowserFragment.ACTION_ADD_FOLDER)) {
             mFragment.showDialog(BrowserFragment.ACTION_ADD_FOLDER);
             mActionMenu.collapseImmediately();
         }
@@ -256,20 +259,23 @@ public class FileManager extends ThemeActivity implements View.OnClickListener {
     }
 
     public void getExternalSDCard() {
-        final String rawSecondaryStoragesStr = System.getenv("SECONDARY_STORAGE");
-        if (TextUtils.isEmpty(rawSecondaryStoragesStr)) return;
-        String[] sec = rawSecondaryStoragesStr.split(File.pathSeparator);
-        if (sec.length > 0) {
-            for (String s : sec) {
-                if (s.toLowerCase().contains("usb")) {
-                    if (new File(s).exists() && new File(s).isDirectory()
-                            && new File(s).list().length > 0){
-                        mDrawerAdapter.addItem("USB OTG", s);
-                    }
-                } else if (s.toLowerCase().contains("sdcard1")) {
-                    if (new File(s).exists() && new File(s).isDirectory()
-                            && new File(s).list().length > 0) {
-                        mDrawerAdapter.addItem("External SD", s);
+        String secondaryStorage = System.getenv("SECONDARY_STORAGE");
+        Set<String> sec = new HashSet<>();
+        if (!TextUtils.isEmpty(secondaryStorage)) {
+            String[] secs = secondaryStorage.split(File.pathSeparator);
+            Collections.addAll(sec, secs);
+            if (!sec.isEmpty()) {
+                for (String stor : sec) {
+                    if (stor.toLowerCase().contains("usb")) {
+                        File f = new File(stor);
+                        if (f.exists() && f.isDirectory()) {
+                            mDrawerAdapter.addItem("USB OTG", stor);
+                        }
+                    } else if (stor.toLowerCase().contains("sdcard1")) {
+                        File f = new File(stor);
+                        if (f.exists() && f.isDirectory()) {
+                            mDrawerAdapter.addItem("External SD", stor);
+                        }
                     }
                 }
             }

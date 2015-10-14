@@ -128,8 +128,8 @@ public class PermissionsDialog implements CompoundButton.OnCheckedChangeListener
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (mPermissions.equals(mOriginalPermissions))
-                FileUtils.applyPermissions(mContext, mFile, mPermissions);
-                FileUtils.changeGroupOwner(mContext, mFile, mPermissions.owner, mPermissions.group);
+                FileUtil.applyPermissions(mContext, mFile, mPermissions);
+                FileUtil.changeGroupOwner(mContext, mFile, mPermissions.owner, mPermissions.group);
                 dialog.dismiss();
             }
         });

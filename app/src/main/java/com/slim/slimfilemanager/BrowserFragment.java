@@ -13,7 +13,6 @@ import android.os.Environment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.ActionMode;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -33,7 +32,7 @@ import com.slim.slimfilemanager.multichoice.MultiChoiceViewHolder;
 import com.slim.slimfilemanager.multichoice.MultiSelector;
 import com.slim.slimfilemanager.settings.SettingsProvider;
 import com.slim.slimfilemanager.utils.BackgroundUtils;
-import com.slim.slimfilemanager.utils.FileUtils;
+import com.slim.slimfilemanager.utils.FileUtil;
 import com.slim.slimfilemanager.utils.FragmentLifecycle;
 import com.slim.slimfilemanager.utils.IconCache;
 import com.slim.slimfilemanager.utils.MimeUtils;
@@ -191,7 +190,6 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
     }
 
     public boolean onBackPressed() {
-        Log.d("TEST", mCurrentPath);
         if (mSearchView != null && !mSearchView.isIconified()) {
             mSearchView.setIconified(true);
             return true;
@@ -402,8 +400,9 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
             if (f.isDirectory()) {
                 filesChanged(file);
             } else {
-                if (FileUtils.getExtension(f).equals("zip")) {
-                    onClickZipFile(file);
+                String ext = FileUtil.getExtension(f);
+                if (ext.equals("zip") || ext.equals("tar") || ext.equals("gz")) {
+                    onClickArchive(file);
                 } else {
                     Utils.onClickFile(mContext, file);
                 }
@@ -411,19 +410,25 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
         }
     }
 
-    private void onClickZipFile(final String file) {
+    private void onClickArchive(final String file) {
 
-        final File zipFile = new File(file);
+        final File archive = new File(file);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-        builder.setTitle(zipFile.getName());
+        builder.setTitle(archive.getName());
         builder.setMessage("What would you like to do with this archive?");
         builder.setPositiveButton("Extract", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 try {
-                    onClickFile(new BackgroundUtils(mContext, file,
-                            BackgroundUtils.UNZIP_FILE).execute().get());
+                    if (FileUtil.getExtension(archive).equals("zip")) {
+                        onClickFile(new BackgroundUtils(mContext, file,
+                                BackgroundUtils.UNZIP_FILE).execute().get());
+                    } else if (FileUtil.getExtension(archive).equals("tar")
+                            || FileUtil.getExtension(archive).equals("gz")) {
+                        onClickFile(new BackgroundUtils(mContext, file,
+                                BackgroundUtils.UNTAR_FILE).execute().get());
+                    }
                 } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
                 }
@@ -452,7 +457,6 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
 
                 if (check.isFile() && name.toLowerCase().
                         contains(query.toLowerCase())) {
-                    Log.d("TEST", "dir = " + dir + " , name = " + name);
                     addFile(check.getPath());
                 } else if(check.isDirectory()) {
                     if (name.toLowerCase().contains(query.toLowerCase())) {
@@ -634,7 +638,7 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     for (String file : SelectedFiles.getFiles()) {
-                                        if (FileUtils.deleteFile(getActivity(), file)) {
+                                        if (FileUtil.deleteFile(getActivity(), file)) {
                                             getOwner().removeFile(file);
                                         } else {
                                             Toast.makeText(getOwner().mContext,
@@ -647,13 +651,7 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
                                     dialog.dismiss();
                                 }
                             });
-                    b.setNegativeButton(R.string.cancel,
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            });
+                    b.setNegativeButton(R.string.cancel, null);
                     return b.create();
                 case MENU_PERMISSIONS:
                     String path = SelectedFiles.getFiles().get(0);

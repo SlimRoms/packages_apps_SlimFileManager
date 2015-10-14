@@ -25,7 +25,7 @@ public class Permissions {
     }
 
     public void loadFromFile(Context context, File file) {
-        String[] fileInfo = FileUtils.getFileProperties(context, file);
+        String[] fileInfo = FileUtil.getFileProperties(context, file);
         String line = null;
 
         if (fileInfo != null) {

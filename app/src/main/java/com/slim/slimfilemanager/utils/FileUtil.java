@@ -6,61 +6,39 @@ import android.util.Log;
 
 import com.slim.slimfilemanager.settings.SettingsProvider;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-public class FileUtils {
-
-    private static final int BUFFER = 4096;
+public class FileUtil {
 
     public static boolean copyFile(Context context, String f, String fol) {
         File file = new File(f);
         File folder = new File(fol);
-        byte[] data = new byte[BUFFER];
-        int read;
 
-        if (file.canRead() && folder.isDirectory()
-                && folder.canWrite()) {
-            if (file.isFile()) {
-                String file_name = file.getName();
-                File cp_file = new File(folder.getPath() + File.separator + file_name);
-
-                try {
-                    BufferedOutputStream o_stream = new BufferedOutputStream(
-                            new FileOutputStream(cp_file));
-                    BufferedInputStream i_stream = new BufferedInputStream(
-                            new FileInputStream(file));
-
-                    while ((read = i_stream.read(data, 0, BUFFER)) != -1)
-                        o_stream.write(data, 0, read);
-
-                    o_stream.flush();
-                    i_stream.close();
-                    o_stream.close();
-                    return true;
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            } else if (file.isDirectory()) {
-                String files[] = file.list();
-                String dir = folder.getPath() + file.getName();
-
-                if (!new File(dir).mkdir())
-                    return false;
-
-                for (String fil : files) copyFile(context, f + "/" + fil, dir);
+        if (file.exists()) {
+            if (!folder.exists()) {
+                if (!mkdir(context, folder)) return false;
             }
-        } else if (SettingsProvider.getBoolean(context, SettingsProvider.KEY_ENABLE_ROOT, false)) {
-            return RootUtils.copyFile(f, fol);
+            try {
+                if (file.isDirectory()) {
+                    FileUtils.copyDirectoryToDirectory(file, folder);
+                } else if (file.isFile()) {
+                    FileUtils.copyFileToDirectory(file, folder);
+                }
+                return true;
+            } catch (IOException e) {
+                return SettingsProvider.getBoolean(context, SettingsProvider.KEY_ENABLE_ROOT, false)
+                        && RootUtils.isRootAvailable() && RootUtils.copyFile(f, fol);
+            }
+        } else {
+            return false;
         }
-        return false;
     }
 
     public static boolean moveFile(Context context, String source, String destination) {
@@ -70,76 +48,23 @@ public class FileUtils {
         File file = new File(source);
         File folder = new File(destination);
 
-        if (file.canWrite() && folder.isDirectory()
-                && folder.canWrite()) {
-            if (file.isFile()) {
-                String file_name = file.getName();
-                File cp_file = new File(folder.getPath() + File.separator + file_name);
-                if (!file.renameTo(cp_file)) {
-                    copyFile(context, file.getAbsolutePath(), cp_file.getAbsolutePath());
-                    deleteFile(context, file.getAbsolutePath());
-                    if (!file.exists() && cp_file.exists()) {
-                        return true;
-                    }
-                } else {
-                    return true;
-                }
-            } else if (file.isDirectory()) {
-                String files[] = file.list();
-                String dir = folder.getPath() + file.getName();
-
-                if (!mkdir(dir)) return false;
-
-                for (String fil : files) {
-                    if (!moveFile(context, source + "/" + fil, dir)) return false;
-                }
-            }
-        } else if (SettingsProvider.getBoolean(context, SettingsProvider.KEY_ENABLE_ROOT, false)
-                && RootUtils.isRootAvailable()) {
-            return RootUtils.moveFile(source, destination);
+        try {
+            FileUtils.moveFileToDirectory(file, folder, true);
+            return true;
+        } catch (IOException e) {
+            return SettingsProvider.getBoolean(context, SettingsProvider.KEY_ENABLE_ROOT, false)
+                && RootUtils.isRootAvailable() && RootUtils.moveFile(source, destination);
         }
-        return false;
-    }
-
-    public static boolean mkdir(String dir) {
-        File d = new File(dir);
-        return d.mkdirs() || RootUtils.createFolder(d);
     }
 
     public static boolean deleteFile(Context context, String path) {
-        File target = new File(path);
-
-        if (target.isFile() && target.canWrite()) {
-            if (target.delete()) return true;
-        } else {
-            if (target.isDirectory() && target.canRead()) {
-                String[] file_list = target.list();
-
-                if (file_list != null && file_list.length == 0) {
-                    if (target.delete()) return true;
-                } else if (file_list != null && file_list.length > 0) {
-
-                    for (String aFile_list : file_list) {
-                        File temp_f = new File(target.getAbsolutePath() + "/"
-                                + aFile_list);
-
-                        if (temp_f.isDirectory())
-                            return deleteFile(context, temp_f.getAbsolutePath());
-                        else if (temp_f.isFile()) {
-                            if (temp_f.delete()) return true;
-                        }
-                    }
-                }
-
-                if (target.exists())
-                    if (target.delete()) return true;
-            }
-            if (SettingsProvider.getBoolean(context, SettingsProvider.KEY_ENABLE_ROOT, false)
-                    && RootUtils.isRootAvailable()) {
-                return RootUtils.deleteFile(path);
-            }
+        try {
+            FileUtils.forceDelete(new File(path));
+            return true;
+        } catch (IOException e) {
+            return SettingsProvider.getBoolean(context, SettingsProvider.KEY_ENABLE_ROOT, false)
+                    && RootUtils.isRootAvailable() && RootUtils.deleteFile(path);
         }
-        return false;
     }
 
     public static String[] getFileProperties(Context context, File file) {
@@ -276,35 +201,17 @@ public class FileUtils {
         return false;
     }
 
-    public static String getExtension(File f) {
-        String ext = null;
-        String s = f.getName();
-        int i = s.lastIndexOf('.');
+    public static boolean mkdir (Context context, File dir) {
+        return dir.mkdirs() || (SettingsProvider.getBoolean(context,
+                SettingsProvider.KEY_ENABLE_ROOT, false) && RootUtils.isRootAvailable()
+                && RootUtils.createFolder(dir));
+    }
 
-        if (i > 0 && i < s.length() - 1) {
-            ext = s.substring(i + 1).toLowerCase();
-        }
-        return ext;
+    public static String getExtension(File f) {
+        return FilenameUtils.getExtension(f.getName());
     }
 
     public static String removeExtension(String s) {
-
-        String separator = System.getProperty("file.separator");
-        String filename;
-
-        // Remove the path upto the filename.
-        int lastSeparatorIndex = s.lastIndexOf(separator);
-        if (lastSeparatorIndex == -1) {
-            filename = s;
-        } else {
-            filename = s.substring(lastSeparatorIndex + 1);
-        }
-
-        // Remove the extension.
-        int extensionIndex = filename.lastIndexOf(".");
-        if (extensionIndex == -1)
-            return filename;
-
-        return filename.substring(0, extensionIndex);
+        return FilenameUtils.removeExtension(new File(s).getName());
     }
 }

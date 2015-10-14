@@ -136,7 +136,6 @@ public class RootUtils {
             } else {
                 runCommand("rm -rf '" + path + "'\n");
             }
-            Log.d("TEST", "file-" + path);
 
             remountSystem("ro");
         } catch (Exception e) {
@@ -149,7 +148,6 @@ public class RootUtils {
     public static boolean createFile(File file) {
         if (!isRootAvailable()) return false;
         remountSystem("rw");
-        Log.d("TEST", "create - " + file.getAbsolutePath());
         runCommand("touch " + file.getAbsolutePath());
         remountSystem("ro");
         return true;

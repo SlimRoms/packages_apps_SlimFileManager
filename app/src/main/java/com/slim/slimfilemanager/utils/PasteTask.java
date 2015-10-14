@@ -56,9 +56,9 @@ public class PasteTask implements View.OnClickListener {
             for (String path : mProcess) {
                 if (!TextUtils.isEmpty(path)) {
                     if (mMove) {
-                        failed = !FileUtils.moveFile(mContext, path, mLocation);
+                        failed = !FileUtil.moveFile(mContext, path, mLocation);
                     } else {
-                        failed = !FileUtils.copyFile(mContext, path, mLocation);
+                        failed = !FileUtil.copyFile(mContext, path, mLocation);
                     }
                 }
             }

@@ -12,7 +12,7 @@ public class MimeUtils {
     public static final String ALL_MIME_TYPES = "*/*";
 
     public static String getMimeType(File file) {
-        final String extension = FileUtils.getExtension(file);
+        final String extension = FileUtil.getExtension(file);
         String type = null;
 
         if (extension != null && !extension.isEmpty()) {
@@ -66,6 +66,7 @@ public class MimeUtils {
         MIME_TYPES.put("prop", "text/plain");
         MIME_TYPES.put("properties", "text/plain");
         MIME_TYPES.put("rc", "text/plain");
+        MIME_TYPES.put("sh", "text/plain");
 
         MIME_TYPES.put("epub", "application/epub+zip");
         MIME_TYPES.put("ibooks", "application/x-ibooks+zip");
@@ -86,7 +87,6 @@ public class MimeUtils {
 
         MIME_TYPES.put("bat", "application/x-msdownload");
         MIME_TYPES.put("ksh", "text/plain");
-        MIME_TYPES.put("sh", "application/x-sh");
 
         MIME_TYPES.put("db", "application/octet-stream");
         MIME_TYPES.put("db3", "application/octet-stream");

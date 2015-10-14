@@ -113,8 +113,8 @@ public class SortUtils {
                     return 1;
                 }
 
-                final String ext_a = FileUtils.getExtension(a);
-                final String ext_b = FileUtils.getExtension(b);
+                final String ext_a = FileUtil.getExtension(a);
+                final String ext_b = FileUtil.getExtension(b);
 
                 if (TextUtils.isEmpty(ext_a) && TextUtils.isEmpty(ext_b)) {
                     return lhs.name.toLowerCase().compareTo(rhs.name.toLowerCase());
