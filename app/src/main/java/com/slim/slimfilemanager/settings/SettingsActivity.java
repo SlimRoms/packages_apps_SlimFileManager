@@ -18,7 +18,7 @@ public class SettingsActivity extends ThemeActivity {
     }
 
     public void onUpdateTheme() {
-        updateTheme();
+        recreate();
     }
 
     @Override

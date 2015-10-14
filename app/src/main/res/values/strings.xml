@@ -9,6 +9,8 @@
     <string name="downloads_title">Downloads</string>
     <string name="dcim_title">DCIM</string>
 
+    <string name="cant_open_file">Unable to open file.</string>
+
     <!-- Actions -->
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>

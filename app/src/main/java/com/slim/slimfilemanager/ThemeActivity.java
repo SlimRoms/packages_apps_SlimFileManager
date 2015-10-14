@@ -1,7 +1,6 @@
 package com.slim.slimfilemanager;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 
 import com.slim.slimfilemanager.settings.SettingsProvider;
@@ -28,17 +27,7 @@ public class ThemeActivity extends Activity {
                 R.style.AppTheme);
 
         if (mCurrentTheme != newTheme) {
-            updateTheme();
+            recreate();
         }
-    }
-
-    protected void updateTheme() {
-        final Bundle outState = new Bundle();
-        onSaveInstanceState(outState);
-        final Intent intent = new Intent(this, getClass());
-        intent.putExtras(outState);
-        finish();
-        overridePendingTransition(0, 0);
-        startActivity(intent);
     }
 }

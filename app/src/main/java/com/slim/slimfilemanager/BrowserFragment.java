@@ -402,18 +402,42 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
             if (f.isDirectory()) {
                 filesChanged(file);
             } else {
-                if (file.endsWith("zip")) {
-                    try {
-                        onClickFile(new BackgroundUtils(mContext, file,
-                                BackgroundUtils.UNZIP_FILE).execute().get());
-                    } catch (InterruptedException | ExecutionException e) {
-                        e.printStackTrace();
-                    }
+                if (FileUtils.getExtension(f).equals("zip")) {
+                    onClickZipFile(file);
                 } else {
                     Utils.onClickFile(mContext, file);
                 }
             }
         }
+    }
+
+    private void onClickZipFile(final String file) {
+
+        final File zipFile = new File(file);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        builder.setTitle(zipFile.getName());
+        builder.setMessage("What would you like to do with this archive?");
+        builder.setPositiveButton("Extract", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                try {
+                    onClickFile(new BackgroundUtils(mContext, file,
+                            BackgroundUtils.UNZIP_FILE).execute().get());
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+                dialog.dismiss();
+            }
+        });
+        builder.setNegativeButton("Open", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Utils.onClickFile(mContext, file);
+                dialog.dismiss();
+            }
+        });
+        builder.show();
     }
 
     public void searchForFile(String dir, String query) {

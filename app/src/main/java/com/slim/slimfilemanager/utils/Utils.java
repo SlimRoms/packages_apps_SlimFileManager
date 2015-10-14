@@ -3,6 +3,9 @@ package com.slim.slimfilemanager.utils;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.widget.Toast;
+
+import com.slim.slimfilemanager.R;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -56,9 +59,8 @@ public class Utils {
         }
 
         if (context.getPackageManager().queryIntentActivities(i, 0).isEmpty()) {
-          //  Toast.makeText(context, R.string.cantopenfile, Toast.LENGTH_SHORT)
-            //        .show();
-            //return;
+            Toast.makeText(context, R.string.cant_open_file, Toast.LENGTH_SHORT).show();
+            return;
         }
 
         try {
@@ -107,13 +109,8 @@ public class Utils {
             Class c = Class.forName("android.os.SystemProperties");
             Method m = c.getMethod("get", String.class);
             value = (String) m.invoke(null, name);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
+        } catch (ClassNotFoundException|NoSuchMethodException
+                |IllegalAccessException|InvocationTargetException e) {
             e.printStackTrace();
         }
         return value;
