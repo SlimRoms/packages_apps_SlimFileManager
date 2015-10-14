@@ -10,8 +10,6 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 
 import com.slim.slimfilemanager.R;
-import com.slim.slimfilemanager.utils.FileUtils;
-import com.slim.slimfilemanager.utils.Permissions;
 
 import java.io.File;
 
@@ -37,7 +35,7 @@ public class PermissionsDialog implements CompoundButton.OnCheckedChangeListener
         mFile = new File(file);
 
         mOriginalPermissions = new Permissions();
-        mOriginalPermissions.loadFromFile(mFile);
+        mOriginalPermissions.loadFromFile(mContext, mFile);
 
         mPermissions = mOriginalPermissions;
 
@@ -130,8 +128,8 @@ public class PermissionsDialog implements CompoundButton.OnCheckedChangeListener
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (mPermissions.equals(mOriginalPermissions))
-                FileUtils.applyPermissions(mFile, mPermissions);
-                FileUtils.changeGroupOwner(mFile, mPermissions.owner, mPermissions.group);
+                FileUtils.applyPermissions(mContext, mFile, mPermissions);
+                FileUtils.changeGroupOwner(mContext, mFile, mPermissions.owner, mPermissions.group);
                 dialog.dismiss();
             }
         });

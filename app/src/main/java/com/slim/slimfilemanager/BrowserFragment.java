@@ -568,7 +568,7 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
     }
 
     private void sortFiles() {
-        SortUtils.sort(mFiles);
+        SortUtils.sort(getActivity(), mFiles);
     }
 
     public void showDialog(int id) {
@@ -610,7 +610,7 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     for (String file : SelectedFiles.getFiles()) {
-                                        if (FileUtils.deleteFile(file)) {
+                                        if (FileUtils.deleteFile(getActivity(), file)) {
                                             getOwner().removeFile(file);
                                         } else {
                                             Toast.makeText(getOwner().mContext,
@@ -676,7 +676,7 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
                                 if (id == ACTION_ADD_FOLDER) {
                                     if (!newFolder.exists()) {
                                         if (!newFolder.mkdirs()) {
-                                            if (SettingsProvider.getInstance(null).getBoolean(
+                                            if (SettingsProvider.getBoolean(getActivity(),
                                                     SettingsProvider.KEY_ENABLE_ROOT, false)
                                                     && RootUtils.isRootAvailable()) {
                                                 if (!RootUtils.createFolder(newFolder)) {

@@ -1,5 +1,7 @@
 package com.slim.slimfilemanager.utils;
 
+import android.content.Context;
+
 import java.io.File;
 
 public class Permissions {
@@ -22,8 +24,8 @@ public class Permissions {
     public Permissions() {
     }
 
-    public void loadFromFile(File file) {
-        String[] fileInfo = FileUtils.getFileProperties(file);
+    public void loadFromFile(Context context, File file) {
+        String[] fileInfo = FileUtils.getFileProperties(context, file);
         String line = null;
 
         if (fileInfo != null) {

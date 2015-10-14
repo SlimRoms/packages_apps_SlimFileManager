@@ -1,5 +1,6 @@
 package com.slim.slimfilemanager.utils;
 
+import android.content.Context;
 import android.text.TextUtils;
 
 import com.slim.slimfilemanager.BrowserFragment;
@@ -16,9 +17,9 @@ public class SortUtils {
     public static final String SORT_MODE_SIZE = "sort_mode_size";
     public static final String SORT_MODE_TYPE = "sort_mode_type";
 
-    public static void sort(ArrayList<BrowserFragment.Item> files) {
-        String sortMode = SettingsProvider.getInstance(null)
-                .getString(SettingsProvider.SORT_MODE, SORT_MODE_NAME);
+    public static void sort(Context context, ArrayList<BrowserFragment.Item> files) {
+        String sortMode = SettingsProvider.getString(context,
+                SettingsProvider.SORT_MODE, SORT_MODE_NAME);
         switch (sortMode) {
             case SORT_MODE_SIZE:
                 Collections.sort(files, getSizeComparator());

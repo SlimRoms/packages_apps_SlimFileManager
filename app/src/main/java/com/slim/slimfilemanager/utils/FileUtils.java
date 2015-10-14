@@ -1,10 +1,9 @@
 package com.slim.slimfilemanager.utils;
 
-import android.app.Activity;
+import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.slim.slimfilemanager.BrowserFragment;
 import com.slim.slimfilemanager.settings.SettingsProvider;
 
 import java.io.BufferedInputStream;
@@ -21,7 +20,7 @@ public class FileUtils {
 
     private static final int BUFFER = 4096;
 
-    public static boolean copyFile(String f, String fol) {
+    public static boolean copyFile(Context context, String f, String fol) {
         File file = new File(f);
         File folder = new File(fol);
         byte[] data = new byte[BUFFER];
@@ -45,6 +44,7 @@ public class FileUtils {
                     o_stream.flush();
                     i_stream.close();
                     o_stream.close();
+                    return true;
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -55,43 +55,58 @@ public class FileUtils {
                 if (!new File(dir).mkdir())
                     return false;
 
-                for (String fil : files) copyFile(f + "/" + fil, dir);
+                for (String fil : files) copyFile(context, f + "/" + fil, dir);
             }
-        } else if (SettingsProvider.getInstance(null)
-                .getBoolean(SettingsProvider.KEY_ENABLE_ROOT, false)) {
+        } else if (SettingsProvider.getBoolean(context, SettingsProvider.KEY_ENABLE_ROOT, false)) {
             return RootUtils.copyFile(f, fol);
         }
         return false;
     }
 
-    public static boolean moveFile(String f, String fol) {
-        File file = new File(f);
-        File folder = new File(fol);
+    public static boolean moveFile(Context context, String source, String destination) {
+        if (TextUtils.isEmpty(source) || TextUtils.isEmpty(destination)) {
+            return false;
+        }
+        File file = new File(source);
+        File folder = new File(destination);
 
         if (file.canWrite() && folder.isDirectory()
                 && folder.canWrite()) {
             if (file.isFile()) {
                 String file_name = file.getName();
                 File cp_file = new File(folder.getPath() + File.separator + file_name);
-                if (!file.renameTo(cp_file)) return false;
+                if (!file.renameTo(cp_file)) {
+                    copyFile(context, file.getAbsolutePath(), cp_file.getAbsolutePath());
+                    deleteFile(context, file.getAbsolutePath());
+                    if (!file.exists() && cp_file.exists()) {
+                        return true;
+                    }
+                } else {
+                    return true;
+                }
             } else if (file.isDirectory()) {
                 String files[] = file.list();
                 String dir = folder.getPath() + file.getName();
 
-                if (!new File(dir).mkdir())
-                    return false;
+                if (!mkdir(dir)) return false;
 
-                for (String fil : files) if (!moveFile(f + "/" + fil, dir)) return false;
+                for (String fil : files) {
+                    if (!moveFile(context, source + "/" + fil, dir)) return false;
+                }
             }
-        } else if (SettingsProvider.getInstance(null)
-                .getBoolean(SettingsProvider.KEY_ENABLE_ROOT, false)
+        } else if (SettingsProvider.getBoolean(context, SettingsProvider.KEY_ENABLE_ROOT, false)
                 && RootUtils.isRootAvailable()) {
-            return RootUtils.moveFile(f, fol);
+            return RootUtils.moveFile(source, destination);
         }
         return false;
     }
 
-    public static boolean deleteFile(String path) {
+    public static boolean mkdir(String dir) {
+        File d = new File(dir);
+        return d.mkdirs() || RootUtils.createFolder(d);
+    }
+
+    public static boolean deleteFile(Context context, String path) {
         File target = new File(path);
 
         if (target.isFile() && target.canWrite()) {
@@ -109,7 +124,7 @@ public class FileUtils {
                                 + aFile_list);
 
                         if (temp_f.isDirectory())
-                            return deleteFile(temp_f.getAbsolutePath());
+                            return deleteFile(context, temp_f.getAbsolutePath());
                         else if (temp_f.isFile()) {
                             if (temp_f.delete()) return true;
                         }
@@ -119,8 +134,7 @@ public class FileUtils {
                 if (target.exists())
                     if (target.delete()) return true;
             }
-            if (SettingsProvider.getInstance(null)
-                    .getBoolean(SettingsProvider.KEY_ENABLE_ROOT, false)
+            if (SettingsProvider.getBoolean(context, SettingsProvider.KEY_ENABLE_ROOT, false)
                     && RootUtils.isRootAvailable()) {
                 return RootUtils.deleteFile(path);
             }
@@ -128,14 +142,13 @@ public class FileUtils {
         return false;
     }
 
-    public static String[] getFileProperties(File file) {
+    public static String[] getFileProperties(Context context, File file) {
         BufferedReader in;
         String[] info = null;
         String line;
 
         try {
-            if (SettingsProvider.getInstance(null)
-                    .getBoolean(SettingsProvider.KEY_ENABLE_ROOT, false)) {
+            if (SettingsProvider.getBoolean(context, SettingsProvider.KEY_ENABLE_ROOT, false)) {
                 in = RootUtils.runCommand("ls -l " + file.getAbsolutePath());
             } else {
                 in = runCommand("ls -l " + file.getAbsolutePath());
@@ -213,11 +226,11 @@ public class FileUtils {
         return null;
     }
 
-    public static boolean changeGroupOwner(File file, String owner, String group) {
+    public static boolean changeGroupOwner(Context context, File file, String owner, String group) {
         try {
             boolean useRoot = false;
-            if (!file.canWrite() && SettingsProvider.getInstance(null)
-                    .getBoolean(SettingsProvider.KEY_ENABLE_ROOT, false)
+            if (!file.canWrite() && SettingsProvider.getBoolean(context,
+                    SettingsProvider.KEY_ENABLE_ROOT, false)
                     && RootUtils.isRootAvailable()) {
                 useRoot = true;
                 RootUtils.remountSystem("rw");
@@ -238,11 +251,11 @@ public class FileUtils {
         return false;
     }
 
-    public static boolean applyPermissions(File file, Permissions permissions) {
+    public static boolean applyPermissions(Context context, File file, Permissions permissions) {
         try {
             boolean useSu = false;
-            if (!file.canWrite() && SettingsProvider.getInstance(null)
-                    .getBoolean(SettingsProvider.KEY_ENABLE_ROOT, false)
+            if (!file.canWrite() && SettingsProvider.getBoolean(context,
+                    SettingsProvider.KEY_ENABLE_ROOT, false)
                     && RootUtils.isRootAvailable()) {
                 useSu = true;
                 RootUtils.remountSystem("rw");

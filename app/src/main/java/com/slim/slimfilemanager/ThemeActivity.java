@@ -14,7 +14,7 @@ public class ThemeActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mCurrentTheme = SettingsProvider.getInstance(this).getInt(
+        mCurrentTheme = SettingsProvider.getInt(this,
                 SettingsProvider.THEME, R.style.AppTheme);
 
         setTheme(mCurrentTheme);
@@ -24,7 +24,7 @@ public class ThemeActivity extends Activity {
     public void onResume() {
         super.onResume();
 
-        int newTheme = SettingsProvider.getInstance(this).getInt(SettingsProvider.THEME,
+        int newTheme = SettingsProvider.getInt(this, SettingsProvider.THEME,
                 R.style.AppTheme);
 
         if (mCurrentTheme != newTheme) {

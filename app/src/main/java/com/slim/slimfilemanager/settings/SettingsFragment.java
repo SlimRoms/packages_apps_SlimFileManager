@@ -42,8 +42,8 @@ public class SettingsFragment extends PreferenceFragment {
                 Integer.toString(R.style.AppTheme_Dark)
         };
 
-        String value = Integer.toString(SettingsProvider
-                .getInstance(getActivity()).getInt(SettingsProvider.THEME, R.style.AppTheme));
+        String value = Integer.toString(SettingsProvider.getInt(getActivity(),
+                SettingsProvider.THEME, R.style.AppTheme));
 
         ListPreference theme = (ListPreference) findPreference("key_theme");
         theme.setEntries(entries);
@@ -52,7 +52,7 @@ public class SettingsFragment extends PreferenceFragment {
         theme.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                SettingsProvider.getInstance(getActivity()).putInt(SettingsProvider.THEME,
+                SettingsProvider.putInt(getActivity(), SettingsProvider.THEME,
                         Integer.parseInt((String) newValue));
                 ((SettingsActivity) getActivity()).onUpdateTheme();
                 return true;

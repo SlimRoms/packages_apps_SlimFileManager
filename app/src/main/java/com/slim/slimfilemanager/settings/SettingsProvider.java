@@ -30,61 +30,48 @@ public class SettingsProvider {
     public static final String THEME = "app_theme";
     public static final String SORT_MODE = "sort_mode";
 
-    public static SettingsProvider instance;
-    public Context mContext;
-
-    public SettingsProvider(Context context) {
-        mContext = context;
+    public static SharedPreferences get(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context);
     }
 
-    public static SettingsProvider getInstance(Context context) {
-        if (instance == null) {
-            instance = new SettingsProvider(context);
-        }
-        return instance;
+    public static SharedPreferences.Editor put(Context context) {
+        return get(context).edit();
     }
 
-    public SharedPreferences get() {
-        return PreferenceManager.getDefaultSharedPreferences(mContext);
+    public static String getString(Context context, String key, String defValue) {
+        return get(context).getString(key, defValue);
     }
 
-    public SharedPreferences.Editor put() {
-        return get().edit();
+    public static boolean getBoolean(Context context, String key, boolean defValue) {
+        return get(context).getBoolean(key, defValue);
     }
 
-    public String getString(String key, String defValue) {
-        return get().getString(key, defValue);
-    }
-
-    public boolean getBoolean(String key, boolean defValue) {
-        return get().getBoolean(key, defValue);
-    }
-
-    public int getInt(String key, int defValue) {
+    public static int getInt(Context context, String key, int defValue) {
         int i;
         try {
-            i = get().getInt(key, defValue);
+            i = get(context).getInt(key, defValue);
         } catch (Exception e) {
-            i = Integer.parseInt(get().getString(key, Integer.toString(defValue)));
+            i = Integer.parseInt(get(context).getString(key, Integer.toString(defValue)));
         }
         return i;
     }
 
-    public void putInt(String key, int value) {
-        put().putInt(key, value).commit();
+    public static void putInt(Context context, String key, int value) {
+        put(context).putInt(key, value).commit();
     }
 
-    public ArrayList<String> getListString(String key, ArrayList<String> def) {
+    public static ArrayList<String> getListString(Context context,
+                                                  String key, ArrayList<String> def) {
         ArrayList<String> array = new ArrayList<>(
-                Arrays.asList(TextUtils.split(get().getString(key, ""), "‚‗‚")));
+                Arrays.asList(TextUtils.split(get(context).getString(key, ""), "‚‗‚")));
         if (array.isEmpty()) {
             array.addAll(def);
         }
         return array;
     }
 
-    public void putListString(String key, ArrayList<String> stringList) {
+    public static void putListString(Context context, String key, ArrayList<String> stringList) {
         String[] myStringList = stringList.toArray(new String[stringList.size()]);
-        put().putString(key, TextUtils.join("‚‗‚", myStringList)).apply();
+        put(context).putString(key, TextUtils.join("‚‗‚", myStringList)).apply();
     }
 }

@@ -22,7 +22,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.StateSet;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -42,10 +41,11 @@ import com.slim.slimfilemanager.settings.SettingsProvider;
 import com.slim.slimfilemanager.utils.FragmentLifecycle;
 import com.slim.slimfilemanager.utils.IconCache;
 import com.slim.slimfilemanager.utils.PasteTask;
+import com.slim.slimfilemanager.widget.CustomDrawerLayout;
 import com.slim.slimfilemanager.widget.PageIndicator;
 import com.slim.slimfilemanager.widget.TabPageIndicator;
 
-public class FileManager extends ThemeActivity {
+public class FileManager extends ThemeActivity implements View.OnClickListener {
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
@@ -53,7 +53,7 @@ public class FileManager extends ThemeActivity {
 
     private ViewPager mViewPager;
     private ListView mDrawer;
-    private DrawerLayout mDrawerLayout;
+    private CustomDrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerAdapter mDrawerAdapter;
     private FloatingActionsMenu mActionMenu;
@@ -66,7 +66,7 @@ public class FileManager extends ThemeActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        SettingsProvider.getInstance(this).get()
+        SettingsProvider.get(this)
                 .registerOnSharedPreferenceChangeListener(mPreferenceListener);
 
         setContentView(R.layout.file_manager);
@@ -78,12 +78,12 @@ public class FileManager extends ThemeActivity {
 
         // setup drawer
         mDrawer = (ListView) findViewById(R.id.drawer);
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerLayout = (CustomDrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
                 R.string.drawer_open, R.string.drawer_close);
 
-        //mDrawerLayout.setDrawerListener(mDrawerToggle);
-        mDrawerLayout.setDrawerListener(new DrawerLayout.DrawerListener() {
+        mDrawerLayout.addListener(mDrawerToggle);
+        mDrawerLayout.addListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
                 if (Float.toString(slideOffset).contains("0.1")) {
@@ -91,17 +91,14 @@ public class FileManager extends ThemeActivity {
                     mDrawerAdapter.notifyDataSetInvalidated();
                     mDrawerLayout.invalidate();
                 }
-                mDrawerToggle.onDrawerSlide(drawerView, slideOffset);
             }
 
             @Override
             public void onDrawerOpened(View drawerView) {
-                mDrawerToggle.onDrawerOpened(drawerView);
             }
 
             @Override
             public void onDrawerClosed(View drawerView) {
-                mDrawerToggle.onDrawerClosed(drawerView);
             }
 
             @Override
@@ -166,8 +163,7 @@ public class FileManager extends ThemeActivity {
             }
         });
 
-        mViewPager.setCurrentItem(SettingsProvider.getInstance(null)
-                .getInt("current_tab", 0));
+        mViewPager.setCurrentItem(SettingsProvider.getInt(this, "current_tab", 0));
 
         mActionMenu = (FloatingActionsMenu) findViewById(R.id.float_button);
         buildActionButtons();
@@ -213,40 +209,35 @@ public class FileManager extends ThemeActivity {
         super.onStart();
 
         setCurrentlyDisplayedFragment((BrowserFragment) mSectionsPagerAdapter.getItem(
-                SettingsProvider.getInstance(null).getInt("current_tab", 0)));
+                SettingsProvider.getInt(this, "current_tab", 0)));
     }
 
     private void buildActionButtons() {
+        mActionMenu.addButton(getButton(R.drawable.add_folder,
+                R.string.create_folder, BrowserFragment.ACTION_ADD_FOLDER));
+        mActionMenu.addButton(getButton(R.drawable.add_file,
+                R.string.create_file, BrowserFragment.ACTION_ADD_FILE));
+    }
+
+    private FloatingActionButton getButton(int icon, int title, int tag) {
         FloatingActionButton button = new FloatingActionButton(this);
         button.setColorNormalResId(R.color.accent);
-        button.setColorPressedResId(R.color.primary_dark);
-        button.setIcon(R.drawable.add_folder);
-        button.setTitle(getString(R.string.create_folder));
-        button.setTag(BrowserFragment.ACTION_ADD_FOLDER);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("TEST", "path=" + mFragment.getCurrentPath());
-                mFragment.showDialog(BrowserFragment.ACTION_ADD_FOLDER);
-                mActionMenu.collapseImmediately();
-            }
-        });
-        mActionMenu.addButton(button);
-        button = new FloatingActionButton(this);
-        button.setColorNormalResId(R.color.accent);
-        button.setColorPressedResId(R.color.primary_dark);
-        button.setIcon(R.drawable.add_file);
-        button.setTitle(getString(R.string.create_file));
-        button.setTag(BrowserFragment.ACTION_ADD_FILE);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("TEST", "path=" + mFragment.getCurrentPath());
-                mFragment.showDialog(BrowserFragment.ACTION_ADD_FILE);
-                mActionMenu.collapseImmediately();
-            }
-        });
-        mActionMenu.addButton(button);
+        button.setColorPressedResId(R.color.accent_dark);
+        button.setIcon(icon);
+        button.setTitle(getString(title));
+        button.setTag(tag);
+        button.setOnClickListener(this);
+        return button;
+    }
+
+    public void onClick(View v) {
+        if (v.getTag() == BrowserFragment.ACTION_ADD_FILE) {
+            mFragment.showDialog(BrowserFragment.ACTION_ADD_FILE);
+            mActionMenu.collapseImmediately();
+        } else if (v.getTag() == BrowserFragment.ACTION_ADD_FOLDER) {
+            mFragment.showDialog(BrowserFragment.ACTION_ADD_FOLDER);
+            mActionMenu.collapseImmediately();
+        }
     }
 
     public void setMove(boolean move) {
@@ -339,7 +330,7 @@ public class FileManager extends ThemeActivity {
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
             addDefault();
-            mTabs = SettingsProvider.getInstance(null).getListString("tabs", mTabs);
+            mTabs = SettingsProvider.getListString(FileManager.this, "tabs", mTabs);
             for (String tab : mTabs) {
                 mItems.add(new TabItem(
                         BrowserFragment.newInstance(tab), tab));
@@ -495,8 +486,8 @@ public class FileManager extends ThemeActivity {
         }
 
         private int getTextColor() {
-            if (SettingsProvider.getInstance(FileManager.this)
-                    .getInt(SettingsProvider.THEME, R.style.AppTheme) == R.style.AppTheme) {
+            if (SettingsProvider.getInt(FileManager.this,
+                    SettingsProvider.THEME, R.style.AppTheme) == R.style.AppTheme) {
                 return getResources().getColor(R.color.primary_text);
             } else {
                 return getResources().getColor(R.color.primary_text_dark);
@@ -530,7 +521,7 @@ public class FileManager extends ThemeActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        SettingsProvider.getInstance(this).get()
+        SettingsProvider.get(this)
                 .unregisterOnSharedPreferenceChangeListener(mPreferenceListener);
     }
 
@@ -545,9 +536,9 @@ public class FileManager extends ThemeActivity {
             }
         }
         if (!arrayList.isEmpty()) {
-            SettingsProvider.getInstance(null).putListString("tabs", arrayList);
+            SettingsProvider.putListString(this, "tabs", arrayList);
         }
-        SettingsProvider.getInstance(null).putInt("current_tab", mViewPager.getCurrentItem());
+        SettingsProvider.putInt(this, "current_tab", mViewPager.getCurrentItem());
     }
 
     SharedPreferences.OnSharedPreferenceChangeListener mPreferenceListener
