@@ -44,15 +44,14 @@ public class BackgroundUtils extends AsyncTask<Void, Void, String> {
     }
 
     protected String doInBackground(Void... v) {
-        final String location = Environment.getExternalStorageDirectory() + "/Slim/Extracted";
         switch (mId) {
             case UNZIP_FILE:
-                return ArchiveUtils.extractZipFiles(mFile, location);
+                return ArchiveUtils.extractZipFiles(mFile, EXTRACTED_LOCATION);
             case ZIP_FILE:
                 String loc = Environment.getExternalStorageDirectory() + "/Slim/Archives";
                 return ArchiveUtils.createZipFile(loc, PasteTask.SelectedFiles.getFiles());
             case UNTAR_FILE:
-                return ArchiveUtils.unTar(mContext, mFile, location);
+                return ArchiveUtils.unTar(mContext, mFile, EXTRACTED_LOCATION);
 
         }
         return null;
