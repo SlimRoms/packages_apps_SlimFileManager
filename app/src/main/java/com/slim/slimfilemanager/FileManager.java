@@ -41,7 +41,6 @@ import com.slim.slimfilemanager.settings.SettingsProvider;
 import com.slim.slimfilemanager.utils.FragmentLifecycle;
 import com.slim.slimfilemanager.utils.IconCache;
 import com.slim.slimfilemanager.utils.PasteTask;
-import com.slim.slimfilemanager.widget.CustomDrawerLayout;
 import com.slim.slimfilemanager.widget.PageIndicator;
 import com.slim.slimfilemanager.widget.TabPageIndicator;
 
@@ -53,7 +52,7 @@ public class FileManager extends ThemeActivity implements View.OnClickListener {
 
     private ViewPager mViewPager;
     private ListView mDrawer;
-    private CustomDrawerLayout mDrawerLayout;
+    private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerAdapter mDrawerAdapter;
     private FloatingActionsMenu mActionMenu;
@@ -78,12 +77,11 @@ public class FileManager extends ThemeActivity implements View.OnClickListener {
 
         // setup drawer
         mDrawer = (ListView) findViewById(R.id.drawer);
-        mDrawerLayout = (CustomDrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
                 R.string.drawer_open, R.string.drawer_close);
 
-        mDrawerLayout.addListener(mDrawerToggle);
-        mDrawerLayout.addListener(new DrawerLayout.DrawerListener() {
+        mDrawerLayout.setDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
                 if (Float.toString(slideOffset).contains("0.1")) {
@@ -91,19 +89,22 @@ public class FileManager extends ThemeActivity implements View.OnClickListener {
                     mDrawerAdapter.notifyDataSetInvalidated();
                     mDrawerLayout.invalidate();
                 }
+                mDrawerToggle.onDrawerSlide(drawerView, slideOffset);
             }
 
             @Override
             public void onDrawerOpened(View drawerView) {
+                mDrawerToggle.onDrawerOpened(drawerView);
             }
 
             @Override
             public void onDrawerClosed(View drawerView) {
+                mDrawerToggle.onDrawerClosed(drawerView);
             }
 
             @Override
             public void onDrawerStateChanged(int newState) {
-
+                mDrawerToggle.onDrawerStateChanged(newState);
             }
         });
         mDrawerToggle.syncState();
