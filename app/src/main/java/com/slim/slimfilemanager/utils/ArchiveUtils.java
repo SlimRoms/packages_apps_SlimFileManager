@@ -3,9 +3,11 @@ package com.slim.slimfilemanager.utils;
 import android.content.Context;
 
 import org.apache.commons.compress.archivers.ArchiveException;
+import org.apache.commons.compress.archivers.ArchiveOutputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.compress.utils.IOUtils;
 
 import java.io.BufferedInputStream;
@@ -18,6 +20,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -69,11 +72,16 @@ public class ArchiveUtils {
         return location;
     }
 
-    public static String createZipFile(String location, ArrayList<String> files) {
+    public static String createZipFile(String zip, ArrayList<String> files) {
+        if (!zip.startsWith(File.separator)) {
+            zip = BackgroundUtils.ARCHIVE_LOCATION + File.separator + zip;
+        }
+        if (!zip.endsWith("zip")) {
+            zip += ".zip";
+        }
+        File outFile = new File(zip);
         try {
-            if (!new File(location).exists())
-                if (!new File(location).mkdirs()) return null;
-            FileOutputStream dest = new FileOutputStream(location + "/test.zip");
+            FileOutputStream dest = new FileOutputStream(outFile);
             ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(
                     dest));
 
@@ -91,7 +99,7 @@ public class ArchiveUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return location;
+        return BackgroundUtils.ARCHIVE_LOCATION;
     }
 
     private static void zipFolder(ZipOutputStream out, File folder,
@@ -199,6 +207,82 @@ public class ArchiveUtils {
         if (deleteAfter) FileUtil.deleteFile(context, input);
 
         return outputDir.getAbsolutePath();
+    }
+
+    public static String createTar(String tar, ArrayList<String> files) {
+        if (!tar.startsWith(File.separator)) {
+            tar = BackgroundUtils.ARCHIVE_LOCATION + File.separator + tar;
+        }
+        File tarFile = new File(tar);
+        if (!FileUtil.getExtension(tarFile).equals("tar")) {
+            tar += ".tar";
+            tarFile = new File(tar);
+        }
+
+        try {
+            OutputStream os = new FileOutputStream(tarFile);
+            ArchiveOutputStream aos = new ArchiveStreamFactory()
+                    .createArchiveOutputStream(ArchiveStreamFactory.TAR, os);
+            for (String s : files) {
+                File input = new File(s);
+                addFilesToCompression(aos, input, ".");
+            }
+            aos.finish();
+        } catch (IOException|ArchiveException e) {
+            e.printStackTrace();
+        }
+        return BackgroundUtils.ARCHIVE_LOCATION;
+    }
+
+    public static String createTarGZ(String tarFile, ArrayList<String> files) {
+
+        if (!tarFile.startsWith(File.separator)) {
+            tarFile = BackgroundUtils.ARCHIVE_LOCATION + File.separator + tarFile;
+        }
+        if (!tarFile.endsWith("tar.gz")) {
+            tarFile += ".tar.gz";
+        }
+        File outFile = new File(tarFile);
+        try {
+            FileOutputStream fos = new FileOutputStream(outFile);
+
+            TarArchiveOutputStream taos = new TarArchiveOutputStream(
+                    new GZIPOutputStream(new BufferedOutputStream(fos)));
+            taos.setBigNumberMode(TarArchiveOutputStream.BIGNUMBER_STAR);
+            taos.setLongFileMode(TarArchiveOutputStream.LONGFILE_GNU);
+            for (String f : files) {
+                addFilesToCompression(taos, new File(f), ".");
+            }
+            taos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return BackgroundUtils.ARCHIVE_LOCATION;
+    }
+
+    //add entries to archive file...
+    private static void addFilesToCompression(
+            ArchiveOutputStream taos, File file, String dir) throws IOException {
+
+        taos.putArchiveEntry(new TarArchiveEntry(file, dir+"/"+file.getName()));
+
+        if (file.isFile()) {
+            // Add the file to the archive
+            BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
+            IOUtils.copy(bis, taos);
+            taos.closeArchiveEntry();
+            bis.close();
+
+        } else if (file.isDirectory()) {
+            // close the archive entry
+            taos.closeArchiveEntry();
+            // go through all the files in the directory and using recursion, add them to the archive
+
+            for (File childFile : file.listFiles()) {
+                addFilesToCompression(taos, childFile, file.getName());
+            }
+        }
+
     }
 
     public static String unGzip(String input, String output) {

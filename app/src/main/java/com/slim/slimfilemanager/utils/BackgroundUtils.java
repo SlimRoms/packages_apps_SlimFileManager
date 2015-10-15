@@ -14,9 +14,22 @@ public class BackgroundUtils extends AsyncTask<Void, Void, String> {
     public static final int ZIP_FILE = 1001002;
 
     public static final int UNTAR_FILE = 1001003;
+    public static final int TAR_FILE = 1001004;
+    public static final int TAR_COMPRESS = 1001005;
 
     public static final String EXTRACTED_LOCATION = Environment.getExternalStorageDirectory()
             + File.separator + "Slim" + File.separator + "Extracted";
+    public static final String ARCHIVE_LOCATION = Environment.getExternalStorageDirectory()
+            + File.separator + "Slim" + File.separator + "Archived";
+
+    static {
+        if (!new File(EXTRACTED_LOCATION).exists()) {
+            new File(EXTRACTED_LOCATION).mkdirs();
+        }
+        if (!new File(ARCHIVE_LOCATION).exists()) {
+            new File(ARCHIVE_LOCATION).mkdirs();
+        }
+    }
 
     Context mContext;
     int mId;
@@ -40,6 +53,10 @@ public class BackgroundUtils extends AsyncTask<Void, Void, String> {
             case UNTAR_FILE:
                 mDialog = ProgressDialog.show(mContext, "Untarring", "Please wait...", true, false);
                 break;
+            case TAR_FILE:
+            case TAR_COMPRESS:
+                mDialog = ProgressDialog.show(mContext, "Tarring", "Please wait...", true, false);
+                break;
         }
     }
 
@@ -48,10 +65,14 @@ public class BackgroundUtils extends AsyncTask<Void, Void, String> {
             case UNZIP_FILE:
                 return ArchiveUtils.extractZipFiles(mFile, EXTRACTED_LOCATION);
             case ZIP_FILE:
-                String loc = Environment.getExternalStorageDirectory() + "/Slim/Archives";
-                return ArchiveUtils.createZipFile(loc, PasteTask.SelectedFiles.getFiles());
+                return ArchiveUtils.createZipFile(mFile,
+                        PasteTask.SelectedFiles.getFiles());
             case UNTAR_FILE:
                 return ArchiveUtils.unTar(mContext, mFile, EXTRACTED_LOCATION);
+            case TAR_FILE:
+                return ArchiveUtils.createTar(mFile, PasteTask.SelectedFiles.getFiles());
+            case TAR_COMPRESS:
+                return ArchiveUtils.createTarGZ(mFile, PasteTask.SelectedFiles.getFiles());
 
         }
         return null;

@@ -13,4 +13,10 @@
         <item>sort_mode_type</item>
     </string-array>
 
+    <string-array name="archive_types">
+        <item>zip</item>
+        <item>tar</item>
+        <item>tar.gz</item>
+    </string-array>
+
 </resources>

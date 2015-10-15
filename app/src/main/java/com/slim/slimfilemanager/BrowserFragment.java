@@ -13,6 +13,7 @@ import android.os.Environment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -25,6 +26,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -60,7 +62,7 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
     private static final int MENU_PERMISSIONS = 1004;
     private static final int MENU_RENAME = 1005;
     private static final int MENU_SHARE = 1006;
-    private static final int MENU_ZIP = 1007;
+    private static final int MENU_ARCHIVE = 1007;
 
     public static final int ACTION_ADD_FOLDER = 10001;
     public static final int ACTION_ADD_FILE = 10002;
@@ -228,7 +230,8 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
                     .setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
             menu.add(0, MENU_SHARE, 0, R.string.share).setIcon(R.drawable.share)
                     .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-            menu.add(0, MENU_ZIP, 0, R.string.zip).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+            menu.add(0, MENU_ARCHIVE, 0, R.string.archive)
+                    .setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
             mActionMode = mode;
             return true;
         }
@@ -273,8 +276,9 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
                     case MENU_SHARE:
                         handleShareFile();
                         break;
-                    case MENU_ZIP:
-                        new BackgroundUtils(mContext, null, BackgroundUtils.ZIP_FILE).execute();
+                    case MENU_ARCHIVE:
+                        showDialog(MENU_ARCHIVE);
+                        break;
                 }
             }
             mMultiSelector.clearSelections();
@@ -596,7 +600,7 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
     }
 
     private void sortFiles() {
-        SortUtils.sort(getActivity(), mFiles);
+        SortUtils.sort(mContext, mFiles);
     }
 
     public void showDialog(int id) {
@@ -624,16 +628,16 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             final int id = getArguments().getInt("id");
+            final AlertDialog.Builder builder = new AlertDialog.Builder(getOwner().mContext);
             switch (id) {
                 case MENU_DELETE:
-                    final AlertDialog.Builder b = new AlertDialog.Builder(getOwner().mContext);
                     if (SelectedFiles.getFiles().size() == 1) {
-                        b.setTitle(SelectedFiles.getFiles().get(0));
+                        builder.setTitle(SelectedFiles.getFiles().get(0));
                     } else {
-                        b.setTitle(R.string.delete_dialog_title);
+                        builder.setTitle(R.string.delete_dialog_title);
                     }
-                    b.setMessage(R.string.delete_dialog_message);
-                    b.setPositiveButton(R.string.delete,
+                    builder.setMessage(R.string.delete_dialog_message);
+                    builder.setPositiveButton(R.string.delete,
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -651,8 +655,8 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
                                     dialog.dismiss();
                                 }
                             });
-                    b.setNegativeButton(R.string.cancel, null);
-                    return b.create();
+                    builder.setNegativeButton(R.string.cancel, null);
+                    return builder.create();
                 case MENU_PERMISSIONS:
                     String path = SelectedFiles.getFiles().get(0);
                     if (TextUtils.isEmpty(path)) return null;
@@ -662,7 +666,6 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
                 case ACTION_ADD_FILE:
                 case ACTION_ADD_FOLDER:
                 case MENU_RENAME:
-                    final AlertDialog.Builder builder = new AlertDialog.Builder(getOwner().mContext);
                     View view = View.inflate(getOwner().mContext, R.layout.add_folder, null);
                     final EditText folderName = (EditText) view.findViewById(R.id.folder_name);
                     if (id == ACTION_ADD_FOLDER) {
@@ -737,6 +740,49 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
                     };
                     view.findViewById(R.id.cancel).setOnClickListener(listener);
                     view.findViewById(R.id.create).setOnClickListener(listener);
+                    return builder.create();
+                case MENU_ARCHIVE:
+                    View v = View.inflate(getOwner().mContext, R.layout.archive, null);
+                    final Spinner archiveType = (Spinner) v.findViewById(R.id.archive_type);
+                    final EditText archiveName = (EditText) v.findViewById(R.id.archive_name);
+                    if (SelectedFiles.getFiles().size() == 1) {
+                        builder.setTitle(new File(SelectedFiles.getFiles().get(0)).getName());
+                    } else {
+                        builder.setTitle("Create Archive.");
+                    }
+                    builder.setView(v);
+                    builder.setPositiveButton("Create", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if (TextUtils.isEmpty(archiveName.getText())) {
+                                Toast.makeText(getOwner().mContext,
+                                        "Name cannot be empty.", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            String type = String.valueOf(archiveType.getSelectedItem());
+                            String name = archiveName.getText().toString();
+                            Log.d("TEST", "type=" + type);
+                            try {
+                                switch (type) {
+                                    case "zip":
+                                        getOwner().filesChanged(new BackgroundUtils(getOwner().mContext,
+                                                name, BackgroundUtils.ZIP_FILE).execute().get());
+                                        break;
+                                    case "tar":
+                                        getOwner().filesChanged(new BackgroundUtils(getOwner().mContext,
+                                                name, BackgroundUtils.TAR_FILE).execute().get());
+                                        break;
+                                    case "tar.gz":
+                                        getOwner().filesChanged(new BackgroundUtils(getOwner().mContext,
+                                                name, BackgroundUtils.TAR_COMPRESS).execute().get());
+                                        break;
+                                }
+                            } catch (Exception e) {
+                                // Ignore
+                            }
+                        }
+                    });
+                    builder.setNegativeButton("Cancel", null);
                     return builder.create();
             }
             return null;
