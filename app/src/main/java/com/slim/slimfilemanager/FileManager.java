@@ -45,7 +45,6 @@ import com.slim.slimfilemanager.utils.FragmentLifecycle;
 import com.slim.slimfilemanager.utils.IconCache;
 import com.slim.slimfilemanager.utils.PasteTask;
 import com.slim.slimfilemanager.widget.PageIndicator;
-import com.slim.slimfilemanager.widget.TabPageIndicator;
 
 public class FileManager extends ThemeActivity implements View.OnClickListener {
 
@@ -54,6 +53,7 @@ public class FileManager extends ThemeActivity implements View.OnClickListener {
     private BrowserFragment mFragment;
 
     private ViewPager mViewPager;
+    private PageIndicator mPageIndicator;
     private ListView mDrawer;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -63,6 +63,7 @@ public class FileManager extends ThemeActivity implements View.OnClickListener {
 
     int mCurrentPosition;
     boolean mMove;
+    boolean mPicking;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -71,16 +72,71 @@ public class FileManager extends ThemeActivity implements View.OnClickListener {
         SettingsProvider.get(this)
                 .registerOnSharedPreferenceChangeListener(mPreferenceListener);
 
+        Intent intent = getIntent();
+
         setContentView(R.layout.file_manager);
+        setupViews();
+
+        if (intent.getAction().equals(Intent.ACTION_GET_CONTENT)) {
+            hideViews();
+            showFragment(intent.getType());
+            mPicking = true;
+        } else {
+            setupNavigationDrawer();
+            setupTabs();
+            setupActionButtons();
+        }
 
         if (getActionBar() != null) {
             getActionBar().setDisplayHomeAsUpEnabled(true);
             getActionBar().setHomeButtonEnabled(true);
         }
 
-        // setup drawer
+        if (savedInstanceState == null) {
+            if (mDrawer != null && mDrawerLayout != null && mDrawerToggle != null) {
+                mDrawerLayout.openDrawer(mDrawer);
+                mDrawerToggle.syncState();
+            }
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        if (mSectionsPagerAdapter != null && mViewPager != null) {
+            setCurrentlyDisplayedFragment((BrowserFragment) mSectionsPagerAdapter.getItem(
+                    mViewPager.getCurrentItem()));
+        }
+    }
+
+    private void showFragment(String type) {
+        BrowserFragment fragment = new BrowserFragment();
+        getFragmentManager().beginTransaction().add(android.R.id.content, fragment).commit();
+        setCurrentlyDisplayedFragment(fragment);
+        fragment.setPicking();
+        fragment.setMimeType(type);
+    }
+
+    private void setupViews() {
         mDrawer = (ListView) findViewById(R.id.drawer);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mViewPager = (ViewPager) findViewById(R.id.pager);
+        mPageIndicator = (PageIndicator) findViewById(R.id.indicator);
+        mActionMenu = (FloatingActionsMenu) findViewById(R.id.float_button);
+        mPasteButton = (FloatingActionButton) findViewById(R.id.paste);
+    }
+
+    private void hideViews() {
+        mDrawer.setVisibility(View.GONE);
+        mDrawerLayout.setVisibility(View.GONE);
+        mViewPager.setVisibility(View.GONE);
+        mPageIndicator.setVisibility(View.GONE);
+        mActionMenu.setVisibility(View.GONE);
+        mPasteButton.setVisibility(View.GONE);
+    }
+
+    private void setupNavigationDrawer() {
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
                 R.string.drawer_open, R.string.drawer_close);
 
@@ -131,9 +187,10 @@ public class FileManager extends ThemeActivity implements View.OnClickListener {
                 mDrawerLayout.closeDrawers();
             }
         });
+    }
 
+    private void setupTabs() {
         mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
-        mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
@@ -169,10 +226,19 @@ public class FileManager extends ThemeActivity implements View.OnClickListener {
 
         mViewPager.setCurrentItem(SettingsProvider.getInt(this, "current_tab", 0));
 
-        mActionMenu = (FloatingActionsMenu) findViewById(R.id.float_button);
+        setupPageIndicators();
+    }
+
+    private void setupPageIndicators() {
+        mPageIndicator.setViewPager(mViewPager);
+
+        //TabPageIndicator tabPageIndicator = (TabPageIndicator) findViewById(R.id.tab_indicator);
+        //tabPageIndicator.setViewPager(mViewPager);
+    }
+
+    private void setupActionButtons() {
         buildActionButtons();
 
-        mPasteButton = (FloatingActionButton) findViewById(R.id.paste);
         mPasteButton.setIcon(R.drawable.paste);
         mPasteButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -195,25 +261,6 @@ public class FileManager extends ThemeActivity implements View.OnClickListener {
                 return true;
             }
         });
-
-        PageIndicator indicator = (PageIndicator) findViewById(R.id.indicator);
-        indicator.setViewPager(mViewPager);
-
-        TabPageIndicator tabPageIndicator = (TabPageIndicator) findViewById(R.id.tab_indicator);
-        tabPageIndicator.setViewPager(mViewPager);
-
-        if (savedInstanceState == null) {
-            mDrawerLayout.openDrawer(mDrawer);
-            mDrawerToggle.syncState();
-        }
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        setCurrentlyDisplayedFragment((BrowserFragment) mSectionsPagerAdapter.getItem(
-                mViewPager.getCurrentItem()));
     }
 
     private void buildActionButtons() {
@@ -284,6 +331,8 @@ public class FileManager extends ThemeActivity implements View.OnClickListener {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        if (mPicking) return true;
         getMenuInflater().inflate(R.menu.menu_file_manager, menu);
         return true;
     }
@@ -535,6 +584,7 @@ public class FileManager extends ThemeActivity implements View.OnClickListener {
     @Override
     public void onPause() {
         super.onPause();
+        if (mSectionsPagerAdapter == null) return;
         ArrayList<String> arrayList = new ArrayList<>();
         for (TabItem item : mSectionsPagerAdapter.getItems()) {
             String path = item.fragment.getCurrentPath();

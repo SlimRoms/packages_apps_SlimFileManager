@@ -1,5 +1,6 @@
 package com.slim.slimfilemanager;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
@@ -70,6 +71,7 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
     private static final String ARG_PATH = "path";
 
     private String mCurrentPath;
+    private String mMimeType;
 
     private Context mContext;
     private FileManager mActivity;
@@ -86,6 +88,7 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
 
     private boolean mExitOnBack = false;
     private boolean mSearching = false;
+    private boolean mPicking = false;
 
     public class Item {
         public String name;
@@ -130,6 +133,10 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
     public void onPreferencesChanged() {
         sortFiles();
         if (mAdapter != null) mAdapter.notifyDataSetChanged();
+    }
+
+    public void setPicking() {
+        mPicking = true;
     }
 
     @Override
@@ -395,6 +402,10 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
         return false;
     }
 
+    public void setMimeType(String type) {
+        mMimeType = type;
+    }
+
     private void onClickFile(String file) {
         if (TextUtils.isEmpty(file)) {
             return;
@@ -404,6 +415,10 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
             if (f.isDirectory()) {
                 filesChanged(file);
             } else {
+                if (mPicking) {
+                    filePicked(f);
+                    return;
+                }
                 String ext = FileUtil.getExtension(f);
                 if (ext.equals("zip") || ext.equals("tar") || ext.equals("gz")) {
                     onClickArchive(file);
@@ -412,6 +427,17 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
                 }
             }
         }
+    }
+
+    private void filePicked(File file) {
+        Uri data = Uri.fromFile(file);
+
+        Intent intent = new Intent();
+        intent.setData(data);
+
+        Activity activity = getActivity();
+        activity.setResult(Activity.RESULT_OK, intent);
+        activity.finish();
     }
 
     private void onClickArchive(final String file) {
@@ -492,12 +518,14 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
         if (!mFiles.isEmpty()) mFiles.clear();
         mAdapter.notifyDataSetChanged();
         for (String s : files) {
-            Item item = new Item();
-            item.name = new File(s).getName();
-            item.path = s;
-            mFiles.add(item);
-            sortFiles();
-            mAdapter.notifyItemInserted(mFiles.indexOf(item));
+            if (mPicking && !TextUtils.isEmpty(mMimeType) && mMimeType.startsWith("image/")
+                    && !MimeUtils.isPicture(new File(s)) && new File(s).isFile()) continue;
+                Item item = new Item();
+                item.name = new File(s).getName();
+                item.path = s;
+                mFiles.add(item);
+                sortFiles();
+                mAdapter.notifyItemInserted(mFiles.indexOf(item));
         }
         mRecyclerView.scrollToPosition(0);
     }
