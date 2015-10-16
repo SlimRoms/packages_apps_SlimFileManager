@@ -349,7 +349,13 @@ public class FileManager extends ThemeActivity implements View.OnClickListener {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
+        if (mPicking && id == android.R.id.home) {
+            setResult(Activity.RESULT_CANCELED);
+            finish();
+            return true;
+        }
+
+        if (mDrawerToggle != null && mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
 

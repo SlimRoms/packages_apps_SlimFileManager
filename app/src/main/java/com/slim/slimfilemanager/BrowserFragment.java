@@ -347,7 +347,7 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
 
     @Override
     public void onCreateOptionsMenu(final Menu menu, MenuInflater inflater) {
-
+        if (mPicking) return;
         mSearchView = (SearchView) menu.findItem(R.id.search).getActionView();
         mSearchView.setIconifiedByDefault(true);
         mSearchView.setOnQueryTextListener(this);
