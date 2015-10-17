@@ -11,4 +11,11 @@
         <attr name="iconColor" format="integer" />
     </declare-styleable>
 
+    <declare-styleable name="Theme">
+        <!-- Dialog styles -->
+        <attr name="textAppearanceDialogTitle" format="reference"/>
+        <attr name="textAppearanceDialogMessage" format="reference"/>
+        <attr name="textAppearanceDialogInfo" format="reference"/>
+    </declare-styleable>
+
 </resources>

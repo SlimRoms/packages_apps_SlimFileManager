@@ -128,4 +128,15 @@ public class MimeUtils {
         MIME_TYPES.put("flv", "video/x-flv");
         MIME_TYPES.put("mkv", "video/x-matroska");
     }
+
+    public static final String[] MIME_CODE = {
+            "cs", "php", "js", "java", "py", "rb", "aspx", "cshtml", "vbhtml", "go", "c", "h", "cc", "cpp", "hh", "hpp", "pl", "pm", "t", "pod",
+            "m", "f", "for", "f90", "f95", "asp", "json", "wiki", "lua", "r"
+    };
+    public static final String[] MIME_SQL = {
+            "sql", "mdf", "ndf", "ldf"
+    };
+    public static final String[] MIME_MARKDOWN = {
+            "md", "mdown", "markdown",
+    };
 }
