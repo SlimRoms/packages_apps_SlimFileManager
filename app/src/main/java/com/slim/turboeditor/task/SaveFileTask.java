@@ -28,8 +28,8 @@ import android.widget.Toast;
 import com.slim.slimfilemanager.R;
 import com.slim.slimfilemanager.utils.FileUtil;
 import com.slim.turboeditor.activity.MainActivity;
-import com.slim.turboeditor.util.GreatUri;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -37,17 +37,17 @@ import java.nio.charset.Charset;
 public class SaveFileTask extends AsyncTask<Void, Void, Void> {
 
     private final MainActivity activity;
-    private final GreatUri mUri;
+    private final File mFile;
     private final String newContent;
     private final String encoding;
     private String message;
     private String positiveMessage;
     private SaveFileInterface mCompletionHandler;
 
-    public SaveFileTask(MainActivity activity, GreatUri uri, String newContent,
+    public SaveFileTask(MainActivity activity, File file, String newContent,
                         String encoding, SaveFileInterface completionHandler) {
         this.activity = activity;
-        mUri = uri;
+        mFile = file;
         this.newContent = newContent;
         this.encoding = encoding;
         mCompletionHandler = completionHandler;
@@ -56,7 +56,8 @@ public class SaveFileTask extends AsyncTask<Void, Void, Void> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        positiveMessage = String.format(activity.getString(R.string.file_saved_with_success), mUri.getFileName());
+        positiveMessage = String.format(
+                activity.getString(R.string.file_saved_with_success), mFile.getName());
         message = positiveMessage;
     }
 
@@ -66,12 +67,12 @@ public class SaveFileTask extends AsyncTask<Void, Void, Void> {
     @Override
     protected Void doInBackground(final Void... voids) {
         try {
-            String filePath = mUri.getFilePath();
+            String filePath = mFile.getAbsolutePath();
             // if the uri has no path
             if (TextUtils.isEmpty(filePath)) {
-                writeUri(mUri.getUri(), newContent, encoding);
+                writeUri(Uri.fromFile(mFile), newContent, encoding);
             } else {
-                FileUtil.writeFile(activity, newContent, mUri, encoding);
+                FileUtil.writeFile(activity, newContent, mFile, encoding);
             }
         } catch (Exception e) {
             e.printStackTrace();

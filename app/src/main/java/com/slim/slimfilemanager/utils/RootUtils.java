@@ -205,7 +205,7 @@ public class RootUtils {
         return (value == 1 || value == 3);
     }
 
-    public static void writeFile(Context context, String content, File file, String encoding) {
+    public static void writeFile(File file, String content) {
         if (!isRootAvailable()) return;
         String redirect = ">";
         String[] input = content.trim().split("\n");
@@ -217,10 +217,10 @@ public class RootUtils {
         }
     }
 
-    public static String readFile(Uri uri) {
+    public static String readFile(File file) {
         String r = "";
         try {
-            BufferedReader br = runCommand("cat " + uri.getPath() + "\n");
+            BufferedReader br = runCommand("cat " + file.getAbsolutePath() + "\n");
             if (br == null) return null;
             String line;
             while ((line = br.readLine()) != null) {
