@@ -90,7 +90,6 @@ public class Editor extends EditText {
 
     // Settings
     private int mFontSize;
-    private boolean mShowLineNumbers;
 
     //region CONSTRUCTOR
     public Editor(final Context context, AttributeSet attrs) {
@@ -173,8 +172,6 @@ public class Editor extends EditText {
 
     public void updateSettings() {
         mFontSize = SettingsProvider.getInt(mActivity, SettingsProvider.FONT_SIZE, 16);
-        mShowLineNumbers =
-                SettingsProvider.getBoolean(mActivity, SettingsProvider.SHOW_LINE_NUMBERS, true);
     }
 
     public void setExtension(String ext) {
@@ -193,19 +190,11 @@ public class Editor extends EditText {
 
     public void updatePadding() {
         Context context = getContext();
-        if (mShowLineNumbers) {
-            setPadding(
-                    EditTextPadding.getPaddingWithLineNumbers(context, mFontSize),
-                    EditTextPadding.getPaddingTop(context),
-                    EditTextPadding.getPaddingTop(context),
-                    0);
-        } else {
-            setPadding(
-                    EditTextPadding.getPaddingWithoutLineNumbers(context),
-                    EditTextPadding.getPaddingTop(context),
-                    EditTextPadding.getPaddingTop(context),
-                    0);
-        }
+        setPadding(
+                EditTextPadding.getPaddingWithLineNumbers(context, mFontSize),
+                EditTextPadding.getPaddingTop(context),
+                EditTextPadding.getPaddingTop(context),
+                0);
         // add a padding from bottom
         mScrollView.setPadding(0, 0, 0, EditTextPadding.getPaddingBottom(context));
     }
@@ -237,17 +226,14 @@ public class Editor extends EditText {
 
         }
 
-        if (mShowLineNumbers) {
-            for (int i = 0; i < lineCount; i++) {
-                // if last line we count it anyway
-                if (isGoodLineArray[i]) {
-                    realLine = realLines[i];
-
-                    canvas.drawText(String.valueOf(realLine),
-                            numbersWidth, // they are all center aligned
-                            paddingTop + lineHeight * (i + 1),
-                            mPaintNumbers);
-                }
+        for (int i = 0; i < lineCount; i++) {
+            // if last line we count it anyway
+            if (isGoodLineArray[i]) {
+                realLine = realLines[i];
+                canvas.drawText(String.valueOf(realLine),
+                        numbersWidth, // they are all center aligned
+                        paddingTop + lineHeight * (i + 1),
+                        mPaintNumbers);
             }
         }
 
@@ -467,12 +453,8 @@ public class Editor extends EditText {
 
         disableTextChangedListener();
 
-        if (SettingsProvider.getBoolean(mActivity, SettingsProvider.HIGHLIGHT_SYNTAX, true)) {
-            setText(highlight(textToUpdate == null ? getEditableText() : Editable.Factory
-                    .getInstance().newEditable(textToUpdate), textToUpdate != null));
-        } else {
-            setText(textToUpdate == null ? getEditableText() : textToUpdate);
-        }
+        setText(highlight(textToUpdate == null ? getEditableText() : Editable.Factory
+                .getInstance().newEditable(textToUpdate), textToUpdate != null));
 
         enableTextChangedListener();
 
