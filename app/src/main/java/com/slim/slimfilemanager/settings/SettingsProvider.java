@@ -33,7 +33,6 @@ public class SettingsProvider {
 
     // Text Editor
     public static final String USE_MONOSPACE = "use_monospace";
-    public static final String ACCESSORY_VIEW = "accessory_view";
     public static final String EDITOR_WRAP_CONTENT = "editor_wrap_content";
     public static final String SHOW_LINE_NUMBERS = "show_line_numbers";
     public static final String HIGHLIGHT_SYNTAX = "highlight_syntax";

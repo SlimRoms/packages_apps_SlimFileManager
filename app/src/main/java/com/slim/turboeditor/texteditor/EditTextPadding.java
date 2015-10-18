@@ -31,9 +31,7 @@ public class EditTextPadding {
     }
 
     public static int getPaddingBottom(Context context) {
-        boolean useAccessoryView =
-                SettingsProvider.getBoolean(context, SettingsProvider.ACCESSORY_VIEW, true);
-        return (int) PixelDipConverter.convertDpToPixel(useAccessoryView ? 50 : 0, context);
+        return (int) PixelDipConverter.convertDpToPixel(50, context);
     }
 
     public static int getPaddingWithLineNumbers(Context context, float fontSize) {
