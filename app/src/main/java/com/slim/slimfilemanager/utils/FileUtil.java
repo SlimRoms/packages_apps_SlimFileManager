@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.slim.slimfilemanager.settings.SettingsProvider;
+import com.slim.turboeditor.util.GreatUri;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -213,5 +214,18 @@ public class FileUtil {
 
     public static String removeExtension(String s) {
         return FilenameUtils.removeExtension(new File(s).getName());
+    }
+
+    public static void writeFile(Context context, String content, GreatUri uri, String encoding) {
+        File file = new File(uri.getFilePath());
+        if (file.canWrite()) {
+            try {
+                FileUtils.write(file, content, encoding);
+            } catch (IOException e) {
+                // ignore
+            }
+        } else {
+            RootUtils.writeFile(context, content, file, encoding);
+        }
     }
 }

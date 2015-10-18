@@ -21,7 +21,7 @@ package com.slim.turboeditor.texteditor;
 
 import android.content.Context;
 
-import com.slim.turboeditor.preferences.PreferenceHelper;
+import com.slim.slimfilemanager.settings.SettingsProvider;
 import com.slim.turboeditor.util.PixelDipConverter;
 
 public class EditTextPadding {
@@ -31,7 +31,8 @@ public class EditTextPadding {
     }
 
     public static int getPaddingBottom(Context context) {
-        boolean useAccessoryView = PreferenceHelper.getUseAccessoryView(context);
+        boolean useAccessoryView =
+                SettingsProvider.getBoolean(context, SettingsProvider.ACCESSORY_VIEW, true);
         return (int) PixelDipConverter.convertDpToPixel(useAccessoryView ? 50 : 0, context);
     }
 

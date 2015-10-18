@@ -25,6 +25,7 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -92,10 +93,10 @@ public class FindTextDialog extends DialogFragment {
 
     @Override
     public void onStart() {
-        super.onStart();    //super.onStart() is where dialog.show() is actually called on the underlying dialog, so we have to do it after this point
+        super.onStart();
         AlertDialog d = (AlertDialog) getDialog();
         if (d != null) {
-            Button positiveButton = (Button) d.getButton(Dialog.BUTTON_POSITIVE);
+            Button positiveButton = d.getButton(Dialog.BUTTON_POSITIVE);
             positiveButton.setText(getString(R.string.find));
             positiveButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -104,7 +105,7 @@ public class FindTextDialog extends DialogFragment {
                 }
             });
 
-            Button negativeButton = (Button) d.getButton(Dialog.BUTTON_NEGATIVE);
+            Button negativeButton = d.getButton(Dialog.BUTTON_NEGATIVE);
             negativeButton.setText(getString(android.R.string.cancel));
             negativeButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -131,14 +132,23 @@ public class FindTextDialog extends DialogFragment {
     private class SearchTask extends AsyncTask<Void, Void, Void> {
 
         LinkedList<Integer> foundIndex;
-        boolean foundSomething;
+        boolean foundSomething, caseSensitive, isRegex;
+        String whatToSearch;
+
+        @Override
+        protected void onPreExecute() {
+            whatToSearch = textToFind.getText().toString();
+            caseSensitive = matchCaseCheck.isChecked();
+            isRegex = regexCheck.isChecked();
+        }
 
         @Override
         protected Void doInBackground(Void... params) {
             String allText = getArguments().getString("allText");
-            String whatToSearch = textToFind.getText().toString();
-            boolean caseSensitive = matchCaseCheck.isChecked();
-            boolean isRegex = regexCheck.isChecked();
+            if (TextUtils.isEmpty(allText)) {
+                return null;
+            }
+
             foundIndex = new LinkedList<>();
             Matcher matcher = null;
             foundSomething = false;
@@ -146,9 +156,11 @@ public class FindTextDialog extends DialogFragment {
             if (isRegex) {
                 try {
                     if (caseSensitive)
-                        matcher = Pattern.compile(whatToSearch, Pattern.MULTILINE).matcher(allText);
+                        matcher = Pattern.compile(
+                                whatToSearch, Pattern.MULTILINE).matcher(allText);
                     else
-                        matcher = Pattern.compile(whatToSearch, Pattern.CASE_INSENSITIVE | Pattern.MULTILINE).matcher(allText);
+                        matcher = Pattern.compile(whatToSearch,
+                                Pattern.CASE_INSENSITIVE | Pattern.MULTILINE).matcher(allText);
                 } catch (Exception e) {
                     isRegex = false;
                 }
@@ -161,7 +173,7 @@ public class FindTextDialog extends DialogFragment {
                     foundIndex.add(matcher.start());
                 }
             } else {
-                if (caseSensitive == false) { // by default is case sensitive
+                if (caseSensitive) {
                     whatToSearch = whatToSearch.toLowerCase();
                     allText = allText.toLowerCase();
                 }
@@ -193,13 +205,14 @@ public class FindTextDialog extends DialogFragment {
                     return;
                     // else we return positions and other things
                 else {
-                    SearchResult searchResult = new SearchResult(foundIndex, textToFind.length(), replaceCheck.isChecked(), textToFind.getText().toString(), textToReplace.getText().toString());
+                    SearchResult searchResult = new SearchResult(
+                            foundIndex, textToFind.length(), replaceCheck.isChecked(),
+                            textToFind.getText().toString(), textToReplace.getText().toString());
                     searchDialogInterface.onSearchDone(searchResult);
                 }
-            } else {
-
             }
-            Toast.makeText(getActivity(), String.format(getString(R.string.occurrences_found), foundIndex.size()), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), String.format(getString(R.string.occurrences_found),
+                    foundIndex.size()), Toast.LENGTH_SHORT).show();
             // dismiss the dialog
             FindTextDialog.this.dismiss();
         }

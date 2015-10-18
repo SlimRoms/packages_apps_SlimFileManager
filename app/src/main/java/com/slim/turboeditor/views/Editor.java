@@ -1,7 +1,6 @@
 package com.slim.turboeditor.views;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Typeface;
@@ -23,12 +22,11 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.slim.slimfilemanager.R;
+import com.slim.slimfilemanager.settings.SettingsProvider;
 import com.slim.slimfilemanager.utils.MimeUtils;
 import com.slim.turboeditor.activity.MainActivity;
-import com.slim.turboeditor.preferences.PreferenceHelper;
 import com.slim.turboeditor.texteditor.EditTextPadding;
 import com.slim.turboeditor.texteditor.LineUtils;
-import com.slim.turboeditor.texteditor.PageSystem;
 import com.slim.turboeditor.texteditor.Patterns;
 
 import java.util.Arrays;
@@ -53,7 +51,6 @@ public class Editor extends EditText {
     private EditHistory mEditHistory;
 
     private GoodScrollView mScrollView;
-    private PageSystem mPageSystem;
     private MainActivity mActivity;
 
     /**
@@ -83,30 +80,29 @@ public class Editor extends EditText {
      * because it would mess up the undo history.
      */
     private boolean mIsUndoOrRedo;
-    private Matcher m;
     private boolean mShowUndo, mShowRedo;
     private boolean canSaveFile;
     private KeyListener keyListener;
     private int firstVisibleIndex, firstColoredIndex, lastVisibleIndex;
     private int deviceHeight;
-    private int editorHeight;
     private boolean[] isGoodLineArray;
     private int[] realLines;
-    private boolean wrapContent;
-    private CharSequence textToHighlight;
-    //endregion
+
+    // Settings
+    private int mFontSize;
+    private boolean mShowLineNumbers;
 
     //region CONSTRUCTOR
     public Editor(final Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public void setupEditor(MainActivity activity, GoodScrollView goodScrollView, PageSystem pageSystem) {
-        //setLayerType(View.LAYER_TYPE_NONE, null);
-
+    public void setupEditor(MainActivity activity,
+                            GoodScrollView goodScrollView) {
         mActivity = activity;
         mScrollView = goodScrollView;
-        mPageSystem = pageSystem;
+
+        updateSettings();
 
         mEditHistory = new EditHistory();
         mChangeListener = new EditTextChangeListener();
@@ -128,46 +124,39 @@ public class Editor extends EditText {
         }*/
         // update the padding of the editor
         updatePadding();
-
-        if (PreferenceHelper.getReadOnly(getContext())) {
-            setReadOnly(true);
-        } else {
             setReadOnly(false);
-            if (PreferenceHelper.getSuggestionActive(getContext())) {
-                setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE
-                        | InputType.TYPE_TEXT_FLAG_IME_MULTI_LINE);
-            } else {
-                setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE
-                        | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType
-                        .TYPE_TEXT_VARIATION_VISIBLE_PASSWORD | InputType
-                        .TYPE_TEXT_FLAG_IME_MULTI_LINE);
-            }
+
+        if (SettingsProvider.getBoolean(mActivity, SettingsProvider.SUGGESTION_ACTIVE, false)) {
+            setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE
+                    | InputType.TYPE_TEXT_FLAG_IME_MULTI_LINE);
+        } else {
+            setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE
+                    | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType
+                    .TYPE_TEXT_VARIATION_VISIBLE_PASSWORD | InputType
+                    .TYPE_TEXT_FLAG_IME_MULTI_LINE);
         }
 
-        if (PreferenceHelper.getUseMonospace(getContext())) {
+        if (SettingsProvider.getBoolean(mActivity, SettingsProvider.USE_MONOSPACE, false)) {
             setTypeface(Typeface.MONOSPACE);
         } else {
             setTypeface(Typeface.DEFAULT);
         }
-        setTextSize(PreferenceHelper.getFontSize(getContext()));
 
         setFocusable(true);
         setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!PreferenceHelper.getReadOnly(getContext())) {
-                    mScrollView.tempDisableListener(1000);
-                    ((InputMethodManager) getContext().getSystemService(Context
-                            .INPUT_METHOD_SERVICE))
-                            .showSoftInput(Editor.this, InputMethodManager.SHOW_IMPLICIT);
-                }
+                mScrollView.tempDisableListener(1000);
+                ((InputMethodManager) getContext().getSystemService(Context
+                        .INPUT_METHOD_SERVICE))
+                        .showSoftInput(Editor.this, InputMethodManager.SHOW_IMPLICIT);
 
             }
         });
         setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus && !PreferenceHelper.getReadOnly(getContext())) {
+                if (hasFocus) {
                     mScrollView.tempDisableListener(1000);
                     ((InputMethodManager) getContext().getSystemService(Context
                             .INPUT_METHOD_SERVICE))
@@ -177,8 +166,15 @@ public class Editor extends EditText {
         });
 
         setMaxHistorySize(30);
+        setTextSize(mFontSize);
 
         resetVariables();
+    }
+
+    public void updateSettings() {
+        mFontSize = SettingsProvider.getInt(mActivity, SettingsProvider.FONT_SIZE, 16);
+        mShowLineNumbers =
+                SettingsProvider.getBoolean(mActivity, SettingsProvider.SHOW_LINE_NUMBERS, true);
     }
 
     public void setExtension(String ext) {
@@ -197,9 +193,9 @@ public class Editor extends EditText {
 
     public void updatePadding() {
         Context context = getContext();
-        if (PreferenceHelper.getLineNumbers(context)) {
+        if (mShowLineNumbers) {
             setPadding(
-                    EditTextPadding.getPaddingWithLineNumbers(context, PreferenceHelper.getFontSize(context)),
+                    EditTextPadding.getPaddingWithLineNumbers(context, mFontSize),
                     EditTextPadding.getPaddingTop(context),
                     EditTextPadding.getPaddingTop(context),
                     0);
@@ -221,7 +217,7 @@ public class Editor extends EditText {
         final float scale = getContext().getResources().getDisplayMetrics().density;
         mPaintNumbers.setTextSize((int) (size * scale * 0.65f));
         numbersWidth = (int) (EditTextPadding.getPaddingWithLineNumbers(getContext(),
-                PreferenceHelper.getFontSize(getContext())) * 0.8);
+                mFontSize) * 0.8);
         lineHeight = getLineHeight();
     }
 
@@ -229,10 +225,11 @@ public class Editor extends EditText {
     @Override
     public void onDraw(@NonNull final Canvas canvas) {
 
-        if (lineCount != getLineCount() || startingLine != mPageSystem.getStartingLine()) {
-            startingLine = mPageSystem.getStartingLine();
+        if (lineCount != getLineCount()
+                || startingLine != mActivity.getPageSystem().getStartingLine()) {
+            startingLine = mActivity.getPageSystem().getStartingLine();
             lineCount = getLineCount();
-            lineUtils.updateHasNewLineArray(mPageSystem
+            lineUtils.updateHasNewLineArray(mActivity.getPageSystem()
                     .getStartingLine(), lineCount, getLayout(), getText().toString());
 
             isGoodLineArray = lineUtils.getGoodLines();
@@ -240,13 +237,10 @@ public class Editor extends EditText {
 
         }
 
-        if (PreferenceHelper.getLineNumbers(getContext())) {
-            wrapContent = PreferenceHelper.getWrapContent(getContext());
-
+        if (mShowLineNumbers) {
             for (int i = 0; i < lineCount; i++) {
                 // if last line we count it anyway
-                if (!wrapContent
-                        || isGoodLineArray[i]) {
+                if (isGoodLineArray[i]) {
                     realLine = realLines[i];
 
                     canvas.drawText(String.valueOf(realLine),
@@ -473,7 +467,7 @@ public class Editor extends EditText {
 
         disableTextChangedListener();
 
-        if (PreferenceHelper.getSyntaxHighlight(getContext())) {
+        if (SettingsProvider.getBoolean(mActivity, SettingsProvider.HIGHLIGHT_SYNTAX, true)) {
             setText(highlight(textToUpdate == null ? getEditableText() : Editable.Factory
                     .getInstance().newEditable(textToUpdate), textToUpdate != null));
         } else {
@@ -515,11 +509,11 @@ public class Editor extends EditText {
             return editable;
         }
 
-        editorHeight = getHeight();
-
-        if (!newText && editorHeight > 0) {
-            firstVisibleIndex = getLayout().getLineStart(lineUtils.getFirstVisibleLine(mScrollView, editorHeight, lineCount));
-            lastVisibleIndex = getLayout().getLineEnd(lineUtils.getLastVisibleLine(mScrollView, editorHeight, lineCount, deviceHeight) - 1);
+        if (!newText && getHeight() > 0) {
+            firstVisibleIndex = getLayout().getLineStart(
+                    LineUtils.getFirstVisibleLine(mScrollView, getHeight(), lineCount));
+            lastVisibleIndex = getLayout().getLineEnd(
+                    LineUtils.getLastVisibleLine(mScrollView, getHeight(), lineCount, deviceHeight) - 1);
         } else {
             firstVisibleIndex = 0;
             lastVisibleIndex = CHARS_TO_COLOR;
@@ -536,7 +530,7 @@ public class Editor extends EditText {
             firstColoredIndex = lastVisibleIndex;
 
 
-        textToHighlight = editable.subSequence(firstColoredIndex, lastVisibleIndex);
+        CharSequence textToHighlight = editable.subSequence(firstColoredIndex, lastVisibleIndex);
 
         if (TextUtils.isEmpty(mExtension))
             mExtension = "";
@@ -629,19 +623,20 @@ public class Editor extends EditText {
             color = getResources().getColor(R.color.syntax_comment);
         } else if (pattern.equals(Patterns.GENERAL_STRINGS)) {
             color = getResources().getColor(R.color.syntax_string);
-        } else if (pattern.equals(Patterns.NUMBERS) || pattern.equals(Patterns.SYMBOLS) || pattern.equals(Patterns.NUMBERS_OR_SYMBOLS)) {
+        } else if (pattern.equals(Patterns.NUMBERS) || pattern.equals(Patterns.SYMBOLS)
+                || pattern.equals(Patterns.NUMBERS_OR_SYMBOLS)) {
             color = getResources().getColor(R.color.syntax_number);
         } else if (pattern.equals(Patterns.PHP_VARIABLES)) {
             color = getResources().getColor(R.color.syntax_variable);
         }
 
-        m = pattern.matcher(textToHighlight);
+        Matcher matcher = pattern.matcher(textToHighlight);
 
-        while (m.find()) {
+        while (matcher.find()) {
             allText.setSpan(
                     new ForegroundColorSpan(color),
-                    start + m.start(),
-                    start + m.end(),
+                    start + matcher.start(),
+                    start + matcher.end(),
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
     }
@@ -653,107 +648,6 @@ public class Editor extends EditText {
         mEditHistory.clear();
         mShowUndo = getCanUndo();
         mShowRedo = getCanRedo();
-    }
-
-    /**
-     * Store preferences.
-     */
-    public void storePersistentState(
-            SharedPreferences.Editor editor,
-            String prefix) {
-        // Store hash code of text in the editor so that we can check if the
-        // editor contents has changed.
-        editor.putString(prefix + ".hash",
-                String.valueOf(
-                        getText().toString().hashCode()));
-        editor.putInt(prefix + ".maxSize",
-                mEditHistory.mmMaxHistorySize);
-        editor.putInt(prefix + ".position",
-                mEditHistory.mmPosition);
-        editor.putInt(prefix + ".size",
-                mEditHistory.mmHistory.size());
-
-        int i = 0;
-        for (EditItem ei : mEditHistory.mmHistory) {
-            String pre = prefix + "." + i;
-
-            editor.putInt(pre + ".start", ei.mmStart);
-            editor.putString(pre + ".before",
-                    ei.mmBefore.toString());
-            editor.putString(pre + ".after",
-                    ei.mmAfter.toString());
-
-            i++;
-        }
-    }
-
-    /**
-     * Restore preferences.
-     *
-     * @param prefix The preference key prefix
-     *               used when state was stored.
-     * @return did restore succeed? If this is
-     * false, the undo history will be empty.
-     */
-    public boolean restorePersistentState(
-            SharedPreferences sp, String prefix)
-            throws IllegalStateException {
-
-        boolean ok =
-                doRestorePersistentState(sp, prefix);
-        if (!ok) {
-            mEditHistory.clear();
-        }
-
-        return ok;
-    }
-
-    private boolean doRestorePersistentState(
-            SharedPreferences sp, String prefix) {
-
-        String hash =
-                sp.getString(prefix + ".hash", null);
-        if (hash == null) {
-            // No state to be restored.
-            return true;
-        }
-
-        if (Integer.valueOf(hash)
-                != getText().toString().hashCode()) {
-            return false;
-        }
-
-        mEditHistory.clear();
-        mEditHistory.mmMaxHistorySize =
-                sp.getInt(prefix + ".maxSize", -1);
-
-        int count = sp.getInt(prefix + ".size", -1);
-        if (count == -1) {
-            return false;
-        }
-
-        for (int i = 0; i < count; i++) {
-            String pre = prefix + "." + i;
-
-            int start = sp.getInt(pre + ".start", -1);
-            String before =
-                    sp.getString(pre + ".before", null);
-            String after =
-                    sp.getString(pre + ".after", null);
-
-            if (start == -1
-                    || before == null
-                    || after == null) {
-                return false;
-            }
-            mEditHistory.add(
-                    new EditItem(start, before, after));
-        }
-
-        mEditHistory.mmPosition =
-                sp.getInt(prefix + ".position", -1);
-        return mEditHistory.mmPosition != -1;
-
     }
 
     /**
@@ -841,10 +735,6 @@ public class Editor extends EditText {
          * Maximum undo history size.
          */
         private int mmMaxHistorySize = -1;
-
-        private int size() {
-            return mmHistory.size();
-        }
 
         /**
          * Clear history.

@@ -23,15 +23,13 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.os.Bundle;
-import android.support.v7.widget.SwitchCompat;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.CompoundButton;
 import android.widget.ListView;
 
 import com.slim.slimfilemanager.R;
-import com.slim.turboeditor.preferences.PreferenceHelper;
+import com.slim.slimfilemanager.settings.SettingsProvider;
 
 import org.mozilla.universalchardet.Constants;
 
@@ -67,32 +65,22 @@ public class EncodingDialog extends DialogFragment implements AdapterView.OnItem
             Constants.CHARSET_WINDOWS_1253,
             Constants.CHARSET_WINDOWS_1255
     };
-    private ListView list;
 
     public static EncodingDialog newInstance() {
-        final EncodingDialog f = new EncodingDialog();
-        return f;
+        return new EncodingDialog();
     }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-        final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_encoding_list, null);
-        list = (ListView) view.findViewById(android.R.id.list);
-        SwitchCompat autoencoding = (SwitchCompat) view.findViewById(android.R.id.checkbox);
-        autoencoding.setChecked(PreferenceHelper.getAutoEncoding(getActivity()));
-
-        autoencoding.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                PreferenceHelper.setAutoencoding(getActivity(), isChecked);
-            }
-        });
+        final View view = View.inflate(getActivity(), R.layout.dialog_encoding_list, null);
+        ListView list = (ListView) view.findViewById(android.R.id.list);
 
         list.setAdapter(new ArrayAdapter<>(getActivity(), R.layout.item_single_choice, encodings));
         list.setOnItemClickListener(this);
 
-        String currentEncoding = PreferenceHelper.getEncoding(getActivity());
+        String currentEncoding = SettingsProvider.getString(
+                getActivity(), SettingsProvider.EDITOR_ENCODING, "UTF-8");
 
         for (int i = 0; i < encodings.length; i++) {
             if (currentEncoding.equals(encodings[i])) {

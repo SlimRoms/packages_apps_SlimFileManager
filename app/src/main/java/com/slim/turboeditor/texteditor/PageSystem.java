@@ -19,33 +19,38 @@
 
 package com.slim.turboeditor.texteditor;
 
-import android.content.Context;
-
-import com.slim.turboeditor.preferences.PreferenceHelper;
+import com.slim.slimfilemanager.settings.SettingsProvider;
+import com.slim.turboeditor.activity.MainActivity;
 
 import java.util.LinkedList;
 import java.util.List;
 
 public class PageSystem {
 
+    private MainActivity mActivity;
+
     private List<String> pages;
     private int[] startingLines;
     private int currentPage = 0;
     private PageSystemInterface pageSystemInterface;
 
-    public PageSystem(Context context, PageSystemInterface pageSystemInterface, String text) {
+    public PageSystem(MainActivity activity) {
+        mActivity = activity;
+        pageSystemInterface = activity;
+        pages = new LinkedList<>();
+    }
+
+    public void setFileText(String text) {
 
         final int charForPage = 20000;
         final int firstPageChars = 50000;
-
-        this.pageSystemInterface = pageSystemInterface;
-        pages = new LinkedList<>();
 
         int i = 0;
         int to;
         int nextIndexOfReturn;
         final int textLength = text.length();
-        boolean pageSystemEnabled = PreferenceHelper.getSplitText(context);
+        boolean pageSystemEnabled =
+                SettingsProvider.getBoolean(mActivity, SettingsProvider.SPLIT_TEXT, true);
 
         if (pageSystemEnabled) {
             while (i < textLength) {

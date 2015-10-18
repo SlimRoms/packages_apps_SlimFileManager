@@ -26,14 +26,9 @@ import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.slim.slimfilemanager.R;
+import com.slim.slimfilemanager.utils.FileUtil;
 import com.slim.turboeditor.activity.MainActivity;
 import com.slim.turboeditor.util.GreatUri;
-import com.spazedog.lib.rootfw4.RootFW;
-import com.spazedog.lib.rootfw4.Shell;
-import com.spazedog.lib.rootfw4.utils.File;
-import com.spazedog.lib.rootfw4.utils.Filesystem;
-
-import org.apache.commons.io.FileUtils;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -42,26 +37,27 @@ import java.nio.charset.Charset;
 public class SaveFileTask extends AsyncTask<Void, Void, Void> {
 
     private final MainActivity activity;
-    private final GreatUri uri;
+    private final GreatUri mUri;
     private final String newContent;
     private final String encoding;
     private String message;
-    private String positiveMessage, negativeMessage;
+    private String positiveMessage;
     private SaveFileInterface mCompletionHandler;
 
-    public SaveFileTask(MainActivity activity, GreatUri uri, String newContent, String encoding, SaveFileInterface mCompletionHandler) {
+    public SaveFileTask(MainActivity activity, GreatUri uri, String newContent,
+                        String encoding, SaveFileInterface completionHandler) {
         this.activity = activity;
-        this.uri = uri;
+        mUri = uri;
         this.newContent = newContent;
         this.encoding = encoding;
-        this.mCompletionHandler = mCompletionHandler;
+        mCompletionHandler = completionHandler;
     }
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        positiveMessage = String.format(activity.getString(R.string.file_saved_with_success), uri.getFileName());
-        negativeMessage = activity.getString(R.string.error);
+        positiveMessage = String.format(activity.getString(R.string.file_saved_with_success), mUri.getFileName());
+        message = positiveMessage;
     }
 
     /**
@@ -69,49 +65,14 @@ public class SaveFileTask extends AsyncTask<Void, Void, Void> {
      */
     @Override
     protected Void doInBackground(final Void... voids) {
-
-        boolean isRootNeeded = false;
-        Shell.Result resultRoot = null;
-
         try {
-            String filePath = uri.getFilePath();
+            String filePath = mUri.getFilePath();
             // if the uri has no path
             if (TextUtils.isEmpty(filePath)) {
-                writeUri(uri.getUri(), newContent, encoding);
+                writeUri(mUri.getUri(), newContent, encoding);
             } else {
-                isRootNeeded = !uri.isWritable();
-                if (isRootNeeded) {
-                    FileUtils.write(new java.io.File(filePath),
-                            newContent,
-                            encoding);
-                }
-                // if we can read the file associated with the uri
-                else {
-
-                    if (RootFW.connect()) {
-                        Filesystem.Disk systemPart = RootFW.getDisk(uri.getParentFolder());
-                        systemPart.mount(new String[]{"rw"});
-
-                        File file = RootFW.getFile(uri.getFilePath());
-                        resultRoot = file.writeResult(newContent);
-
-                        RootFW.disconnect();
-                    }
-
-                }
-
+                FileUtil.writeFile(activity, newContent, mUri, encoding);
             }
-
-
-            if (isRootNeeded) {
-                if (resultRoot != null && resultRoot.wasSuccessful()) {
-                    message = positiveMessage;
-                } else if (resultRoot != null) {
-                    message = negativeMessage + " command number: " + resultRoot.getCommandNumber() + " result code: " + resultRoot.getResultCode() + " error lines: " + resultRoot.getString();
-                } else
-                    message = negativeMessage;
-            } else
-                message = positiveMessage;
         } catch (Exception e) {
             e.printStackTrace();
             message = e.getMessage();

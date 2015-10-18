@@ -81,7 +81,7 @@ public class SaveFileDialog extends DialogFragment {
                                     @Override
                                     public void fileSaved(Boolean success) {
                                         if (getActivity() != null) {
-                                            ((MainActivity) getActivity()).savedAFile(uri, true);
+                                            ((MainActivity) getActivity()).savedAFile(uri);
                                         }
                                     }
                                 }).execute();

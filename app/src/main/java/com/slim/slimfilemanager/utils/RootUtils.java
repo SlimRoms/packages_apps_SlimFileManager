@@ -1,5 +1,7 @@
 package com.slim.slimfilemanager.utils;
 
+import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -8,8 +10,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 public class RootUtils {
+
+    protected final static Pattern sEscape = Pattern.compile("([\"\'`\\\\])");
 
     public static ArrayList<String> listFiles(String path, boolean showHidden) {
         if (!isRootAvailable()) return null;
@@ -198,5 +203,32 @@ public class RootUtils {
             e.printStackTrace();
         }
         return (value == 1 || value == 3);
+    }
+
+    public static void writeFile(Context context, String content, File file, String encoding) {
+        if (!isRootAvailable()) return;
+        String redirect = ">";
+        String[] input = content.trim().split("\n");
+        remountSystem("rw");
+        for (String line : input) {
+            String l = sEscape.matcher(line).replaceAll("\\\\$1");
+            runCommand("echo '" + l + "' " + redirect + " '" + file.getAbsolutePath() + "' ");
+            redirect = ">>";
+        }
+    }
+
+    public static String readFile(Uri uri) {
+        String r = "";
+        try {
+            BufferedReader br = runCommand("cat " + uri.getPath() + "\n");
+            if (br == null) return null;
+            String line;
+            while ((line = br.readLine()) != null) {
+                r += line;
+            }
+        } catch (IOException e) {
+            // ignore
+        }
+        return r;
     }
 }

@@ -30,7 +30,6 @@ import android.widget.NumberPicker;
 import com.slim.slimfilemanager.R;
 import com.slim.turboeditor.views.DialogHelper;
 
-// ...
 public class NumberPickerDialog extends DialogFragment {
 
     private NumberPicker mSeekBar;
@@ -39,7 +38,8 @@ public class NumberPickerDialog extends DialogFragment {
         return NumberPickerDialog.newInstance(action, 0, 50, 100);
     }
 
-    public static NumberPickerDialog newInstance(final Actions action, final int min, final int current, final int max) {
+    public static NumberPickerDialog newInstance(
+            final Actions action, final int min, final int current, final int max) {
         final NumberPickerDialog f = new NumberPickerDialog();
         final Bundle args = new Bundle();
         args.putSerializable("action", action);
@@ -54,6 +54,7 @@ public class NumberPickerDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         Actions action = (Actions) getArguments().getSerializable("action");
+        if (action == null) return null;
         int title;
         switch (action) {
             case FontSize:

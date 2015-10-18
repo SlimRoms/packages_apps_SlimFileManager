@@ -23,16 +23,14 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.text.InputType;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -44,12 +42,12 @@ import android.widget.Toast;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.slim.slimfilemanager.R;
 import com.slim.slimfilemanager.ThemeActivity;
+import com.slim.slimfilemanager.settings.SettingsProvider;
+import com.slim.slimfilemanager.utils.RootUtils;
 import com.slim.turboeditor.adapter.AdapterDrawer;
 import com.slim.turboeditor.dialogfragment.FindTextDialog;
 import com.slim.turboeditor.dialogfragment.NumberPickerDialog;
 import com.slim.turboeditor.dialogfragment.SaveFileDialog;
-import com.slim.turboeditor.preferences.PreferenceChangeType;
-import com.slim.turboeditor.preferences.PreferenceHelper;
 import com.slim.turboeditor.task.SaveFileTask;
 import com.slim.turboeditor.texteditor.FileUtils;
 import com.slim.turboeditor.texteditor.LineUtils;
@@ -61,19 +59,13 @@ import com.slim.turboeditor.util.AccessoryView;
 import com.slim.turboeditor.util.GreatUri;
 import com.slim.turboeditor.views.Editor;
 import com.slim.turboeditor.views.GoodScrollView;
-import com.spazedog.lib.rootfw4.RootFW;
-import com.spazedog.lib.rootfw4.utils.io.FileReader;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.ArrayUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends ThemeActivity implements FindTextDialog
         .SearchDialogInterface, GoodScrollView.ScrollInterface, PageSystem.PageSystemInterface,
@@ -113,7 +105,6 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
                     mEditor.replaceTextKeepCursor(null);
                 }
             };
-    private HorizontalScrollView horizontalScroll;
     private SearchResult searchResult;
     private PageSystem pageSystem;
     private PageSystemButtons pageSystemButtons;
@@ -138,8 +129,6 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
     @Override
     public void onResume() {
         super.onResume();
-        // Refresh the list view
-        refreshList();
     }
 
     @Override
@@ -152,7 +141,7 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
     public void onPause() {
         super.onPause();
 
-        if (PreferenceHelper.getAutoSave(getBaseContext()) && mEditor.canSaveFile()) {
+        if (SettingsProvider.getBoolean(this, "auto_save", false) && mEditor.canSaveFile()) {
             saveTheFile(false);
             mEditor.fileSaved(); // so it doesn't ask to save in onDetach
         }
@@ -166,6 +155,10 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
             e.printStackTrace();
         }
         super.onDestroy();
+    }
+
+    public PageSystem getPageSystem() {
+        return pageSystem;
     }
 
     @Override
@@ -205,25 +198,12 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
 
     @Override
     public void onBackPressed() {
-
-        try {
-            // if we should ignore the back button
-            if (PreferenceHelper.getIgnoreBackButton(this))
-                return;
-
-            if (fileOpened && mEditor.canSaveFile()) {
-                new SaveFileDialog(greatUri, pageSystem.getAllText(mEditor
-                        .getText().toString()), currentEncoding).show(getFragmentManager(),
-                        "dialog");
-            } else if (fileOpened) {
-
-                hideTextEditor();
-
-            } else {
-                super.onBackPressed();
-            }
-        } catch (Exception e) {
-            // maybe something is null, who knows
+        if (mEditor.canSaveFile()) {
+            new SaveFileDialog(greatUri, pageSystem.getAllText(mEditor
+                    .getText().toString()), currentEncoding).show(getFragmentManager(),
+                    "dialog");
+        } else {
+            super.onBackPressed();
         }
     }
 
@@ -234,7 +214,8 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
             if (requestCode == SELECT_FILE_CODE) {
 
                 final Uri data = intent.getData();
-                final GreatUri newUri = new GreatUri(data, AccessStorageApi.getPath(this, data), AccessStorageApi.getName(this, data));
+                final GreatUri newUri = new GreatUri(data, AccessStorageApi.getPath(this, data),
+                        AccessStorageApi.getName(this, data));
 
                 newFileToOpen(newUri, "");
             } else {
@@ -244,11 +225,10 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
                         AccessStorageApi.getPath(this, data), AccessStorageApi.getName(this, data));
 
                 // grantUriPermission(getPackageName(), data, Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                final int takeFlags = intent.getFlags()
-                        & (Intent.FLAG_GRANT_READ_URI_PERMISSION
-                        | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                 // Check for the freshest data.
-                getContentResolver().takePersistableUriPermission(data, takeFlags);
+                getContentResolver().takePersistableUriPermission(data,
+                        (Intent.FLAG_GRANT_READ_URI_PERMISSION
+                        | Intent.FLAG_GRANT_WRITE_URI_PERMISSION));
 
                 if (requestCode == READ_REQUEST_CODE || requestCode == CREATE_REQUEST_CODE) {
 
@@ -262,7 +242,7 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
                             currentEncoding, new SaveFileTask.SaveFileInterface() {
                         @Override
                         public void fileSaved(Boolean success) {
-                            savedAFile(greatUri, false);
+                            savedAFile(greatUri);
                             newFileToOpen(newUri, "");
                         }
                     }).execute();
@@ -399,7 +379,7 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
 
         if (searchResult.index < searchResult.numberOfResults() - 1) { // equal zero is not good
             searchResult.index++;
-            final int line = mEditor.getLineUtils().getLineFromIndex(searchResult.foundIndex.get
+            final int line = LineUtils.getLineFromIndex(searchResult.foundIndex.get
                     (searchResult.index), mEditor.getLineCount(), mEditor.getLayout());
 
 
@@ -454,42 +434,37 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
     }
 
     public void saveTheFile(boolean saveAs) {
-        if (!saveAs && greatUri != null && greatUri.getUri() != null && greatUri.getUri() != Uri.EMPTY)
+        if (!saveAs && greatUri != null && greatUri.getUri() != null && greatUri.getUri() != Uri.EMPTY) {
             new SaveFileTask(this, greatUri, pageSystem.getAllText(mEditor.getText()
                     .toString()), currentEncoding, new SaveFileTask.SaveFileInterface() {
                 @Override
                 public void fileSaved(Boolean success) {
-                    savedAFile(greatUri, true);
+                    savedAFile(greatUri);
                 }
             }).execute();
-        else {
-            if (PreferenceHelper.getUseStorageAccessFramework(this)) {
-                Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
-                intent.setType("*/*");
-                intent.putExtra(Intent.EXTRA_TITLE, greatUri.getFileName());
-                startActivityForResult(intent, SAVE_AS_REQUEST_CODE);
-            }
-
+        } else {
+            Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+            intent.setType("*/*");
+            intent.putExtra(Intent.EXTRA_TITLE, greatUri.getFileName());
+            startActivityForResult(intent, SAVE_AS_REQUEST_CODE);
         }
     }
 
     private void setupTextEditor() {
 
         verticalScroll = (GoodScrollView) findViewById(R.id.vertical_scroll);
-        horizontalScroll = (HorizontalScrollView) findViewById(R.id.horizontal_scroll);
         mEditor = (Editor) findViewById(R.id.editor);
 
         AccessoryView accessoryView = (AccessoryView) findViewById(R.id.accessoryView);
         accessoryView.setInterface(this);
 
         HorizontalScrollView parentAccessoryView = (HorizontalScrollView) findViewById(R.id.parent_accessory_view);
-        if (PreferenceHelper.getUseAccessoryView(this)) {
-            parentAccessoryView.setVisibility(View.VISIBLE);
-        } else {
-            parentAccessoryView.setVisibility(View.GONE);
-        }
+        parentAccessoryView.setVisibility(View.VISIBLE);
 
-        if (PreferenceHelper.getWrapContent(this)) {
+        HorizontalScrollView horizontalScroll =
+                (HorizontalScrollView) findViewById(R.id.horizontal_scroll);
+
+        if (SettingsProvider.getBoolean(this, SettingsProvider.EDITOR_WRAP_CONTENT, false)) {
             horizontalScroll.removeView(mEditor);
             verticalScroll.removeView(horizontalScroll);
             verticalScroll.addView(mEditor);
@@ -497,13 +472,13 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
 
         verticalScroll.setScrollInterface(this);
 
-        pageSystem = new PageSystem(this, this, "");
+        pageSystem = new PageSystem(this);
 
         pageSystemButtons = new PageSystemButtons(this, this,
                 (FloatingActionButton) findViewById(R.id.fabPrev),
                 (FloatingActionButton) findViewById(R.id.fabNext));
 
-        mEditor.setupEditor(this, verticalScroll, pageSystem);
+        mEditor.setupEditor(this, verticalScroll);
     }
 
     private void showTextEditor() {
@@ -560,12 +535,6 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
         }
     }
 
-    /**
-     * Show a dialog with the changelog
-     */
-    private void showChangeLog() {
-    }
-
     // closes the soft keyboard
     private void closeKeyBoard() throws NullPointerException {
         // Central system API to the overall input method framework (IMF) architecture
@@ -573,17 +542,19 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
                 (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 
         // Base interface for a remotable object
-        IBinder windowToken = getCurrentFocus().getWindowToken();
+        if (getCurrentFocus() != null) {
+            IBinder windowToken = getCurrentFocus().getWindowToken();
 
-        // Hide type
-        int hideType = InputMethodManager.HIDE_NOT_ALWAYS;
+            // Hide type
+            int hideType = InputMethodManager.HIDE_NOT_ALWAYS;
 
-        // Hide the KeyBoard
-        inputManager.hideSoftInputFromWindow(windowToken, hideType);
+            // Hide the KeyBoard
+            inputManager.hideSoftInputFromWindow(windowToken, hideType);
+        }
     }
 
     public void updateTextSyntax() {
-        if (!PreferenceHelper.getSyntaxHighlight(this) || mEditor.hasSelection() ||
+        if (mEditor.hasSelection() ||
                 updateHandler == null || colorRunnable_duringEditing == null)
             return;
 
@@ -592,51 +563,10 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
         updateHandler.postDelayed(colorRunnable_duringEditing, SYNTAX_DELAY_MILLIS_LONG);
     }
 
-    private void refreshList() {
-        refreshList(null, false, false);
-    }
-
-    private void refreshList(@Nullable GreatUri thisUri, boolean add, boolean delete) {
-        int max_recent_files = 15;
-        if (add)
-            max_recent_files--;
-
-        // File paths saved in preferences
-        String[] savedPaths = PreferenceHelper.getSavedPaths(this);
-        int first_index_of_array = savedPaths.length > max_recent_files ? savedPaths.length - max_recent_files : 0;
-        savedPaths = ArrayUtils.subarray(savedPaths, first_index_of_array, savedPaths.length);
-        // StringBuilder that will contain the file paths
-        StringBuilder sb = new StringBuilder();
-
-        // for cycle to convert paths to names
-        for (String path : savedPaths) {
-            Uri particularUri = Uri.parse(path);
-            String name = AccessStorageApi.getName(this, particularUri);
-            // Check that the file exist
-            // if is null or empty the particular url we dont use it
-            if (!particularUri.equals(Uri.EMPTY) && !TextUtils.isEmpty(name)) {
-                // if the particular uri is good
-                boolean good = false;
-                if (thisUri == null || thisUri.getUri() == null || thisUri.getUri() == Uri.EMPTY ||
-                        !thisUri.getUri().equals(particularUri)) {
-                    sb.append(path).append(",");
-                }
-            }
-            //}
-        }
-        // if is not null, empty, we have to add something and we dont already have this uri
-        if (thisUri != null && !thisUri.getUri().equals(Uri.EMPTY) && add && !ArrayUtils.contains(savedPaths, thisUri.getUri().toString())) {
-            sb.append(thisUri.getUri().toString()).append(",");
-        }
-        // save list without empty or non existed files
-        PreferenceHelper.setSavedPaths(this, sb);
-    }
-    //endregion
-
-    //region EVENTBUS
     void newFileToOpen(final GreatUri newUri, final String newFileText) {
 
-        if (fileOpened && mEditor != null && mEditor.canSaveFile() && greatUri != null && pageSystem != null && currentEncoding != null) {
+        if (fileOpened && mEditor != null && mEditor.canSaveFile()
+                && greatUri != null && pageSystem != null && currentEncoding != null) {
             new SaveFileDialog(greatUri, pageSystem.getAllText(mEditor
                     .getText().toString()), currentEncoding, true, newUri).show(getFragmentManager(),
                     "dialog");
@@ -669,7 +599,6 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
                     // if no new uri
                     if (newUri == null || newUri.getUri() == null || newUri.getUri() == Uri.EMPTY) {
                         fileText = newFileText;
-
                         return "txt";
                     } else {
                         String filePath = newUri.getFilePath();
@@ -677,20 +606,16 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
                         // if the uri has no path
                         if (TextUtils.isEmpty(filePath)) {
                             fileName = newUri.getFileName();
-                            readUri(newUri.getUri(), filePath, false);
+                            readUri(newUri.getUri(), false);
                             return FilenameUtils.getExtension(fileName).toLowerCase();
-                        }
-                        // if the uri has a path
-                        else {
+                        } else {
                             fileName = FilenameUtils.getName(filePath);
                             isRootRequired = !newUri.isReadable();
                             // if we cannot read the file, root permission required
                             if (isRootRequired) {
-                                readUri(newUri.getUri(), filePath, true);
-                            }
-                            // if we can read the file associated with the uri
-                            else {
-                                readUri(newUri.getUri(), filePath, false);
+                                readUri(newUri.getUri(), true);
+                            } else {
+                                readUri(newUri.getUri(), false);
                             }
                             return FilenameUtils.getExtension(fileName).toLowerCase();
                         }
@@ -700,18 +625,10 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
                     message = e.getMessage();
                     fileText = "";
                 }
-
-                /*while (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
-                    try {
-                        Thread.sleep(50);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }*/
                 return null;
             }
 
-            private void readUri(Uri uri, String path, boolean asRoot) throws IOException {
+            private void readUri(Uri uri, boolean asRoot) throws IOException {
 
 
                 BufferedReader buffer = null;
@@ -719,26 +636,14 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
                 String line;
 
                 if (asRoot) {
-
                     encoding = "UTF-8";
-
-                    // Connect the shared connection
-                    if (RootFW.connect()) {
-                        FileReader reader = RootFW.getFileReader(path);
-                        buffer = new BufferedReader(reader);
-                    }
+                    fileText = RootUtils.readFile(uri);
                 } else {
-
-                    boolean autoencoding = PreferenceHelper.getAutoEncoding(MainActivity.this);
-                    if (autoencoding) {
-                        encoding = FileUtils.getDetectedEncoding(getContentResolver().openInputStream(uri));
-                        if (encoding.isEmpty()) {
-                            encoding = PreferenceHelper.getEncoding(MainActivity.this);
-                        }
-                    } else {
-                        encoding = PreferenceHelper.getEncoding(MainActivity.this);
+                    encoding = FileUtils.getDetectedEncoding(getContentResolver().openInputStream(uri));
+                    if (encoding.isEmpty()) {
+                        encoding = SettingsProvider.getString(
+                                MainActivity.this, SettingsProvider.EDITOR_ENCODING, "UTF-8");
                     }
-
                     InputStream inputStream = getContentResolver().openInputStream(uri);
                     if (inputStream != null) {
                         buffer = new BufferedReader(new InputStreamReader(inputStream, encoding));
@@ -753,9 +658,6 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
                     buffer.close();
                     fileText = stringBuilder.toString();
                 }
-
-                if (isRootRequired)
-                    RootFW.disconnect();
             }
 
             @Override
@@ -764,12 +666,14 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
                 progressDialog.hide();
                 mEditor.setExtension(result);
 
+                Log.d("TEST", "onPostExecute");
+
                 if (!TextUtils.isEmpty(message)) {
                     Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
                     cannotOpenFile();
                 } else {
 
-                    pageSystem = new PageSystem(MainActivity.this, MainActivity.this, fileText);
+                    pageSystem.setFileText(fileText);
                     currentEncoding = encoding;
 
                     showTextEditor();
@@ -781,27 +685,19 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
                             getActionBar().setTitle(fileName);
 
                     }
-                    if (greatUri != null) {
-                        refreshList(greatUri, true, false);
-                    }
                 }
 
             }
         }.execute();
     }
 
-    public void savedAFile(GreatUri uri, boolean updateList) {
+    public void savedAFile(GreatUri uri) {
 
         if (uri != null) {
-
             greatUri = uri;
 
             String name = uri.getFileName();
             mEditor.setExtension(FilenameUtils.getExtension(name).toLowerCase());
-
-            if (updateList) {
-                refreshList(uri, true, false);
-            }
         }
 
         mEditor.clearHistory();
@@ -820,19 +716,14 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
      * Invoked by the EditorFragment
      */
     void cannotOpenFile() {
-        getActionBar().setTitle(getString(R.string.nome_app_turbo_editor));
+        if (getActionBar() != null)
+            getActionBar().setTitle(getString(R.string.nome_app_turbo_editor));
         invalidateOptionsMenu();
         // Replace fragment
         hideTextEditor();
     }
 
-    public void aPreferenceValueWasChanged(final PreferenceChangeType type) {
-        this.aPreferenceValueWasChanged(new ArrayList<PreferenceChangeType>() {{
-            add(type);
-        }});
-    }
-
-    void aPreferenceValueWasChanged(List<PreferenceChangeType> types) {
+    /*void onPreferencesChanged(String key) {
 
         if (types.contains(PreferenceChangeType.THEME_CHANGE)) {
             AccessoryView accessoryView = (AccessoryView) findViewById(R.id.accessoryView);
@@ -864,11 +755,11 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
             else
                 mEditor.setTypeface(Typeface.DEFAULT);
         } else if (types.contains(PreferenceChangeType.THEME_CHANGE)) {
-            /*if (PreferenceHelper.getLightTheme(this)) {
+            if (PreferenceHelper.getLightTheme(this)) {
                 mEditor.setTextColor(getResources().getColor(R.color.textColorInverted));
             } else {
                 mEditor.setTextColor(getResources().getColor(R.color.textColor));
-            }*/
+            }
         } else if (types.contains(PreferenceChangeType.TEXT_SUGGESTIONS) || types.contains(PreferenceChangeType.READ_ONLY)) {
             if (PreferenceHelper.getReadOnly(this)) {
                 mEditor.setReadOnly(true);
@@ -916,7 +807,7 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
                 }
             }
         }
-    }
+    }*/
 
     @Override
     public void nextPageClicked() {
@@ -932,12 +823,6 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
                 verticalScroll.smoothScrollTo(0, 0);
             }
         }, 200);
-
-        if (!PreferenceHelper.getPageSystemButtonsPopupShown(this)) {
-            PreferenceHelper.setPageSystemButtonsPopupShown(this, true);
-            Toast.makeText(this, getString(R.string.long_click_for_more_options),
-                    Toast.LENGTH_LONG).show();
-        }
     }
 
     @Override
@@ -954,12 +839,6 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
                 verticalScroll.smoothScrollTo(0, 0);
             }
         }, 200);
-
-        if (!PreferenceHelper.getPageSystemButtonsPopupShown(this)) {
-            PreferenceHelper.setPageSystemButtonsPopupShown(this, true);
-            Toast.makeText(this, getString(R.string.long_click_for_more_options),
-                    Toast.LENGTH_LONG).show();
-        }
     }
 
     @Override
@@ -1018,7 +897,7 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
     public void onScrollChanged(int l, int t, int oldl, int oldt) {
         pageSystemButtons.updateVisibility(Math.abs(t) > 10);
 
-        if (!PreferenceHelper.getSyntaxHighlight(this) || (mEditor.hasSelection() &&
+        if ((mEditor.hasSelection() &&
                 searchResult == null) || updateHandler == null || colorRunnable_duringScroll == null)
             return;
 
