@@ -238,7 +238,7 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
                             currentEncoding, new SaveFileTask.SaveFileInterface() {
                         @Override
                         public void fileSaved(Boolean success) {
-                            savedAFile(newFile);
+                            savedAFile(success);
                             newFileToOpen(newFile, "");
                         }
                     }).execute();
@@ -429,13 +429,13 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
         invalidateOptionsMenu();
     }
 
-    public void saveTheFile(boolean saveAs) {
+    public void saveTheFile(final boolean saveAs) {
         if (!saveAs && mFile != null && mFile.exists()) {
             new SaveFileTask(this, mFile, pageSystem.getAllText(mEditor.getText()
                     .toString()), currentEncoding, new SaveFileTask.SaveFileInterface() {
                 @Override
                 public void fileSaved(Boolean success) {
-                    savedAFile(mFile);
+                    savedAFile(success);
                 }
             }).execute();
         } else {
@@ -689,14 +689,7 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
         }.execute();
     }
 
-    public void savedAFile(File file) {
-
-        if (file != null) {
-            mFile = file;
-
-            String name = file.getName();
-            mEditor.setExtension(FilenameUtils.getExtension(name).toLowerCase());
-        }
+    public void savedAFile(boolean success) {
 
         mEditor.clearHistory();
         mEditor.fileSaved();
@@ -707,6 +700,8 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
+
+        if (success) finish();
     }
 
     /**
