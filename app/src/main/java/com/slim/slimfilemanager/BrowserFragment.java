@@ -23,6 +23,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -696,6 +697,7 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
                 case MENU_RENAME:
                     View view = View.inflate(getOwner().mContext, R.layout.add_folder, null);
                     final EditText folderName = (EditText) view.findViewById(R.id.folder_name);
+                    final File file = new File(SelectedFiles.getFiles().get(0));
                     if (id == ACTION_ADD_FOLDER) {
                         builder.setTitle(R.string.create_folder);
                         folderName.setHint(R.string.folder_name_hint);
@@ -703,8 +705,8 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
                         builder.setTitle(R.string.create_file);
                         folderName.setHint(R.string.file_name_hint);
                     } else {
-                        builder.setTitle(R.string.rename);
-                        folderName.setText(SelectedFiles.getFiles().get(0));
+                        builder.setTitle(file.getName());
+                        folderName.setText(file.getName());
                     }
                     builder.setView(view);
                     View.OnClickListener listener = new View.OnClickListener() {
@@ -713,59 +715,70 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
                             if (v.getId() == R.id.cancel) {
                                 dismiss();
                             } else if (v.getId() == R.id.create) {
-                                File newFolder = new File(getOwner().getCurrentPath()
-                                        + File.separator
-                                        + folderName.getText().toString());
-                                if (newFolder.exists()) {
-                                    if (id == ACTION_ADD_FILE) {
-                                        Toast.makeText(getActivity(), R.string.file_exists,
-                                                Toast.LENGTH_SHORT).show();
-                                    } else if (id == ACTION_ADD_FOLDER) {
-                                        Toast.makeText(getActivity(), R.string.folder_exists,
-                                                Toast.LENGTH_SHORT).show();
+                                if (id == ACTION_ADD_FILE || id == ACTION_ADD_FOLDER) {
+                                    File newFolder = new File(getOwner().getCurrentPath()
+                                            + File.separator
+                                            + folderName.getText().toString());
+                                    if (newFolder.exists()) {
+                                        if (id == ACTION_ADD_FILE) {
+                                            Toast.makeText(getActivity(), R.string.file_exists,
+                                                    Toast.LENGTH_SHORT).show();
+                                        } else if (id == ACTION_ADD_FOLDER) {
+                                            Toast.makeText(getActivity(), R.string.folder_exists,
+                                                    Toast.LENGTH_SHORT).show();
+                                        }
+                                        return;
                                     }
-                                    return;
-                                }
-                                if (id == ACTION_ADD_FOLDER) {
-                                    if (!newFolder.exists()) {
-                                        if (!newFolder.mkdirs()) {
-                                            if (SettingsProvider.getBoolean(getActivity(),
-                                                    SettingsProvider.KEY_ENABLE_ROOT, false)
-                                                    && RootUtils.isRootAvailable()) {
-                                                if (!RootUtils.createFolder(newFolder)) {
-                                                    Toast.makeText(getOwner().getActivity(),
-                                                            R.string.unable_to_create_folder,
-                                                            Toast.LENGTH_SHORT).show();
+                                    if (id == ACTION_ADD_FOLDER) {
+                                        if (!newFolder.exists()) {
+                                            if (!newFolder.mkdirs()) {
+                                                if (SettingsProvider.getBoolean(getActivity(),
+                                                        SettingsProvider.KEY_ENABLE_ROOT, false)
+                                                        && RootUtils.isRootAvailable()) {
+                                                    if (!RootUtils.createFolder(newFolder)) {
+                                                        Toast.makeText(getOwner().getActivity(),
+                                                                R.string.unable_to_create_folder,
+                                                                Toast.LENGTH_SHORT).show();
+                                                    }
                                                 }
                                             }
                                         }
-                                    }
-                                } else if (id == ACTION_ADD_FILE) {
-                                    try {
-                                        if (!newFolder.exists()) {
-                                            if (newFolder.getParentFile().canWrite()) {
-                                                if (!newFolder.createNewFile()) {
+                                    } else if (id == ACTION_ADD_FILE) {
+                                        try {
+                                            if (!newFolder.exists()) {
+                                                if (newFolder.getParentFile().canWrite()) {
+                                                    if (!newFolder.createNewFile()) {
+                                                        Toast.makeText(getOwner().mContext,
+                                                                R.string.unable_to_create_file,
+                                                                Toast.LENGTH_SHORT).show();
+                                                    }
+                                                } else if (!RootUtils.createFile(newFolder)) {
                                                     Toast.makeText(getOwner().mContext,
                                                             R.string.unable_to_create_file,
                                                             Toast.LENGTH_SHORT).show();
                                                 }
-                                            } else if (!RootUtils.createFile(newFolder)) {
-                                                Toast.makeText(getOwner().mContext,
-                                                        R.string.unable_to_create_file,
-                                                        Toast.LENGTH_SHORT).show();
                                             }
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
                                         }
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
                                     }
-                                }
-                                if (newFolder.exists()) {
-                                    getOwner().addFile(newFolder.getPath());
+                                    if (newFolder.exists()) {
+                                        getOwner().addFile(newFolder.getPath());
+                                    }
+                                } else if (id == MENU_RENAME) {
+                                    File newFile = new File(file.getParent()
+                                            + File.separator + folderName.getText().toString());
+                                    FileUtil.renameFile(getOwner().mContext, file, newFile);
+                                    getOwner().removeFile(file.getAbsolutePath());
+                                    getOwner().addFile(newFile.getAbsolutePath());
                                 }
                                 dismiss();
                             }
                         }
                     };
+                    if (id == MENU_RENAME) {
+                        ((Button) view.findViewById(R.id.create)).setText(R.string.rename);
+                    }
                     view.findViewById(R.id.cancel).setOnClickListener(listener);
                     view.findViewById(R.id.create).setOnClickListener(listener);
                     return builder.create();

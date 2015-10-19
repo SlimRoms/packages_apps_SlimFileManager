@@ -226,4 +226,14 @@ public class FileUtil {
             RootUtils.writeFile(file, content);
         }
     }
+
+    public static void renameFile(Context context, File oldFile, File newFile) {
+        try {
+            FileUtils.moveFile(oldFile, newFile);
+        } catch (IOException e) {
+            if (SettingsProvider.getBoolean(context, SettingsProvider.KEY_ENABLE_ROOT, false)) {
+                RootUtils.renameFile(oldFile, newFile);
+            }
+        }
+    }
 }

@@ -230,4 +230,10 @@ public class RootUtils {
         }
         return r;
     }
+
+    public static void renameFile(File oldFile, File newFile) {
+        remountSystem("rw");
+        runCommand("mv " + oldFile.getAbsolutePath() + " " + newFile.getAbsolutePath() + "\n");
+        remountSystem("ro");
+    }
 }
