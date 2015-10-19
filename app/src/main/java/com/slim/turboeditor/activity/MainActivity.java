@@ -149,7 +149,7 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
     }
 
     public void hideProgressDialog() {
-        mProgressDialog.hide();
+        mProgressDialog.dismiss();
     }
 
     @Override
