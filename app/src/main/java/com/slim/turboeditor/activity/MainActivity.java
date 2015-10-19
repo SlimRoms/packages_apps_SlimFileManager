@@ -31,7 +31,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -613,7 +612,6 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
         String fileName = "";
         String encoding = "UTF-16";
         boolean isRootRequired = false;
-        //ProgressDialog progressDialog;
         File newFile;
         String newFileText;
 
@@ -635,21 +633,12 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            if (isCancelled()) {
-                Log.d("TEST", "weak reference is null");
-            } else {
-                Log.d("TEST", "weak reference is not null");
-            }
         }
 
         @Override
         protected String doInBackground(Void... params) {
             try {
-                Log.d("TEST", "doInBackground");
-                if (isCancelled()) {
-                    Log.d("TEST", "isCancelled");
-                    return "";
-                }
+                if (isCancelled()) return "";
                 // if no new uri
                 if (newFile == null) {
                     fileText = newFileText;
@@ -689,8 +678,6 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
             StringBuilder stringBuilder = new StringBuilder();
             String line;
 
-            Log.d("TEST", "readUri");
-
             if (asRoot) {
                 encoding = "UTF-8";
                 fileText = RootUtils.readFile(file);
@@ -728,8 +715,6 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
             super.onPostExecute(result);
 
             if (isCancelled()) return;
-
-            Log.d("TEST", "onPostExecute");
 
             MainActivity activity = mActivityReference.get();
 
