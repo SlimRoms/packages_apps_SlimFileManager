@@ -66,6 +66,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class MainActivity extends ThemeActivity implements FindTextDialog
         .SearchDialogInterface, GoodScrollView.ScrollInterface, PageSystem.PageSystemInterface,
@@ -86,11 +88,11 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
     private final Handler updateHandler = new Handler();
     private boolean fileOpened = false;
 
-    private NewFileTask mNewFileTask = new NewFileTask();
+    private Executor mExecutor = Executors.newSingleThreadExecutor();
+    private NewFileTask mNewFileTask;
 
-    /*
-    * The Drawer Layout
-    */
+    private ProgressDialog mProgressDialog;
+
     private GoodScrollView verticalScroll;
     private Editor mEditor;
     private final Runnable colorRunnable_duringEditing =
@@ -117,6 +119,9 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
 
         setContentView(R.layout.activity_home);
 
+        mProgressDialog = new ProgressDialog(this);
+        mProgressDialog.setMessage(getString(R.string.please_wait));
+
         setupTextEditor();
         hideTextEditor();
         parseIntent(getIntent());
@@ -139,20 +144,29 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
         parseIntent(intent);
     }
 
+    public void showProgressDialog() {
+        mProgressDialog.show();
+    }
+
+    public void hideProgressDialog() {
+        mProgressDialog.hide();
+    }
+
     @Override
     public void onPause() {
         super.onPause();
+
+        if (mNewFileTask != null) {
+            mNewFileTask.cancel(true);
+            mNewFileTask = null;
+        }
+
+        hideProgressDialog();
 
         if (SettingsProvider.getBoolean(this, "auto_save", false) && mEditor.canSaveFile()) {
             saveTheFile(false);
             mEditor.fileSaved(); // so it doesn't ask to save in onDetach
         }
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        mNewFileTask.cancel(true);
     }
 
     @Override
@@ -579,18 +593,17 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
             return;
         }
 
-        if (mNewFileTask.getStatus() == AsyncTask.Status.RUNNING) {
+        showProgressDialog();
+
+        if (mNewFileTask != null && mNewFileTask.getStatus() == AsyncTask.Status.RUNNING) {
             mNewFileTask.cancel(true);
-            try {
-                mNewFileTask.wait();
-            } catch (InterruptedException e) {
-                // ignore
-            }
         }
+        mFile = newFile;
+        mNewFileTask = new NewFileTask();
         mNewFileTask.setMainActivity(this);
         mNewFileTask.setNewFile(newFile);
         mNewFileTask.setNewFileText(newFileText);
-        mNewFileTask.execute();
+        mNewFileTask.executeOnExecutor(mExecutor);
     }
 
     private static class NewFileTask extends AsyncTask<Void, Void, String> {
@@ -600,7 +613,7 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
         String fileName = "";
         String encoding = "UTF-16";
         boolean isRootRequired = false;
-        ProgressDialog progressDialog;
+        //ProgressDialog progressDialog;
         File newFile;
         String newFileText;
 
@@ -616,25 +629,26 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
         }
 
         private void setMainActivity(MainActivity activity) {
-            mActivityReference = new WeakReference<MainActivity>(activity);
+            mActivityReference = new WeakReference<>(activity);
         }
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            // Close the drawer
-            if (mActivityReference.get() == null) return;
-            progressDialog = new ProgressDialog(mActivityReference.get());
-            progressDialog.setMessage(mActivityReference.get().getString(R.string.please_wait));
-            progressDialog.show();
+            if (isCancelled()) {
+                Log.d("TEST", "weak reference is null");
+            } else {
+                Log.d("TEST", "weak reference is not null");
+            }
         }
 
         @Override
         protected String doInBackground(Void... params) {
             try {
-                MainActivity activity = mActivityReference.get();
-                if (activity != null) {
-                    activity.mFile = newFile;
+                Log.d("TEST", "doInBackground");
+                if (isCancelled()) {
+                    Log.d("TEST", "isCancelled");
+                    return "";
                 }
                 // if no new uri
                 if (newFile == null) {
@@ -675,6 +689,8 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
             StringBuilder stringBuilder = new StringBuilder();
             String line;
 
+            Log.d("TEST", "readUri");
+
             if (asRoot) {
                 encoding = "UTF-8";
                 fileText = RootUtils.readFile(file);
@@ -710,14 +726,18 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            progressDialog.hide();
-            //mEditor.setExtension(result);
+
+            if (isCancelled()) return;
 
             Log.d("TEST", "onPostExecute");
 
             MainActivity activity = mActivityReference.get();
 
             if (activity == null) return;
+
+            activity.mEditor.setExtension(result);
+
+            activity.hideProgressDialog();
 
             if (!TextUtils.isEmpty(message)) {
                 Toast.makeText(activity, message, Toast.LENGTH_LONG).show();
@@ -740,7 +760,7 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
             }
 
         }
-    };
+    }
 
     public void savedAFile(boolean success) {
 
