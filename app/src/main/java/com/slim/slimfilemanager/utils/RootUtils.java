@@ -1,7 +1,5 @@
 package com.slim.slimfilemanager.utils;
 
-import android.content.Context;
-import android.net.Uri;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -225,6 +223,7 @@ public class RootUtils {
             String line;
             while ((line = br.readLine()) != null) {
                 r += line;
+                r += "\n";
             }
         } catch (IOException e) {
             // ignore
