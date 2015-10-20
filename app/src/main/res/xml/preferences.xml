@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:manager="http://schemas.android.com/apk/res-auto">
 
+    <PreferenceCategory
+        android:title="@string/file_manager" />
     <SwitchPreference
         android:key="enable_root"
         android:title="@string/enable_root_title" />
@@ -17,5 +20,41 @@
         android:defaultValue="sort_mode_name"
         android:entries="@array/sort_mode_entries"
         android:entryValues="@array/sort_mode_values" />
+
+    <PreferenceCategory
+        android:title="@string/text_editor" />
+
+    <SwitchPreference
+        android:key="use_monospace"
+        android:title="@string/use_monospace"
+        android:defaultValue="false" />
+
+    <ListPreference
+        android:key="editor_encoding"
+        android:title="@string/encoding"
+        android:summary="%s" />
+
+    <SwitchPreference
+        android:key="editor_wrap_content"
+        android:title="@string/wrap_content"
+        android:defaultValue="true" />
+
+    <SwitchPreference
+        android:key="suggestion_active"
+        android:title="@string/keyboard_suggestions_and_swipe"
+        android:defaultValue="false" />
+
+    <SwitchPreference
+        android:key="page_system_active"
+        android:title="@string/split_text_if_too_long"
+        android:defaultValue="true" />
+
+    <com.slim.preference.NumberPickerPreference
+        android:key="font_size"
+        android:title="@string/font_size"
+        manager:min="1"
+        manager:max="36"
+        manager:defaultValue="16"
+        android:summary="%s"/>
 
 </PreferenceScreen>

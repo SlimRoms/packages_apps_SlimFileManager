@@ -8,6 +8,7 @@ import android.preference.SwitchPreference;
 
 import com.slim.slimfilemanager.R;
 import com.slim.slimfilemanager.utils.RootUtils;
+import com.slim.utils.Constant;
 
 public class SettingsFragment extends PreferenceFragment {
 
@@ -58,5 +59,13 @@ public class SettingsFragment extends PreferenceFragment {
                 return true;
             }
         });
+
+        value = SettingsProvider.getString(getActivity(), SettingsProvider.EDITOR_ENCODING,
+                Constant.DEFAULT_ENCODING);
+
+        ListPreference encoding = (ListPreference) findPreference(SettingsProvider.EDITOR_ENCODING);
+        encoding.setEntries(Constant.ENCODINGS);
+        encoding.setEntryValues(Constant.ENCODINGS);
+        encoding.setValue(value);
     }
 }

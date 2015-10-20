@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">SlimFileManager</string>
 
+    <string name="file_manager">File Manager</string>
+
     <string name="blank" translatable="false">---</string>
 
     <!-- Shortcuts -->
@@ -94,6 +96,8 @@
     <string name="sort_mode_size">Size</string>
     <string name="sort_mode_type">Type</string>
 
+    <!-- Text Editor -->
+    <string name="text_editor">Text Editor</string>
     <string name="use_monospace">Use monospace</string>
     <string name="recent_files">Recent files</string>
     <string name="font_size">Font size</string>
@@ -130,7 +134,7 @@
     <string name="extra_options">Extra options</string>
     <string name="split_text_if_too_long">Split the text if too long</string>
     <string name="ignore_back_button">Ignore back button</string>
-    <string name="codifica">Encoding</string>
+    <string name="encoding">Encoding</string>
     <string name="condividi">Share</string>
     <string name="info">Info</string>
     <string name="nome_app_turbo_editor">Turbo Editor</string>

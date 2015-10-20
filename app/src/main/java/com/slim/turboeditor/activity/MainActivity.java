@@ -56,6 +56,7 @@ import com.slim.turboeditor.texteditor.SearchResult;
 import com.slim.turboeditor.util.AccessoryView;
 import com.slim.turboeditor.views.Editor;
 import com.slim.turboeditor.views.GoodScrollView;
+import com.slim.utils.Constant;
 
 import org.apache.commons.io.FilenameUtils;
 
@@ -687,7 +688,7 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
                             .getContentResolver().openInputStream(Uri.fromFile(file)));
                     if (encoding.isEmpty()) {
                         encoding = SettingsProvider.getString(mActivityReference.get(),
-                                SettingsProvider.EDITOR_ENCODING, "UTF-8");
+                                SettingsProvider.EDITOR_ENCODING, Constant.DEFAULT_ENCODING);
                     }
                     InputStream inputStream = mActivityReference.get().
                             getContentResolver().openInputStream(Uri.fromFile(file));
