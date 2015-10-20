@@ -697,7 +697,12 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
                 case MENU_RENAME:
                     View view = View.inflate(getOwner().mContext, R.layout.add_folder, null);
                     final EditText folderName = (EditText) view.findViewById(R.id.folder_name);
-                    final File file = new File(SelectedFiles.getFiles().get(0));
+                    final File file;
+                    if (SelectedFiles.getFiles().size() > 0) {
+                        file = new File(SelectedFiles.getFiles().get(0));
+                    } else {
+                        file = new File("");
+                    }
                     if (id == ACTION_ADD_FOLDER) {
                         builder.setTitle(R.string.create_folder);
                         folderName.setHint(R.string.folder_name_hint);
@@ -723,7 +728,7 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
                                         if (id == ACTION_ADD_FILE) {
                                             Toast.makeText(getActivity(), R.string.file_exists,
                                                     Toast.LENGTH_SHORT).show();
-                                        } else if (id == ACTION_ADD_FOLDER) {
+                                        } else {
                                             Toast.makeText(getActivity(), R.string.folder_exists,
                                                     Toast.LENGTH_SHORT).show();
                                         }
@@ -743,7 +748,7 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
                                                 }
                                             }
                                         }
-                                    } else if (id == ACTION_ADD_FILE) {
+                                    } else {
                                         try {
                                             if (!newFolder.exists()) {
                                                 if (newFolder.getParentFile().canWrite()) {
@@ -765,7 +770,7 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
                                     if (newFolder.exists()) {
                                         getOwner().addFile(newFolder.getPath());
                                     }
-                                } else if (id == MENU_RENAME) {
+                                } else {
                                     File newFile = new File(file.getParent()
                                             + File.separator + folderName.getText().toString());
                                     FileUtil.renameFile(getOwner().mContext, file, newFile);
