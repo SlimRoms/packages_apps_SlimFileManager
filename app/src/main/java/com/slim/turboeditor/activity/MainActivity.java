@@ -23,7 +23,9 @@ import android.app.ActionBar;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -65,6 +67,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -93,6 +96,7 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
 
     private ProgressDialog mProgressDialog;
 
+    private HorizontalScrollView mHorizontalScroll;
     private GoodScrollView verticalScroll;
     private Editor mEditor;
     private final Runnable colorRunnable_duringEditing =
@@ -125,6 +129,8 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
         setupTextEditor();
         hideTextEditor();
         parseIntent(getIntent());
+
+        SettingsProvider.get(this).registerOnSharedPreferenceChangeListener(mPreferenceListener);
     }
 
 
@@ -176,6 +182,7 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
+        SettingsProvider.get(this).unregisterOnSharedPreferenceChangeListener(mPreferenceListener);
         super.onDestroy();
     }
 
@@ -481,12 +488,12 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
         HorizontalScrollView parentAccessoryView = (HorizontalScrollView) findViewById(R.id.parent_accessory_view);
         parentAccessoryView.setVisibility(View.VISIBLE);
 
-        HorizontalScrollView horizontalScroll =
+        mHorizontalScroll =
                 (HorizontalScrollView) findViewById(R.id.horizontal_scroll);
 
         if (SettingsProvider.getBoolean(this, SettingsProvider.EDITOR_WRAP_CONTENT, false)) {
-            horizontalScroll.removeView(mEditor);
-            verticalScroll.removeView(horizontalScroll);
+            mHorizontalScroll.removeView(mEditor);
+            verticalScroll.removeView(mHorizontalScroll);
             verticalScroll.addView(mEditor);
         }
 
@@ -775,91 +782,56 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
         hideTextEditor();
     }
 
-    /*void onPreferencesChanged(String key) {
-        if (types.contains(PreferenceChangeType.THEME_CHANGE)) {
-            AccessoryView accessoryView = (AccessoryView) findViewById(R.id.accessoryView);
-            accessoryView.updateTextColors();
-        }
-        if (types.contains(PreferenceChangeType.WRAP_CONTENT)) {
-            if (PreferenceHelper.getWrapContent(this)) {
-                horizontalScroll.removeView(mEditor);
-                verticalScroll.removeView(horizontalScroll);
-                verticalScroll.addView(mEditor);
-            } else {
-                verticalScroll.removeView(mEditor);
-                verticalScroll.addView(horizontalScroll);
-                horizontalScroll.addView(mEditor);
-            }
-        } else if (types.contains(PreferenceChangeType.LINE_NUMERS)) {
-            mEditor.disableTextChangedListener();
-            mEditor.replaceTextKeepCursor(null);
-            mEditor.enableTextChangedListener();
-            mEditor.updatePadding();
-        } else if (types.contains(PreferenceChangeType.SYNTAX)) {
-            mEditor.disableTextChangedListener();
-            mEditor.replaceTextKeepCursor(mEditor.getText().toString());
-            mEditor.enableTextChangedListener();
-        } else if (types.contains(PreferenceChangeType.MONOSPACE)) {
-            if (PreferenceHelper.getUseMonospace(this))
-                mEditor.setTypeface(Typeface.MONOSPACE);
-            else
-                mEditor.setTypeface(Typeface.DEFAULT);
-        } else if (types.contains(PreferenceChangeType.THEME_CHANGE)) {
-            if (PreferenceHelper.getLightTheme(this)) {
-                mEditor.setTextColor(getResources().getColor(R.color.textColorInverted));
-            } else {
-                mEditor.setTextColor(getResources().getColor(R.color.textColor));
-            }
-        } else if (types.contains(PreferenceChangeType.TEXT_SUGGESTIONS)
-                || types.contains(PreferenceChangeType.READ_ONLY)) {
-            if (PreferenceHelper.getReadOnly(this)) {
-                mEditor.setReadOnly(true);
-            } else {
-                mEditor.setReadOnly(false);
-                if (PreferenceHelper.getSuggestionActive(this)) {
-                    mEditor.setInputType(InputType.TYPE_CLASS_TEXT | InputType
-                            .TYPE_TEXT_FLAG_MULTI_LINE | InputType.TYPE_TEXT_FLAG_IME_MULTI_LINE);
+    void onPreferencesChanged(String key) {
+        switch (key) {
+            case SettingsProvider.EDITOR_WRAP_CONTENT:
+                if (SettingsProvider.getBoolean(this,
+                        SettingsProvider.EDITOR_WRAP_CONTENT, false)) {
+                    mHorizontalScroll.removeView(mEditor);
+                    verticalScroll.removeView(mHorizontalScroll);
+                    verticalScroll.addView(mEditor);
                 } else {
-                    mEditor.setInputType(InputType.TYPE_CLASS_TEXT | InputType
-                            .TYPE_TEXT_FLAG_MULTI_LINE | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
-                            | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD | InputType
-                            .TYPE_TEXT_FLAG_IME_MULTI_LINE);
+                    verticalScroll.removeView(mEditor);
+                    verticalScroll.addView(mHorizontalScroll);
+                    mHorizontalScroll.addView(mEditor);
                 }
-            }
-            // sometimes it becomes monospace after setting the input type
-            if (PreferenceHelper.getUseMonospace(this))
-                mEditor.setTypeface(Typeface.MONOSPACE);
-            else
-                mEditor.setTypeface(Typeface.DEFAULT);
-        } else if (types.contains(PreferenceChangeType.FONT_SIZE)) {
-            mEditor.updatePadding();
-            mEditor.setTextSize(PreferenceHelper.getFontSize(this));
-        } else if (types.contains(PreferenceChangeType.ACCESSORY_VIEW)) {
-            HorizontalScrollView parentAccessoryView = (HorizontalScrollView)
-                    findViewById(R.id.parent_accessory_view);
-            mEditor.updatePadding();
-        } else if (types.contains(PreferenceChangeType.ENCODING)) {
-            String oldEncoding, newEncoding;
-            oldEncoding = currentEncoding;
-            newEncoding = PreferenceHelper.getEncoding(this);
-            try {
-                final byte[] oldText = mEditor.getText().toString().getBytes(oldEncoding);
-                mEditor.disableTextChangedListener();
-                mEditor.replaceTextKeepCursor(new String(oldText, newEncoding));
-                mEditor.enableTextChangedListener();
-                currentEncoding = newEncoding;
-            } catch (UnsupportedEncodingException ignored) {
+                break;
+            case SettingsProvider.USE_MONOSPACE:
+                if (SettingsProvider.getBoolean(this, SettingsProvider.USE_MONOSPACE, false)) {
+                    mEditor.setTypeface(Typeface.MONOSPACE);
+                } else {
+                    mEditor.setTypeface(Typeface.DEFAULT);
+                }
+                break;
+            case SettingsProvider.FONT_SIZE:
+                mEditor.updatePadding();
+                mEditor.setTextSize(SettingsProvider.getInt(this, SettingsProvider.FONT_SIZE, 16));
+                break;
+            case SettingsProvider.EDITOR_ENCODING:
+                String oldEncoding, newEncoding;
+                oldEncoding = currentEncoding;
+                newEncoding = SettingsProvider.getString(this,
+                        SettingsProvider.EDITOR_ENCODING, Constant.DEFAULT_ENCODING);
                 try {
                     final byte[] oldText = mEditor.getText().toString().getBytes(oldEncoding);
                     mEditor.disableTextChangedListener();
-                    mEditor.replaceTextKeepCursor(new String(oldText, "UTF-16"));
+                    mEditor.replaceTextKeepCursor(new String(oldText, newEncoding));
                     mEditor.enableTextChangedListener();
-                } catch (UnsupportedEncodingException ignored2) {
-                    // Ignored
+                    currentEncoding = newEncoding;
+                } catch (UnsupportedEncodingException ignored) {
+                    try {
+                        final byte[] oldText = mEditor.getText().toString().getBytes(oldEncoding);
+                        mEditor.disableTextChangedListener();
+                        mEditor.replaceTextKeepCursor(
+                                new String(oldText, Constant.DEFAULT_ENCODING));
+                        mEditor.enableTextChangedListener();
+                    } catch (UnsupportedEncodingException ignored2) {
+                        // Ignored
+                    }
                 }
-            }
+                break;
         }
-    }*/
+    }
 
     @Override
     public void nextPageClicked() {
@@ -1004,4 +976,12 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
     public void onButtonAccessoryViewClicked(String text) {
         mEditor.getText().insert(mEditor.getSelectionStart(), text);
     }
+
+    SharedPreferences.OnSharedPreferenceChangeListener mPreferenceListener
+            = new SharedPreferences.OnSharedPreferenceChangeListener() {
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            onPreferencesChanged(key);
+        }
+    };
 }
