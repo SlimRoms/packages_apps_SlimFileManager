@@ -45,6 +45,7 @@ import com.slim.slimfilemanager.utils.FragmentLifecycle;
 import com.slim.slimfilemanager.utils.IconCache;
 import com.slim.slimfilemanager.utils.PasteTask;
 import com.slim.slimfilemanager.widget.PageIndicator;
+import com.slim.slimfilemanager.widget.TabPageIndicator;
 
 public class FileManager extends ThemeActivity implements View.OnClickListener {
 
@@ -54,6 +55,7 @@ public class FileManager extends ThemeActivity implements View.OnClickListener {
 
     private ViewPager mViewPager;
     private PageIndicator mPageIndicator;
+    private TabPageIndicator mTabs;
     private ListView mDrawer;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -123,6 +125,7 @@ public class FileManager extends ThemeActivity implements View.OnClickListener {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mPageIndicator = (PageIndicator) findViewById(R.id.indicator);
+        mTabs = (TabPageIndicator) findViewById(R.id.tab_indicator);
         mActionMenu = (FloatingActionsMenu) findViewById(R.id.float_button);
         mPasteButton = (FloatingActionButton) findViewById(R.id.paste);
     }
@@ -132,6 +135,7 @@ public class FileManager extends ThemeActivity implements View.OnClickListener {
         mDrawerLayout.setVisibility(View.GONE);
         mViewPager.setVisibility(View.GONE);
         mPageIndicator.setVisibility(View.GONE);
+        mTabs.setVisibility(View.GONE);
         mActionMenu.setVisibility(View.GONE);
         mPasteButton.setVisibility(View.GONE);
     }
@@ -224,16 +228,37 @@ public class FileManager extends ThemeActivity implements View.OnClickListener {
             }
         });
 
-        mViewPager.setCurrentItem(SettingsProvider.getInt(this, "current_tab", 0));
-
         setupPageIndicators();
+
+        mViewPager.setCurrentItem(SettingsProvider.getInt(this, "current_tab", 0));
     }
 
     private void setupPageIndicators() {
         mPageIndicator.setViewPager(mViewPager);
+        mTabs.setViewPager(mViewPager);
 
-        //TabPageIndicator tabPageIndicator = (TabPageIndicator) findViewById(R.id.tab_indicator);
-        //tabPageIndicator.setViewPager(mViewPager);
+        if (SettingsProvider.getBoolean(this, SettingsProvider.SMALL_INDICATOR, false)) {
+            mTabs.setVisibility(View.GONE);
+            mPageIndicator.setVisibility(View.VISIBLE);
+        } else {
+            mPageIndicator.setVisibility(View.GONE);
+            mTabs.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void setTabTitle(BrowserFragment fragment, File file) {
+        boolean root = file.getAbsolutePath().equals("/");
+        String title = root ? "/" : file.getName();
+        if (fragment.getUserVisibleHint()) {
+            mTabs.setTabTitle(title, mCurrentPosition);
+        } else {
+            for (TabItem item : mSectionsPagerAdapter.getItems()) {
+                if (item.fragment == fragment) {
+                    mTabs.setTabTitle(title, mSectionsPagerAdapter.getItems().indexOf(item));
+                    break;
+                }
+            }
+        }
     }
 
     private void setupActionButtons() {
@@ -402,8 +427,11 @@ public class FileManager extends ThemeActivity implements View.OnClickListener {
         public void addTab(String path) {
             mItems.add(new TabItem(
                     BrowserFragment.newInstance(path), path));
+            FileManager.this.mTabs.notifyDataSetChanged();
             notifyDataSetChanged();
             mViewPager.setCurrentItem(getCount());
+            setTabTitle(mItems.get(mItems.size() - 1).fragment,
+                    new File(mItems.get(mItems.size() - 1).fragment.getCurrentPath()));
         }
 
         public void removeCurrentTab() {
@@ -412,6 +440,7 @@ public class FileManager extends ThemeActivity implements View.OnClickListener {
             mItems.get(id).fragment.onDestroy();
             mItems.remove(mItems.get(id));
             notifyDataSetChanged();
+            FileManager.this.mTabs.notifyDataSetChanged();
         }
 
         public void addDefault() {
@@ -610,6 +639,9 @@ public class FileManager extends ThemeActivity implements View.OnClickListener {
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             for (TabItem tabItem : mSectionsPagerAdapter.getItems()) {
                 tabItem.fragment.onPreferencesChanged();
+            }
+            if (key.equals(SettingsProvider.SMALL_INDICATOR)) {
+                setupPageIndicators();
             }
         }
     };

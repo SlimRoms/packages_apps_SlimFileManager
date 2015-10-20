@@ -4,9 +4,15 @@
 
     <PreferenceCategory
         android:title="@string/file_manager" />
+
     <SwitchPreference
         android:key="enable_root"
         android:title="@string/enable_root_title" />
+
+    <SwitchPreference
+        android:key="small_indicator"
+        android:title="@string/use_small_page_indicator"
+        android:summary="@string/small_page_indicator_summary"/>
 
     <ListPreference
         android:key="key_theme"

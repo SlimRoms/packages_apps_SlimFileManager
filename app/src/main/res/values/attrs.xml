@@ -3,6 +3,7 @@
 
     <declare-styleable name="PageIndicator">
         <attr name="selectedColor" format="integer" />
+        <attr name="defaultColor" format="integer" />
 
         <attr name="tabPageIndicatorStyle" format="reference" />
     </declare-styleable>

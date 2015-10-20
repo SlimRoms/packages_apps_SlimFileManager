@@ -13,10 +13,11 @@
 
         <com.slim.slimfilemanager.widget.TabPageIndicator
             android:id="@+id/tab_indicator"
-            android:visibility="gone"
             android:gravity="top"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            app:selectedColor="?android:colorPrimaryDark"
+            app:defaultColor="?android:colorPrimary"/>
 
         <com.slim.slimfilemanager.widget.PageIndicator
             android:id="@+id/indicator"

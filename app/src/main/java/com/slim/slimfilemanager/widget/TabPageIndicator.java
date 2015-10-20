@@ -17,6 +17,8 @@
 package com.slim.slimfilemanager.widget;
 
 import android.content.Context;
+import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
@@ -54,6 +56,9 @@ public class TabPageIndicator extends HorizontalScrollView
 
     private final IndicatorLinearLayout mTabLayout;
 
+    private int mSelectedColor;
+    private int mBackgroundColor;
+
     private ViewPager mViewPager;
 
     private int mMaxTabWidth;
@@ -66,6 +71,13 @@ public class TabPageIndicator extends HorizontalScrollView
     public TabPageIndicator(Context context, AttributeSet attrs) {
         super(context, attrs);
         setHorizontalScrollBarEnabled(false);
+
+        TypedArray type = context.obtainStyledAttributes(attrs, R.styleable.PageIndicator);
+
+        mSelectedColor = type.getColor(R.styleable.PageIndicator_selectedColor, Color.TRANSPARENT);
+        mBackgroundColor = type.getColor(R.styleable.PageIndicator_defaultColor, Color.TRANSPARENT);
+
+        type.recycle();
 
         mTabLayout = new IndicatorLinearLayout(context, R.attr.tabPageIndicatorStyle);
         addView(mTabLayout, new ViewGroup.LayoutParams(WRAP_CONTENT, MATCH_PARENT));
@@ -96,6 +108,11 @@ public class TabPageIndicator extends HorizontalScrollView
             // Recenter the tab display if we're at a new (scrollable) size.
             setCurrentItem(mSelectedTabIndex);
         }
+    }
+
+    public void setTabTitle(String title, int position) {
+        TabView tv = (TabView) mTabLayout.getChildAt(position);
+        if (tv != null) tv.setText(title);
     }
 
     private void animateToTab(final int position) {
@@ -200,11 +217,6 @@ public class TabPageIndicator extends HorizontalScrollView
         requestLayout();
     }
 
-    public void setViewPager(ViewPager view, int initialPosition) {
-        setViewPager(view);
-        setCurrentItem(initialPosition);
-    }
-
     public void setCurrentItem(int item) {
         if (mViewPager == null) {
             throw new IllegalStateException("ViewPager has not been bound.");
@@ -219,6 +231,9 @@ public class TabPageIndicator extends HorizontalScrollView
             child.setSelected(isSelected);
             if (isSelected) {
                 animateToTab(item);
+                child.setBackgroundColor(mSelectedColor);
+            } else {
+                child.setBackgroundColor(mBackgroundColor);
             }
         }
     }
@@ -227,7 +242,7 @@ public class TabPageIndicator extends HorizontalScrollView
         private int mIndex;
 
         public TabView(Context context) {
-            super(context, null, R.attr.actionBarTabTextStyle);
+            super(context, null, R.attr.tabPageIndicatorStyle);
         }
 
         @Override

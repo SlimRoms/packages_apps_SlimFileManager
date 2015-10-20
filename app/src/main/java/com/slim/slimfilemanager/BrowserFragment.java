@@ -507,6 +507,7 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
         if (!newPath.exists()) {
             return;
         }
+        mActivity.setTabTitle(this, newPath);
         if (!newPath.canRead() && !RootUtils.isRootAvailable()) {
             Toast.makeText(mContext, "Root is required to view folder.", Toast.LENGTH_SHORT).show();
         }
@@ -834,19 +835,6 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
             return null;
         }
     }
-
-    /*@Override
-    public final void setUserVisibleHint(boolean isVisibleToUser) {
-        final boolean needUpdate = isVisibleToUser != getUserVisibleHint();
-        super.setUserVisibleHint(isVisibleToUser);
-        if (needUpdate) {
-            if (isVisibleToUser) {
-                // onVisible()
-                //mActivity.setCurrentlyDisplayedFragment(this);
-            }
-            //onInvisible()
-        }
-    }*/
 
     public class BrowserViewHolder extends MultiChoiceViewHolder
             implements View.OnClickListener, View.OnLongClickListener {

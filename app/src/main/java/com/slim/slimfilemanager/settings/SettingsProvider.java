@@ -30,6 +30,7 @@ public class SettingsProvider {
     public static final String KEY_ENABLE_ROOT = "enable_root";
     public static final String THEME = "app_theme";
     public static final String SORT_MODE = "sort_mode";
+    public static final String SMALL_INDICATOR = "small_indicator";
 
     // Text Editor
     public static final String USE_MONOSPACE = "use_monospace";

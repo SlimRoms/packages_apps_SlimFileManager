@@ -13,6 +13,9 @@
 
     <string name="cant_open_file">Unable to open file.</string>
 
+    <string name="use_small_page_indicator">Use small page indicator</string>
+    <string name="small_page_indicator_summary">Hide tabs and show small indicator.</string>
+
     <!-- Actions -->
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
