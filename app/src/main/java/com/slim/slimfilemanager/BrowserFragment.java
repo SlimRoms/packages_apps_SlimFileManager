@@ -515,7 +515,7 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
         if (files == null) {
             return;
         }
-        mPath.setText(new File(file).getAbsolutePath());
+        if (mPath != null) mPath.setText(new File(file).getAbsolutePath());
         mCurrentPath = file;
         if (!mFiles.isEmpty()) mFiles.clear();
         mAdapter.notifyDataSetChanged();
