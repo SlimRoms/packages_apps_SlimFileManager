@@ -186,8 +186,11 @@ public class FileManager extends ThemeActivity implements View.OnClickListener {
         mDrawer.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mFragment.filesChanged(mDrawerAdapter.getPath(position));
-                //mSectionsPagerAdapter.addTab(mDrawerAdapter.getPath(position));
+                if (mSectionsPagerAdapter.getCount() == 0) {
+                    mSectionsPagerAdapter.addTab(mDrawerAdapter.getPath(position));
+                } else {
+                    mFragment.filesChanged(mDrawerAdapter.getPath(position));
+                }
                 mDrawerLayout.closeDrawers();
             }
         });
@@ -427,17 +430,20 @@ public class FileManager extends ThemeActivity implements View.OnClickListener {
         public void addTab(String path) {
             mItems.add(new TabItem(
                     BrowserFragment.newInstance(path), path));
-            FileManager.this.mTabs.notifyDataSetChanged();
             notifyDataSetChanged();
+            FileManager.this.mTabs.notifyDataSetChanged();
             mViewPager.setCurrentItem(getCount());
             setTabTitle(mItems.get(mItems.size() - 1).fragment,
                     new File(mItems.get(mItems.size() - 1).fragment.getCurrentPath()));
+            if (mItems.size() == 1) {
+                setCurrentlyDisplayedFragment(mItems.get(0).fragment);
+            }
         }
 
         public void removeCurrentTab() {
             int id = mCurrentPosition;
             mViewPager.setCurrentItem(id - 1, true);
-            mItems.get(id).fragment.onDestroy();
+            mItems.get(id).fragment.onDestroyView();
             mItems.remove(mItems.get(id));
             notifyDataSetChanged();
             FileManager.this.mTabs.notifyDataSetChanged();
@@ -450,7 +456,7 @@ public class FileManager extends ThemeActivity implements View.OnClickListener {
 
         @Override
         public Fragment getItem(int position) {
-            //setCurrentlyDisplayedFragment(mItems.get(position).fragment);
+            if (mItems.size() == 0) return null;
             return mItems.get(position).fragment;
         }
 
@@ -524,9 +530,9 @@ public class FileManager extends ThemeActivity implements View.OnClickListener {
             holder.view.setBackground(getAccentStateDrawable(mContext));
 
             holder.title.setText(mItems.get(position).title);
-            if (getPath(position).equalsIgnoreCase(
-                    ((BrowserFragment) mSectionsPagerAdapter.getItem(
-                            mViewPager.getCurrentItem())).getCurrentPath())) {
+            BrowserFragment fragment = (BrowserFragment)
+                    mSectionsPagerAdapter.getItem(mViewPager.getCurrentItem());
+            if (fragment != null && getPath(position).equalsIgnoreCase(fragment.getCurrentPath())) {
                 holder.view.setActivated(true);
             } else {
                 holder.view.setActivated(false);
