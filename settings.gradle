@@ -1,1 +1,1 @@
-include ':app', ':slimpluginframework', ':sftp'
+include ':SlimFileManager'
