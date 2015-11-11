@@ -45,10 +45,7 @@ public class FileUtils {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            if (encoding == null) {
-                return Charset.defaultCharset().name();
-            }
         }
-        return encoding;
+        return encoding == null ? Charset.defaultCharset().name() : encoding;
     }
 }

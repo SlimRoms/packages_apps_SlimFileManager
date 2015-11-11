@@ -350,26 +350,28 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
     public void onCreateOptionsMenu(final Menu menu, MenuInflater inflater) {
         if (mPicking) return;
         mSearchView = (SearchView) menu.findItem(R.id.search).getActionView();
-        mSearchView.setIconifiedByDefault(true);
-        mSearchView.setOnQueryTextListener(this);
-        mSearchView.setOnSearchClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setSearching(true);
-                mActivity.closeDrawesrs();
-                mFiles.clear();
-                mAdapter.notifyDataSetChanged();
-            }
-        });
-        mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-                mProgress.setVisibility(View.GONE);
-                setSearching(false);
-                filesChanged(mCurrentPath);
-                return false;
-            }
-        });
+        if (mSearchView != null) {
+            mSearchView.setIconifiedByDefault(true);
+            mSearchView.setOnQueryTextListener(this);
+            mSearchView.setOnSearchClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    setSearching(true);
+                    mActivity.closeDrawesrs();
+                    mFiles.clear();
+                    mAdapter.notifyDataSetChanged();
+                }
+            });
+            mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
+                @Override
+                public boolean onClose() {
+                    mProgress.setVisibility(View.GONE);
+                    setSearching(false);
+                    filesChanged(mCurrentPath);
+                    return false;
+                }
+            });
+        }
 
         super.onCreateOptionsMenu(menu, inflater);
     }

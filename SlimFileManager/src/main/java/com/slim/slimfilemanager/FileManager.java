@@ -60,8 +60,8 @@ public class FileManager extends ThemeActivity implements View.OnClickListener {
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerAdapter mDrawerAdapter;
-    private FloatingActionsMenu mActionMenu;
     private FloatingActionButton mPasteButton;
+    private FloatingActionsMenu mActionMenu;
 
     int mCurrentPosition;
     boolean mMove;
@@ -89,9 +89,9 @@ public class FileManager extends ThemeActivity implements View.OnClickListener {
             setupActionButtons();
         }
 
-        if (getActionBar() != null) {
-            getActionBar().setDisplayHomeAsUpEnabled(true);
-            getActionBar().setHomeButtonEnabled(true);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeButtonEnabled(true);
         }
 
         if (savedInstanceState == null) {
@@ -136,7 +136,7 @@ public class FileManager extends ThemeActivity implements View.OnClickListener {
         mViewPager.setVisibility(View.GONE);
         mPageIndicator.setVisibility(View.GONE);
         mTabs.setVisibility(View.GONE);
-        mActionMenu.setVisibility(View.GONE);
+        //mActionMenu.setVisibility(View.GONE);
         mPasteButton.setVisibility(View.GONE);
     }
 
@@ -212,9 +212,9 @@ public class FileManager extends ThemeActivity implements View.OnClickListener {
                         mSectionsPagerAdapter.getItem(position);
                 fragmentToShow.onResumeFragment();
 
-                if (mActionMenu != null) {
-                    mActionMenu.collapse();
-                }
+                //if (mActionMenu != null) {
+                //    mActionMenu.collapse();
+                //}
 
                 setCurrentlyDisplayedFragment(
                         (BrowserFragment) mSectionsPagerAdapter.getItem(position));
@@ -267,7 +267,7 @@ public class FileManager extends ThemeActivity implements View.OnClickListener {
     private void setupActionButtons() {
         buildActionButtons();
 
-        mPasteButton.setIcon(R.drawable.paste);
+        mPasteButton.setImageResource(R.drawable.paste);
         mPasteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -312,10 +312,10 @@ public class FileManager extends ThemeActivity implements View.OnClickListener {
     public void onClick(View v) {
         if (v.getTag().equals(BrowserFragment.ACTION_ADD_FILE)) {
             mFragment.showDialog(BrowserFragment.ACTION_ADD_FILE);
-            mActionMenu.collapseImmediately();
+            //mActionMenu.collapseImmediately();
         } else if (v.getTag().equals(BrowserFragment.ACTION_ADD_FOLDER)) {
             mFragment.showDialog(BrowserFragment.ACTION_ADD_FOLDER);
-            mActionMenu.collapseImmediately();
+            //mActionMenu.collapseImmediately();
         }
     }
 
@@ -326,9 +326,9 @@ public class FileManager extends ThemeActivity implements View.OnClickListener {
     public void showPaste(boolean show) {
         if (show) {
             mPasteButton.setVisibility(View.VISIBLE);
-            mActionMenu.setVisibility(View.GONE);
+            //mActionMenu.setVisibility(View.GONE);
         } else {
-            mActionMenu.setVisibility(View.VISIBLE);
+            //mActionMenu.setVisibility(View.VISIBLE);
             mPasteButton.setVisibility(View.GONE);
         }
     }

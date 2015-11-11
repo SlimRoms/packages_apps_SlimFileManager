@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.1"
+    buildToolsVersion "23.0.2"
 
     defaultConfig {
         applicationId "com.slim.slimfilemanager"
@@ -26,16 +26,15 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:support-v13:23.0.1'
-    compile 'com.android.support:recyclerview-v7:23.0.1'
-    compile 'com.getbase:floatingactionbutton:1.10.0'
-    compile 'com.android.support:appcompat-v7:23.0.1'
+    compile 'com.android.support:support-v13:23.1.0'
+    compile 'com.android.support:recyclerview-v7:23.1.0'
+    compile 'com.android.support:appcompat-v7:23.1.0'
+
+    compile 'com.getbase:floatingactionbutton:1.10.1'
     compile 'org.androidannotations:androidannotations-api:3.3.2'
     compile 'com.jcraft:jsch:0.1.52'
     compile 'org.apache.commons:commons-compress:1.6'
     compile 'commons-io:commons-io:2.4'
     compile 'org.apache.commons:commons-lang3:3.4'
-    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.3.1'
-    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.3.1'
     compile files('libs/juniversalchardet-1.0.3.jar')
 }

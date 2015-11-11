@@ -1,22 +1,23 @@
 package com.slim.slimfilemanager;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
 import com.slim.slimfilemanager.settings.SettingsProvider;
 
-public class ThemeActivity extends Activity {
+public class ThemeActivity extends AppCompatActivity {
 
     private int mCurrentTheme;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
         mCurrentTheme = SettingsProvider.getInt(this,
                 SettingsProvider.THEME, R.style.AppTheme);
 
         setTheme(mCurrentTheme);
+
+        super.onCreate(savedInstanceState);
+
     }
 
     @Override

@@ -19,6 +19,8 @@
 
 package com.slim.turboeditor.texteditor;
 
+import android.text.TextUtils;
+
 import com.slim.slimfilemanager.settings.SettingsProvider;
 import com.slim.turboeditor.activity.MainActivity;
 
@@ -29,15 +31,15 @@ public class PageSystem {
 
     private MainActivity mActivity;
 
-    private List<String> pages;
-    private int[] startingLines;
-    private int currentPage = 0;
-    private PageSystemInterface pageSystemInterface;
+    private List<String> mPages;
+    private int[] mStartingLines;
+    private int mCurrentPage = 0;
+    private PageSystemInterface mPageSystemInterface;
 
     public PageSystem(MainActivity activity) {
         mActivity = activity;
-        pageSystemInterface = activity;
-        pages = new LinkedList<>();
+        mPageSystemInterface = activity;
+        mPages = new LinkedList<>();
     }
 
     public void setFileText(String text) {
@@ -48,7 +50,7 @@ public class PageSystem {
         int i = 0;
         int to;
         int nextIndexOfReturn;
-        final int textLength = text.length();
+        final int textLength = TextUtils.isEmpty(text) ? 0 : text.length();
         boolean pageSystemEnabled =
                 SettingsProvider.getBoolean(mActivity, SettingsProvider.SPLIT_TEXT, true);
 
@@ -59,56 +61,56 @@ public class PageSystem {
                 nextIndexOfReturn = text.indexOf("\n", to);
                 if (nextIndexOfReturn > to) to = nextIndexOfReturn;
                 if (to > text.length()) to = text.length();
-                pages.add(text.substring(i, to));
+                mPages.add(text.substring(i, to));
                 i = to + 1;
             }
 
 
             if (i == 0)
-                pages.add("");
+                mPages.add("");
         } else {
-            pages.add(text);
+            mPages.add(text);
         }
 
-        startingLines = new int[pages.size()];
+        mStartingLines = new int[mPages.size()];
         setStartingLines();
     }
 
     public int getStartingLine() {
-        return startingLines[currentPage];
+        return mStartingLines[mCurrentPage];
     }
 
     public String getCurrentPageText() {
-        return pages.get(currentPage);
+        return mPages.get(mCurrentPage);
     }
 
     public void savePage(String currentText) {
-        pages.set(currentPage, currentText);
+        mPages.set(mCurrentPage, currentText);
     }
 
     public void nextPage() {
         if (!canReadNextPage()) return;
-        goToPage(currentPage + 1);
+        goToPage(mCurrentPage + 1);
     }
 
     public void prevPage() {
         if (!canReadPrevPage()) return;
-        goToPage(currentPage - 1);
+        goToPage(mCurrentPage - 1);
     }
 
     public void goToPage(int page) {
-        if (page >= pages.size()) page = pages.size() - 1;
+        if (page >= mPages.size()) page = mPages.size() - 1;
         if (page < 0) page = 0;
-        boolean shouldUpdateLines = page > currentPage && canReadNextPage();
+        boolean shouldUpdateLines = page > mCurrentPage && canReadNextPage();
         if (shouldUpdateLines) {
             String text = getCurrentPageText();
             int nOfNewLineNow = (text.length() - text.replace("\n", "").length()) + 1; // normally the last line is not counted so we have to add 1
-            int nOfNewLineBefore = startingLines[currentPage + 1] - startingLines[currentPage];
+            int nOfNewLineBefore = mStartingLines[mCurrentPage + 1] - mStartingLines[mCurrentPage];
             int difference = nOfNewLineNow - nOfNewLineBefore;
-            updateStartingLines(currentPage + 1, difference);
+            updateStartingLines(mCurrentPage + 1, difference);
         }
-        currentPage = page;
-        pageSystemInterface.onPageChanged(page);
+        mCurrentPage = page;
+        mPageSystemInterface.onPageChanged(page);
     }
 
     public void setStartingLines() {
@@ -116,12 +118,12 @@ public class PageSystem {
         int startingLine;
         int nOfNewLines;
         String text;
-        startingLines[0] = 0;
-        for (i = 1; i < pages.size(); i++) {
-            text = pages.get(i - 1);
+        mStartingLines[0] = 0;
+        for (i = 1; i < mPages.size(); i++) {
+            text = mPages.get(i - 1);
             nOfNewLines = text.length() - text.replace("\n", "").length() + 1;
-            startingLine = startingLines[i - 1] + nOfNewLines;
-            startingLines[i] = startingLine;
+            startingLine = mStartingLines[i - 1] + nOfNewLines;
+            mStartingLines[i] = startingLine;
         }
     }
 
@@ -130,37 +132,37 @@ public class PageSystem {
             return;
         int i;
         if (fromPage < 1) fromPage = 1;
-        for (i = fromPage; i < pages.size(); i++) {
-            startingLines[i] += difference;
+        for (i = fromPage; i < mPages.size(); i++) {
+            mStartingLines[i] += difference;
         }
     }
 
     public int getMaxPage() {
-        return pages.size() - 1;
+        return mPages.size() - 1;
     }
 
     public int getCurrentPage() {
-        return currentPage;
+        return mCurrentPage;
     }
 
     public String getAllText(String currentPageText) {
-        pages.set(currentPage, currentPageText);
+        mPages.set(mCurrentPage, currentPageText);
         int i;
         StringBuilder allText = new StringBuilder();
-        for (i = 0; i < pages.size(); i++) {
-            allText.append(pages.get(i));
-            if (i < pages.size() - 1)
+        for (i = 0; i < mPages.size(); i++) {
+            allText.append(mPages.get(i));
+            if (i < mPages.size() - 1)
                 allText.append("\n");
         }
         return allText.toString();
     }
 
     public boolean canReadNextPage() {
-        return currentPage < pages.size() - 1;
+        return mCurrentPage < mPages.size() - 1;
     }
 
     public boolean canReadPrevPage() {
-        return currentPage >= 1;
+        return mCurrentPage >= 1;
     }
 
     public interface PageSystemInterface {

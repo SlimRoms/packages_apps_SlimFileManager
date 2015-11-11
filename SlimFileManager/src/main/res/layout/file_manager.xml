@@ -16,15 +16,15 @@
             android:gravity="top"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:selectedColor="?android:colorPrimaryDark"
-            app:defaultColor="?android:colorPrimary"/>
+            app:selectedColor="?colorPrimaryDark"
+            app:defaultColor="?colorPrimary"/>
 
         <com.slim.slimfilemanager.widget.PageIndicator
             android:id="@+id/indicator"
             android:layout_below="@+id/tab_indicator"
             android:layout_width="match_parent"
             android:layout_height="4dp"
-            app:selectedColor="?android:colorPrimaryDark"/>
+            app:selectedColor="?colorPrimaryDark"/>
 
         <android.support.v4.view.ViewPager
             android:id="@+id/pager"
@@ -41,8 +41,6 @@
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="16dp"
             android:layout_marginEnd="16dp"
-            app:fab_colorNormal="?android:colorAccent"
-            app:fab_colorPressed="?android:colorPrimaryDark"
             android:visibility="gone"/>
 
         <com.getbase.floatingactionbutton.FloatingActionsMenu
@@ -53,10 +51,7 @@
             android:layout_alignParentEnd="true"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="16dp"
-            android:layout_marginEnd="16dp"
-            app:fab_labelStyle="@style/menu_labels_style"
-            app:fab_addButtonColorNormal="?android:colorAccent"
-            app:fab_addButtonColorPressed="?android:colorPrimaryDark"/>
+            android:layout_marginEnd="16dp"/>
 
     </RelativeLayout>
 

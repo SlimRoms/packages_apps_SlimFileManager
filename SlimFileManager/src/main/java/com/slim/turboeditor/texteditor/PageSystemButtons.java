@@ -40,16 +40,17 @@ public class PageSystemButtons {
     };
     PageButtonsInterface pageButtonsInterface;
 
-    public PageSystemButtons(Context context, final PageButtonsInterface pageButtonsInterface, FloatingActionButton prev, FloatingActionButton next) {
+    public PageSystemButtons(Context context, final PageButtonsInterface pageButtonsInterface,
+                             FloatingActionButton prev, FloatingActionButton next) {
         this.prev = prev;
         this.next = next;
         this.pageButtonsInterface = pageButtonsInterface;
 
-        this.next.setColorNormal(context.getResources().getColor(R.color.fab_light));
-        this.next.setIconDrawable(context.getResources().getDrawable(R.drawable.ic_keyboard_arrow_right));
+        this.next.setBackgroundColor(context.getResources().getColor(R.color.fab_light));
+        this.next.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_keyboard_arrow_right));
 
-        this.prev.setColorNormal(context.getResources().getColor(R.color.fab_light));
-        this.prev.setIconDrawable(context.getResources().getDrawable(R.drawable.ic_keyboard_arrow_left));
+        this.prev.setBackgroundColor(context.getResources().getColor(R.color.fab_light));
+        this.prev.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_keyboard_arrow_left));
 
         if (pageButtonsInterface.canReadNextPage())
             next.setVisibility(View.VISIBLE);

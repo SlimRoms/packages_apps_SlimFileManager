@@ -55,7 +55,6 @@ import com.slim.turboeditor.texteditor.LineUtils;
 import com.slim.turboeditor.texteditor.PageSystem;
 import com.slim.turboeditor.texteditor.PageSystemButtons;
 import com.slim.turboeditor.texteditor.SearchResult;
-import com.slim.turboeditor.util.AccessoryView;
 import com.slim.turboeditor.views.Editor;
 import com.slim.turboeditor.views.GoodScrollView;
 import com.slim.utils.Constant;
@@ -75,7 +74,7 @@ import java.util.concurrent.Executors;
 public class MainActivity extends ThemeActivity implements FindTextDialog
         .SearchDialogInterface, GoodScrollView.ScrollInterface, PageSystem.PageSystemInterface,
         PageSystemButtons.PageButtonsInterface, NumberPickerDialog.INumberPickerDialog,
-        SaveFileDialog.ISaveDialog, AccessoryView.IAccessoryView {
+        SaveFileDialog.ISaveDialog {
 
     //region VARIABLES
     private static final int READ_REQUEST_CODE = 42,
@@ -482,12 +481,6 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
         verticalScroll = (GoodScrollView) findViewById(R.id.vertical_scroll);
         mEditor = (Editor) findViewById(R.id.editor);
 
-        AccessoryView accessoryView = (AccessoryView) findViewById(R.id.accessoryView);
-        accessoryView.setInterface(this);
-
-        HorizontalScrollView parentAccessoryView = (HorizontalScrollView) findViewById(R.id.parent_accessory_view);
-        parentAccessoryView.setVisibility(View.VISIBLE);
-
         mHorizontalScroll =
                 (HorizontalScrollView) findViewById(R.id.horizontal_scroll);
 
@@ -513,7 +506,6 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
         fileOpened = true;
 
         findViewById(R.id.text_editor).setVisibility(View.VISIBLE);
-        findViewById(R.id.no_file_opened_messagge).setVisibility(View.GONE);
 
         mEditor.resetVariables();
         searchResult = null;
@@ -531,7 +523,6 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
 
         try {
             findViewById(R.id.text_editor).setVisibility(View.GONE);
-            findViewById(R.id.no_file_opened_messagge).setVisibility(View.VISIBLE);
 
             mEditor.disableTextChangedListener();
             mEditor.replaceTextKeepCursor("");
@@ -970,11 +961,6 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
             newFileToOpen(file, "");
         else
             cannotOpenFile();
-    }
-
-    @Override
-    public void onButtonAccessoryViewClicked(String text) {
-        mEditor.getText().insert(mEditor.getSelectionStart(), text);
     }
 
     SharedPreferences.OnSharedPreferenceChangeListener mPreferenceListener
