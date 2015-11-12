@@ -51,7 +51,6 @@
                         android:gravity="top|start"
                         android:singleLine="false"
                         android:background="@null"
-                        android:text=""
                         android:textIsSelectable="true" />
                 </HorizontalScrollView>
     </com.slim.turboeditor.views.GoodScrollView>

@@ -92,4 +92,7 @@
     <item type="id" name="drawer_button_encoding"/>
     <item type="id" name="drawer_button_font_size"/>
     <item name="im_select_folder" type="id" />
+
+    <item name="fab_expand_menu_button" type="id"/>
+    <item name="fab_label" type="id"/>
 </resources>

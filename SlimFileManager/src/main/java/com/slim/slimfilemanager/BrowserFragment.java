@@ -314,7 +314,7 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
             mMove = false;
             //mActionMenu.setVisibility(View.VISIBLE);
             mPasteButton.setVisibility(View.GONE);
-        } else*/ if (v.getTag() == ACTION_ADD_FOLDER) {
+        } else*/ if (((int) v.getTag()) == ACTION_ADD_FOLDER) {
             showDialog(ACTION_ADD_FOLDER);
         }
     }

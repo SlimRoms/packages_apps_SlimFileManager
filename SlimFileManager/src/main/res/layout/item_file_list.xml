@@ -42,8 +42,7 @@
         android:textSize="15sp"
         android:ellipsize="end"
         android:paddingStart="56dp"
-        android:paddingLeft="56dp"
-        android:text="FILE NAME"/>
+        android:paddingLeft="56dp"/>
 
     <TextView
         android:id="@android:id/text2"
@@ -55,7 +54,6 @@
         android:enabled="false"
         android:ellipsize="end"
         android:paddingStart="56dp"
-        android:paddingLeft="56dp"
-        android:text="DETAIL 1"/>
+        android:paddingLeft="56dp"/>
 
 </RelativeLayout>
