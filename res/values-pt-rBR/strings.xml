@@ -30,10 +30,10 @@
   <string name="createmsg">Definir ponto antes do texto para criar pasta oculta.</string>
   <string name="createnewfolder">Criar uma Nova Pasta</string>
   <string name="defaultdir">Diretório Padrão</string>
-  <string name="delete">Deletar</string>
+  <string name="delete">Excluir</string>
   <string name="deleteapps">Deletar Apps</string>
   <string name="deleteappsmsg">Apps salvos serão excluídos do Cartão SD!</string>
-  <string name="deleting">Deletando</string>
+  <string name="deleting">Excluíndo</string>
   <string name="desc">desc</string>
   <string name="detailed">Detalhado</string>
   <string name="details">Detalhes</string>
