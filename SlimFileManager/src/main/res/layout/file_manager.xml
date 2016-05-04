@@ -51,7 +51,9 @@
             android:layout_alignParentEnd="true"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="16dp"
-            android:layout_marginEnd="16dp"/>
+            android:layout_marginEnd="16dp"
+            app:fab_addButtonColorNormal="@color/accent"
+            app:fab_addButtonColorPressed="@color/accent_dark"/>
 
     </RelativeLayout>
 

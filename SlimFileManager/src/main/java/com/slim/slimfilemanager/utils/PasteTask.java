@@ -1,6 +1,8 @@
 package com.slim.slimfilemanager.utils;
 
 import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.text.TextUtils;
 import android.view.View;
@@ -20,6 +22,10 @@ public class PasteTask implements View.OnClickListener {
     boolean mMove;
     String mLocation;
 
+    private Notification.Builder mBuilder;
+    private NotificationManager mNotifManager;
+    private static final int NOTIF_ID = 1001;
+
     String mCurrent;
 
     AlertDialog mDialog;
@@ -28,10 +34,15 @@ public class PasteTask implements View.OnClickListener {
     ArrayList<String> mProcess = new ArrayList<>();
 
     public PasteTask(Context context,
-                     boolean shouldDelete, String location) {
+                     boolean move, String location) {
         mContext = context;
-        mMove = shouldDelete;
+        mMove = move;
         mLocation = location;
+
+        mNotifManager = (NotificationManager)
+                mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        showNotification();
 
         mFiles.addAll(SelectedFiles.getFiles());
 
@@ -55,6 +66,7 @@ public class PasteTask implements View.OnClickListener {
             if (mProcess.isEmpty()) return;
             for (String path : mProcess) {
                 if (!TextUtils.isEmpty(path)) {
+                    updateNotification();
                     if (mMove) {
                         failed = !FileUtil.moveFile(mContext, path, mLocation);
                     } else {
@@ -62,6 +74,7 @@ public class PasteTask implements View.OnClickListener {
                     }
                 }
             }
+            hideNotification();
             if (failed) {
                 Toast.makeText(mContext, "Failed.", Toast.LENGTH_SHORT).show();
             }
@@ -105,6 +118,26 @@ public class PasteTask implements View.OnClickListener {
             mProcess.clear();
         }
         processFiles();
+    }
+
+    private void updateNotification() {
+        mBuilder.setContentText(mCurrent)
+                .setProgress(mFiles.size(), mFiles.indexOf(mCurrent), false);
+
+
+        mNotifManager.notify(NOTIF_ID, mBuilder.build());
+    }
+
+    private void showNotification() {
+        mBuilder = new Notification.Builder(mContext)
+                .setSmallIcon(R.drawable.notification_icon)
+                .setContentTitle(mContext.getString(R.string.file_manager))
+                .setOngoing(true);
+        mNotifManager.notify(NOTIF_ID, mBuilder.build());
+    }
+
+    private void hideNotification() {
+        mNotifManager.cancel(NOTIF_ID);
     }
 
     public static final class SelectedFiles {
