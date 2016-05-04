@@ -146,6 +146,16 @@ public class FloatingActionsMenu extends ViewGroup {
     }
   }
 
+  public void setAddButtonColorNormalResID(@ColorRes int color) {
+    mAddButtonColorNormal = getColor(color);
+    invalidate();
+  }
+
+  public void setAddButtonColorPressedResId(@ColorRes int color) {
+    mAddButtonColorPressed = getColor(color);
+    invalidate();
+  }
+
   private void createAddButton(Context context) {
     mAddButton = new AddFloatingActionButton(context) {
       @Override

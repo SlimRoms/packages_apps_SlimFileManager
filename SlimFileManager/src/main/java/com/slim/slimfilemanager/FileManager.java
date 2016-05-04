@@ -136,7 +136,7 @@ public class FileManager extends ThemeActivity implements View.OnClickListener {
         mViewPager.setVisibility(View.GONE);
         mPageIndicator.setVisibility(View.GONE);
         mTabs.setVisibility(View.GONE);
-        //mActionMenu.setVisibility(View.GONE);
+        mActionMenu.setVisibility(View.GONE);
         mPasteButton.setVisibility(View.GONE);
     }
 
@@ -267,6 +267,12 @@ public class FileManager extends ThemeActivity implements View.OnClickListener {
     private void setupActionButtons() {
         buildActionButtons();
 
+        mPasteButton.setColorNormalResId(R.color.accent);
+        mPasteButton.setColorPressedResId(R.color.accent_dark);
+
+        mActionMenu.setAddButtonColorNormalResID(R.color.accent);
+        mActionMenu.setAddButtonColorPressedResId(R.color.accent_dark);
+
         mPasteButton.setImageResource(R.drawable.paste);
         mPasteButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -326,9 +332,9 @@ public class FileManager extends ThemeActivity implements View.OnClickListener {
     public void showPaste(boolean show) {
         if (show) {
             mPasteButton.setVisibility(View.VISIBLE);
-            //mActionMenu.setVisibility(View.GONE);
+            mActionMenu.setVisibility(View.GONE);
         } else {
-            //mActionMenu.setVisibility(View.VISIBLE);
+            mActionMenu.setVisibility(View.VISIBLE);
             mPasteButton.setVisibility(View.GONE);
         }
     }
