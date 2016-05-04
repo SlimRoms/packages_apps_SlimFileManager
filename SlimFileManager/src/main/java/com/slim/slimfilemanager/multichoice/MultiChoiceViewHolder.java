@@ -35,6 +35,12 @@ public class MultiChoiceViewHolder extends RebindReportingHolder
                 itemView.getBackground());
     }
 
+    @SuppressWarnings("deprecation")
+    private static int getAccentColor(Context context) {
+        int c = context.getResources().getColor(R.color.accent);
+        return Color.argb(99, Color.red(c), Color.green(c), Color.blue(c));
+    }
+
     public void setSelectionModeBackgroundDrawable(Drawable selectionModeBackgroundDrawable) {
         mSelectionModeBackgroundDrawable = selectionModeBackgroundDrawable;
 
@@ -93,11 +99,5 @@ public class MultiChoiceViewHolder extends RebindReportingHolder
     @Override
     protected void onRebind() {
         mMultiSelector.bindHolder(this, getAdapterPosition());
-    }
-
-    @SuppressWarnings("deprecation")
-    private static int getAccentColor(Context context) {
-        int c = context.getResources().getColor(R.color.accent);
-        return Color.argb(99, Color.red(c), Color.green(c), Color.blue(c));
     }
 }

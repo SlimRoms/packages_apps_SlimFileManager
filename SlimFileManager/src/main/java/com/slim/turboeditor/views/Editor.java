@@ -123,7 +123,7 @@ public class Editor extends EditText {
         }*/
         // update the padding of the editor
         updatePadding();
-            setReadOnly(false);
+        setReadOnly(false);
 
         if (SettingsProvider.getBoolean(mActivity, SettingsProvider.SUGGESTION_ACTIVE, false)) {
             setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE

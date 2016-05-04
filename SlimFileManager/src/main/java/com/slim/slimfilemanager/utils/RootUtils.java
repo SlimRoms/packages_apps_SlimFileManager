@@ -60,7 +60,7 @@ public class RootUtils {
                 return null;
             }
             return reader;
-        } catch (IOException|InterruptedException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
         return null;
@@ -179,13 +179,12 @@ public class RootUtils {
     }
 
 
-
     public static boolean findBinary(String binaryName) {
         boolean found = false;
         String[] places = {"/sbin/", "/system/bin/", "/system/xbin/", "/data/local/xbin/",
                 "/data/local/bin/", "/system/sd/xbin/", "/system/bin/failsafe/", "/data/local/"};
         for (String where : places) {
-            if ( new File( where + binaryName ).exists() ) {
+            if (new File(where + binaryName).exists()) {
                 found = true;
                 break;
             }

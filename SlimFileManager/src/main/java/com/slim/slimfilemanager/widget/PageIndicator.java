@@ -27,7 +27,8 @@ public class PageIndicator extends View implements ViewPager.OnPageChangeListene
     boolean mFades = false;
 
     private final Runnable mFadeRunnable = new Runnable() {
-        @Override public void run() {
+        @Override
+        public void run() {
             if (!mFades) return;
 
             final int alpha = Math.max(mPaint.getAlpha() - mFadeBy, 0);

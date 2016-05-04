@@ -11,6 +11,16 @@ public abstract class RebindReportingHolder extends RecyclerView.ViewHolder {
         super(itemView);
     }
 
+    private static boolean isRelevantFlagSet(int flag) {
+        for (Integer value : new int[]{FLAG_BOUND, FLAG_UPDATE, FLAG_RETURNED_FROM_SCRAP}) {
+            if ((flag & value) == value) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /**
      * Called when the ViewHolder is rebound to another item.
      */
@@ -33,16 +43,6 @@ public abstract class RebindReportingHolder extends RecyclerView.ViewHolder {
         if (isRelevantFlagSet(setFlags)) {
             onRebind();
         }
-    }
-
-    private static boolean isRelevantFlagSet(int flag) {
-        for (Integer value : new int[] { FLAG_BOUND, FLAG_UPDATE, FLAG_RETURNED_FROM_SCRAP }) {
-            if ((flag & value) == value) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     @Override

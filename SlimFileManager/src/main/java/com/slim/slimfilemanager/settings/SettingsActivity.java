@@ -1,6 +1,5 @@
 package com.slim.slimfilemanager.settings;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 

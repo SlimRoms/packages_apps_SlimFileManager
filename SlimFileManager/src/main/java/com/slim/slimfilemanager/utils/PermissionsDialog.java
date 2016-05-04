@@ -19,14 +19,11 @@ public class PermissionsDialog implements CompoundButton.OnCheckedChangeListener
 
     Permissions mOriginalPermissions;
     Permissions mPermissions;
-
-    private View mView;
-
     EditText mOwner, mGroup;
     CheckBox uRead, uWrite, uExecute;
     CheckBox gRead, gWrite, gExecute;
     CheckBox oRead, oWrite, oExecute;
-
+    private View mView;
     private File mFile;
     private Context mContext;
 
@@ -128,7 +125,7 @@ public class PermissionsDialog implements CompoundButton.OnCheckedChangeListener
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (mPermissions.equals(mOriginalPermissions))
-                FileUtil.applyPermissions(mContext, mFile, mPermissions);
+                    FileUtil.applyPermissions(mContext, mFile, mPermissions);
                 FileUtil.changeGroupOwner(mContext, mFile, mPermissions.owner, mPermissions.group);
                 dialog.dismiss();
             }

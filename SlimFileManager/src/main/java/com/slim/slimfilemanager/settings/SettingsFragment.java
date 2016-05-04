@@ -24,21 +24,21 @@ public class SettingsFragment extends PreferenceFragment {
         } else {
             findPreference(SettingsProvider.KEY_ENABLE_ROOT)
                     .setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                @Override
-                public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    if (!((SwitchPreference) preference).isChecked()) {
-                        RootUtils.runCommand("");
-                    }
-                    return true;
-                }
-            });
+                        @Override
+                        public boolean onPreferenceChange(Preference preference, Object newValue) {
+                            if (!((SwitchPreference) preference).isChecked()) {
+                                RootUtils.runCommand("");
+                            }
+                            return true;
+                        }
+                    });
         }
 
-        String[] entries = new String[] {
+        String[] entries = new String[]{
                 getActivity().getString(R.string.light),
                 getActivity().getString(R.string.dark)
         };
-        String[] values = new String[] {
+        String[] values = new String[]{
                 Integer.toString(R.style.AppTheme),
                 Integer.toString(R.style.AppTheme_Dark)
         };

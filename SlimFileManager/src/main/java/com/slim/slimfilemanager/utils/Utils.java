@@ -67,8 +67,8 @@ public class Utils {
             context.startActivity(i);
         } catch (Exception e) {
             //Toast.makeText(context,
-              //      context.getString(R.string.cantopenfile) + e.getMessage(),
-                //    Toast.LENGTH_SHORT).show();
+            //      context.getString(R.string.cantopenfile) + e.getMessage(),
+            //    Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -102,15 +102,15 @@ public class Utils {
         return displaySize;
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public static String getProperty(String name) {
         String value = null;
         try {
             Class c = Class.forName("android.os.SystemProperties");
             Method m = c.getMethod("get", String.class);
             value = (String) m.invoke(null, name);
-        } catch (ClassNotFoundException|NoSuchMethodException
-                |IllegalAccessException|InvocationTargetException e) {
+        } catch (ClassNotFoundException | NoSuchMethodException
+                | IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
         return value;

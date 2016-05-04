@@ -1,11 +1,5 @@
 package com.slim.slimfilemanager;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -17,8 +11,8 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
-import android.os.Environment;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -47,25 +41,40 @@ import com.slim.slimfilemanager.utils.PasteTask;
 import com.slim.slimfilemanager.widget.PageIndicator;
 import com.slim.slimfilemanager.widget.TabPageIndicator;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 public class FileManager extends ThemeActivity implements View.OnClickListener {
 
+    int mCurrentPosition;
+    boolean mMove;
+    boolean mPicking;
     private SectionsPagerAdapter mSectionsPagerAdapter;
-
     private BrowserFragment mFragment;
-
     private ViewPager mViewPager;
     private PageIndicator mPageIndicator;
     private TabPageIndicator mTabs;
+    SharedPreferences.OnSharedPreferenceChangeListener mPreferenceListener
+            = new SharedPreferences.OnSharedPreferenceChangeListener() {
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            for (TabItem tabItem : mSectionsPagerAdapter.getItems()) {
+                tabItem.fragment.onPreferencesChanged();
+            }
+            if (key.equals(SettingsProvider.SMALL_INDICATOR)) {
+                setupPageIndicators();
+            }
+        }
+    };
     private ListView mDrawer;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerAdapter mDrawerAdapter;
     private FloatingActionButton mPasteButton;
     private FloatingActionsMenu mActionMenu;
-
-    int mCurrentPosition;
-    boolean mMove;
-    boolean mPicking;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -408,6 +417,37 @@ public class FileManager extends ThemeActivity implements View.OnClickListener {
         }
     }
 
+    @Override
+    public void onTrimMemory(int level) {
+        if (level >= Activity.TRIM_MEMORY_MODERATE) {
+            IconCache.clearCache();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        SettingsProvider.get(this)
+                .unregisterOnSharedPreferenceChangeListener(mPreferenceListener);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mSectionsPagerAdapter == null) return;
+        ArrayList<String> arrayList = new ArrayList<>();
+        for (TabItem item : mSectionsPagerAdapter.getItems()) {
+            String path = item.fragment.getCurrentPath();
+            if (!TextUtils.isEmpty(path)) {
+                arrayList.add(item.fragment.getCurrentPath());
+            }
+        }
+        if (!arrayList.isEmpty()) {
+            SettingsProvider.putListString(this, "tabs", arrayList);
+        }
+        SettingsProvider.putInt(this, "current_tab", mViewPager.getCurrentItem());
+    }
+
     private class TabItem {
         BrowserFragment fragment;
         String path;
@@ -493,25 +533,6 @@ public class FileManager extends ThemeActivity implements View.OnClickListener {
 
     @SuppressWarnings("deprecation")
     public class DrawerAdapter extends BaseAdapter {
-
-        public class DrawerItem {
-            String title;
-            String path;
-        }
-
-        public class ViewHolder {
-
-            View view;
-            TextView title;
-            ImageView plus;
-
-            public ViewHolder(View v) {
-                title = (TextView) v.findViewById(R.id.title);
-                plus = (ImageView) v.findViewById(R.id.add_tab);
-                v.setTag(this);
-                view = v;
-            }
-        }
 
         ArrayList<DrawerItem> mItems = new ArrayList<>();
         Context mContext;
@@ -612,49 +633,24 @@ public class FileManager extends ThemeActivity implements View.OnClickListener {
             int c = context.getResources().getColor(R.color.accent);
             return Color.argb(99, Color.red(c), Color.green(c), Color.blue(c));
         }
-    }
 
-    @Override
-    public void onTrimMemory(int level) {
-        if (level >= Activity.TRIM_MEMORY_MODERATE) {
-            IconCache.clearCache();
+        public class DrawerItem {
+            String title;
+            String path;
         }
-    }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        SettingsProvider.get(this)
-                .unregisterOnSharedPreferenceChangeListener(mPreferenceListener);
-    }
+        public class ViewHolder {
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (mSectionsPagerAdapter == null) return;
-        ArrayList<String> arrayList = new ArrayList<>();
-        for (TabItem item : mSectionsPagerAdapter.getItems()) {
-            String path = item.fragment.getCurrentPath();
-            if (!TextUtils.isEmpty(path)) {
-                arrayList.add(item.fragment.getCurrentPath());
+            View view;
+            TextView title;
+            ImageView plus;
+
+            public ViewHolder(View v) {
+                title = (TextView) v.findViewById(R.id.title);
+                plus = (ImageView) v.findViewById(R.id.add_tab);
+                v.setTag(this);
+                view = v;
             }
         }
-        if (!arrayList.isEmpty()) {
-            SettingsProvider.putListString(this, "tabs", arrayList);
-        }
-        SettingsProvider.putInt(this, "current_tab", mViewPager.getCurrentItem());
     }
-
-    SharedPreferences.OnSharedPreferenceChangeListener mPreferenceListener
-            = new SharedPreferences.OnSharedPreferenceChangeListener() {
-        @Override
-        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            for (TabItem tabItem : mSectionsPagerAdapter.getItems()) {
-                tabItem.fragment.onPreferencesChanged();
-            }
-            if (key.equals(SettingsProvider.SMALL_INDICATOR)) {
-                setupPageIndicators();
-            }
-        }
-    };
 }

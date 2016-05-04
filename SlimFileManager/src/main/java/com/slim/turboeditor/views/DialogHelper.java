@@ -137,7 +137,6 @@ public class DialogHelper {
          * This is nice to display simple layout without scrollable elements such as
          * {@link android.widget.ListView} or any similar. Use {@link #createSkeletonView()}
          * for them.
-         *
          */
         public View createCommonView() {
 

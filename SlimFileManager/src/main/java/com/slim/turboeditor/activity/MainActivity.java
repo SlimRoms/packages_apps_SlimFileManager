@@ -85,9 +85,9 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
             SYNTAX_DELAY_MILLIS_LONG = 1500,
             ID_UNDO = R.id.im_undo,
             ID_REDO = R.id.im_redo;
-    private File mFile;
     private static String currentEncoding = "UTF-16";
     private final Handler updateHandler = new Handler();
+    private File mFile;
     private boolean fileOpened = false;
 
     private Executor mExecutor = Executors.newSingleThreadExecutor();
@@ -112,6 +112,13 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
                     mEditor.replaceTextKeepCursor(null);
                 }
             };
+    SharedPreferences.OnSharedPreferenceChangeListener mPreferenceListener
+            = new SharedPreferences.OnSharedPreferenceChangeListener() {
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            onPreferencesChanged(key);
+        }
+    };
     private SearchResult searchResult;
     private PageSystem pageSystem;
     private PageSystemButtons pageSystemButtons;
@@ -131,7 +138,6 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
 
         SettingsProvider.get(this).registerOnSharedPreferenceChangeListener(mPreferenceListener);
     }
-
 
     @Override
     protected final void onPostCreate(Bundle savedInstanceState) {
@@ -604,148 +610,6 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
         mNewFileTask.executeOnExecutor(mExecutor);
     }
 
-    private static class NewFileTask extends AsyncTask<Void, Void, String> {
-
-        String message = "";
-        String fileText = "";
-        String fileName = "";
-        String encoding = "UTF-16";
-        boolean isRootRequired = false;
-        File newFile;
-        String newFileText;
-
-        // reference to the activity
-        private WeakReference<MainActivity> mActivityReference;
-
-        private void setNewFile(File f) {
-            newFile = f;
-        }
-
-        private void setNewFileText(String t) {
-            newFileText = t;
-        }
-
-        private void setMainActivity(MainActivity activity) {
-            mActivityReference = new WeakReference<>(activity);
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            try {
-                if (isCancelled()) return "";
-                // if no new uri
-                if (newFile == null) {
-                    fileText = newFileText;
-                    return "txt";
-                } else {
-                    String filePath = newFile.getAbsolutePath();
-
-                    // if the uri has no path
-                    if (TextUtils.isEmpty(filePath)) {
-                        fileName = newFile.getName();
-                        readUri(newFile, false);
-                        return FilenameUtils.getExtension(fileName).toLowerCase();
-                    } else {
-                        fileName = FilenameUtils.getName(filePath);
-                        isRootRequired = !newFile.canRead();
-                        // if we cannot read the file, root permission required
-                        if (isRootRequired) {
-                            readUri(newFile, true);
-                        } else {
-                            readUri(newFile, false);
-                        }
-                        return FilenameUtils.getExtension(fileName).toLowerCase();
-                    }
-
-                }
-            } catch (Exception e) {
-                message = e.getMessage();
-                fileText = "";
-            }
-            return null;
-        }
-
-        private void readUri(File file, boolean asRoot) throws IOException {
-
-
-            BufferedReader buffer = null;
-            StringBuilder stringBuilder = new StringBuilder();
-            String line;
-
-            if (asRoot) {
-                encoding = "UTF-8";
-                fileText = RootUtils.readFile(file);
-            } else {
-                if (mActivityReference.get() != null) {
-                    encoding = FileUtils.getDetectedEncoding(mActivityReference.get()
-                            .getContentResolver().openInputStream(Uri.fromFile(file)));
-                    if (encoding.isEmpty()) {
-                        encoding = SettingsProvider.getString(mActivityReference.get(),
-                                SettingsProvider.EDITOR_ENCODING, Constant.DEFAULT_ENCODING);
-                    }
-                    InputStream inputStream = mActivityReference.get().
-                            getContentResolver().openInputStream(Uri.fromFile(file));
-                    if (inputStream != null) {
-                        buffer = new BufferedReader(new InputStreamReader(inputStream, encoding));
-                    }
-                }
-            }
-
-            if (buffer != null) {
-                while ((line = buffer.readLine()) != null) {
-                    if (isCancelled()) {
-                        break;
-                    }
-                    stringBuilder.append(line);
-                    stringBuilder.append("\n");
-                }
-                buffer.close();
-                fileText = stringBuilder.toString();
-            }
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-
-            if (isCancelled()) return;
-
-            MainActivity activity = mActivityReference.get();
-
-            if (activity == null) return;
-
-            activity.mEditor.setExtension(result);
-
-            activity.hideProgressDialog();
-
-            if (!TextUtils.isEmpty(message)) {
-                Toast.makeText(activity, message, Toast.LENGTH_LONG).show();
-                activity.cannotOpenFile();
-            } else {
-
-                activity.pageSystem.setFileText(fileText);
-                currentEncoding = encoding;
-
-                activity.showTextEditor();
-
-                ActionBar ab = activity.getActionBar();
-                if (ab != null) {
-                    if (fileName.isEmpty())
-                        ab.setTitle(R.string.new_file);
-                    else
-                        ab.setTitle(fileName);
-
-                }
-            }
-
-        }
-    }
-
     public void savedAFile(boolean success) {
 
         mEditor.clearHistory();
@@ -963,11 +827,145 @@ public class MainActivity extends ThemeActivity implements FindTextDialog
             cannotOpenFile();
     }
 
-    SharedPreferences.OnSharedPreferenceChangeListener mPreferenceListener
-            = new SharedPreferences.OnSharedPreferenceChangeListener() {
-        @Override
-        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            onPreferencesChanged(key);
+    private static class NewFileTask extends AsyncTask<Void, Void, String> {
+
+        String message = "";
+        String fileText = "";
+        String fileName = "";
+        String encoding = "UTF-16";
+        boolean isRootRequired = false;
+        File newFile;
+        String newFileText;
+
+        // reference to the activity
+        private WeakReference<MainActivity> mActivityReference;
+
+        private void setNewFile(File f) {
+            newFile = f;
         }
-    };
+
+        private void setNewFileText(String t) {
+            newFileText = t;
+        }
+
+        private void setMainActivity(MainActivity activity) {
+            mActivityReference = new WeakReference<>(activity);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            try {
+                if (isCancelled()) return "";
+                // if no new uri
+                if (newFile == null) {
+                    fileText = newFileText;
+                    return "txt";
+                } else {
+                    String filePath = newFile.getAbsolutePath();
+
+                    // if the uri has no path
+                    if (TextUtils.isEmpty(filePath)) {
+                        fileName = newFile.getName();
+                        readUri(newFile, false);
+                        return FilenameUtils.getExtension(fileName).toLowerCase();
+                    } else {
+                        fileName = FilenameUtils.getName(filePath);
+                        isRootRequired = !newFile.canRead();
+                        // if we cannot read the file, root permission required
+                        if (isRootRequired) {
+                            readUri(newFile, true);
+                        } else {
+                            readUri(newFile, false);
+                        }
+                        return FilenameUtils.getExtension(fileName).toLowerCase();
+                    }
+
+                }
+            } catch (Exception e) {
+                message = e.getMessage();
+                fileText = "";
+            }
+            return null;
+        }
+
+        private void readUri(File file, boolean asRoot) throws IOException {
+
+
+            BufferedReader buffer = null;
+            StringBuilder stringBuilder = new StringBuilder();
+            String line;
+
+            if (asRoot) {
+                encoding = "UTF-8";
+                fileText = RootUtils.readFile(file);
+            } else {
+                if (mActivityReference.get() != null) {
+                    encoding = FileUtils.getDetectedEncoding(mActivityReference.get()
+                            .getContentResolver().openInputStream(Uri.fromFile(file)));
+                    if (encoding.isEmpty()) {
+                        encoding = SettingsProvider.getString(mActivityReference.get(),
+                                SettingsProvider.EDITOR_ENCODING, Constant.DEFAULT_ENCODING);
+                    }
+                    InputStream inputStream = mActivityReference.get().
+                            getContentResolver().openInputStream(Uri.fromFile(file));
+                    if (inputStream != null) {
+                        buffer = new BufferedReader(new InputStreamReader(inputStream, encoding));
+                    }
+                }
+            }
+
+            if (buffer != null) {
+                while ((line = buffer.readLine()) != null) {
+                    if (isCancelled()) {
+                        break;
+                    }
+                    stringBuilder.append(line);
+                    stringBuilder.append("\n");
+                }
+                buffer.close();
+                fileText = stringBuilder.toString();
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+
+            if (isCancelled()) return;
+
+            MainActivity activity = mActivityReference.get();
+
+            if (activity == null) return;
+
+            activity.mEditor.setExtension(result);
+
+            activity.hideProgressDialog();
+
+            if (!TextUtils.isEmpty(message)) {
+                Toast.makeText(activity, message, Toast.LENGTH_LONG).show();
+                activity.cannotOpenFile();
+            } else {
+
+                activity.pageSystem.setFileText(fileText);
+                currentEncoding = encoding;
+
+                activity.showTextEditor();
+
+                ActionBar ab = activity.getActionBar();
+                if (ab != null) {
+                    if (fileName.isEmpty())
+                        ab.setTitle(R.string.new_file);
+                    else
+                        ab.setTitle(fileName);
+
+                }
+            }
+
+        }
+    }
 }

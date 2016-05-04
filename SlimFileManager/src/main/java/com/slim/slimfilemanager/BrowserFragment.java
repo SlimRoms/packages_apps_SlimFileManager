@@ -58,6 +58,8 @@ import java.util.concurrent.ExecutionException;
 public class BrowserFragment extends Fragment implements View.OnClickListener,
         FragmentLifecycle, SearchView.OnQueryTextListener {
 
+    public static final int ACTION_ADD_FOLDER = 10001;
+    public static final int ACTION_ADD_FILE = 10002;
     private static final int MENU_COPY = 1001;
     private static final int MENU_CUT = 1002;
     private static final int MENU_DELETE = 1003;
@@ -65,10 +67,6 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
     private static final int MENU_RENAME = 1005;
     private static final int MENU_SHARE = 1006;
     private static final int MENU_ARCHIVE = 1007;
-
-    public static final int ACTION_ADD_FOLDER = 10001;
-    public static final int ACTION_ADD_FILE = 10002;
-
     private static final String ARG_PATH = "path";
 
     private String mCurrentPath;
@@ -86,15 +84,87 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
     private RecyclerView mRecyclerView;
     private ViewAdapter mAdapter;
     private ArrayList<Item> mFiles = new ArrayList<>();
+    ActionMode.Callback mMultiSelect = new ActionMode.Callback() {
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            menu.add(0, MENU_COPY, 0, R.string.copy).setIcon(R.drawable.copy)
+                    .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            menu.add(0, MENU_CUT, 0, R.string.move).setIcon(R.drawable.cut)
+                    .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            menu.add(0, MENU_DELETE, 0, R.string.move).setIcon(R.drawable.delete)
+                    .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            menu.add(0, MENU_PERMISSIONS, 0, R.string.permissions)
+                    .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
+            menu.add(0, MENU_RENAME, 0, R.string.rename)
+                    .setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+            menu.add(0, MENU_SHARE, 0, R.string.share).setIcon(R.drawable.share)
+                    .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            menu.add(0, MENU_ARCHIVE, 0, R.string.archive)
+                    .setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+            mActionMode = mode;
+            return true;
+        }
 
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            menu.findItem(MENU_PERMISSIONS).setVisible(
+                    mMultiSelector.getSelectedPositions().size() == 1);
+            menu.findItem(MENU_RENAME).setVisible(
+                    mMultiSelector.getSelectedPositions().size() == 1);
+            return true;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+
+            SelectedFiles.clearAll();
+            for (int i = 0; i < mFiles.size(); i++) {
+                if (mMultiSelector.isSelected(i)) {
+                    SelectedFiles.addFile(mFiles.get(i).path);
+                }
+            }
+
+            if (mMultiSelector.getSelectedPositions().size() > 0) {
+                int id = item.getItemId();
+                switch (id) {
+                    case MENU_CUT:
+                    case MENU_COPY:
+                        if (id == MENU_CUT) mActivity.setMove(true);
+                        mActivity.showPaste(true);
+                        break;
+                    case MENU_DELETE:
+                        showDialog(MENU_DELETE);
+                        mode.finish();
+                        break;
+                    case MENU_PERMISSIONS:
+                        showDialog(MENU_PERMISSIONS);
+                        break;
+                    case MENU_RENAME:
+                        showDialog(MENU_RENAME);
+                        break;
+                    case MENU_SHARE:
+                        handleShareFile();
+                        break;
+                    case MENU_ARCHIVE:
+                        showDialog(MENU_ARCHIVE);
+                        break;
+                }
+            }
+            mMultiSelector.clearSelections();
+            mMultiSelector.setSelectable(false);
+            mode.finish();
+            return true;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            mMultiSelector.clearSelections();
+            mMultiSelector.setSelectable(false);
+        }
+    };
     private boolean mExitOnBack = false;
     private boolean mSearching = false;
     private boolean mPicking = false;
-
-    public class Item {
-        public String name;
-        public String path;
-    }
 
     public static BrowserFragment newInstance(String path) {
         BrowserFragment fragment = new BrowserFragment();
@@ -223,85 +293,6 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
         return true;
     }
 
-    ActionMode.Callback mMultiSelect = new ActionMode.Callback() {
-        @Override
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            menu.add(0, MENU_COPY, 0, R.string.copy).setIcon(R.drawable.copy)
-                    .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-            menu.add(0, MENU_CUT, 0, R.string.move).setIcon(R.drawable.cut)
-                    .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-            menu.add(0, MENU_DELETE, 0, R.string.move).setIcon(R.drawable.delete)
-                    .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-            menu.add(0, MENU_PERMISSIONS, 0, R.string.permissions)
-                    .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
-            menu.add(0, MENU_RENAME, 0, R.string.rename)
-                    .setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
-            menu.add(0, MENU_SHARE, 0, R.string.share).setIcon(R.drawable.share)
-                    .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-            menu.add(0, MENU_ARCHIVE, 0, R.string.archive)
-                    .setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
-            mActionMode = mode;
-            return true;
-        }
-
-        @Override
-        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            menu.findItem(MENU_PERMISSIONS).setVisible(
-                    mMultiSelector.getSelectedPositions().size() == 1);
-            menu.findItem(MENU_RENAME).setVisible(
-                    mMultiSelector.getSelectedPositions().size() == 1);
-            return true;
-        }
-
-        @Override
-        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-
-            SelectedFiles.clearAll();
-            for (int i = 0; i < mFiles.size(); i++) {
-                if (mMultiSelector.isSelected(i)) {
-                    SelectedFiles.addFile(mFiles.get(i).path);
-                }
-            }
-
-            if (mMultiSelector.getSelectedPositions().size() > 0) {
-                int id = item.getItemId();
-                switch (id) {
-                    case MENU_CUT:
-                    case MENU_COPY:
-                        if (id == MENU_CUT) mActivity.setMove(true);
-                        mActivity.showPaste(true);
-                        break;
-                    case MENU_DELETE:
-                        showDialog(MENU_DELETE);
-                        mode.finish();
-                        break;
-                    case MENU_PERMISSIONS:
-                        showDialog(MENU_PERMISSIONS);
-                        break;
-                    case MENU_RENAME:
-                        showDialog(MENU_RENAME);
-                        break;
-                    case MENU_SHARE:
-                        handleShareFile();
-                        break;
-                    case MENU_ARCHIVE:
-                        showDialog(MENU_ARCHIVE);
-                        break;
-                }
-            }
-            mMultiSelector.clearSelections();
-            mMultiSelector.setSelectable(false);
-            mode.finish();
-            return true;
-        }
-
-        @Override
-        public void onDestroyActionMode(ActionMode mode) {
-            mMultiSelector.clearSelections();
-            mMultiSelector.setSelectable(false);
-        }
-    };
-
     public void setSearching(boolean searching) {
         mSearching = searching;
     }
@@ -314,7 +305,8 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
             mMove = false;
             //mActionMenu.setVisibility(View.VISIBLE);
             mPasteButton.setVisibility(View.GONE);
-        } else*/ if (((int) v.getTag()) == ACTION_ADD_FOLDER) {
+        } else*/
+        if (((int) v.getTag()) == ACTION_ADD_FOLDER) {
             showDialog(ACTION_ADD_FOLDER);
         }
     }
@@ -491,7 +483,7 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
                 if (check.isFile() && name.toLowerCase().
                         contains(query.toLowerCase())) {
                     addFile(check.getPath());
-                } else if(check.isDirectory()) {
+                } else if (check.isDirectory()) {
                     if (name.toLowerCase().contains(query.toLowerCase())) {
                         addFile(check.getPath());
                     }
@@ -524,12 +516,12 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
         for (String s : files) {
             if (mPicking && !TextUtils.isEmpty(mMimeType) && mMimeType.startsWith("image/")
                     && !MimeUtils.isPicture(new File(s)) && new File(s).isFile()) continue;
-                Item item = new Item();
-                item.name = new File(s).getName();
-                item.path = s;
-                mFiles.add(item);
-                sortFiles();
-                mAdapter.notifyItemInserted(mFiles.indexOf(item));
+            Item item = new Item();
+            item.name = new File(s).getName();
+            item.path = s;
+            mFiles.add(item);
+            sortFiles();
+            mAdapter.notifyItemInserted(mFiles.indexOf(item));
         }
         mRecyclerView.scrollToPosition(0);
     }
@@ -552,61 +544,6 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
                 return true;
         }
         return false;
-    }
-
-    public class ViewAdapter extends RecyclerView.Adapter<BrowserViewHolder> {
-
-        @Override
-        public BrowserViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            LayoutInflater inflater = (LayoutInflater) mContext
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View v = inflater.inflate(R.layout.item, parent, false);
-            BrowserViewHolder vh = new BrowserViewHolder(v);
-            vh.icon = (ImageView) v.findViewById(R.id.image);
-            vh.title = (TextView) v.findViewById(R.id.title);
-            vh.date = (TextView) v.findViewById(R.id.date);
-            vh.info = (TextView) v.findViewById(R.id.info);
-            return vh;
-        }
-
-        @Override
-        public void onBindViewHolder(final BrowserViewHolder holder, final int position) {
-            holder.title.setText(mFiles.get(position).name);
-            IconCache.getIconForFile(mContext, mFiles.get(position).path, holder.icon);
-
-            DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT,
-                    DateFormat.SHORT, Locale.getDefault());
-            File file = new File(mFiles.get(position).path);
-            if (file.isFile()) {
-                holder.info.setText(Utils.displaySize(file.length()));
-            } else {
-                int num = 0;
-                String[] files = file.list();
-                if (files != null) {
-                    num = files.length;
-                }
-                holder.info.setText(String.valueOf(num));
-            }
-            if (mSearching) {
-                holder.date.setText(mFiles.get(position).path);
-            } else {
-                holder.date.setText(df.format(file.lastModified()));
-            }
-        }
-
-        @Override
-        public int getItemCount() {
-            return mFiles.size();
-        }
-
-        public int indexOf(String name) {
-            for (int i = 0; i < getItemCount(); i++) {
-                if (mFiles.get(i).name.equalsIgnoreCase(name)) {
-                    return i;
-                }
-            }
-            return 0;
-        }
     }
 
     public void removeFile(String file) {
@@ -709,7 +646,7 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
                     if (id == ACTION_ADD_FOLDER) {
                         builder.setTitle(R.string.create_folder);
                         folderName.setHint(R.string.folder_name_hint);
-                    } else if (id == ACTION_ADD_FILE){
+                    } else if (id == ACTION_ADD_FILE) {
                         builder.setTitle(R.string.create_file);
                         folderName.setHint(R.string.file_name_hint);
                     } else {
@@ -835,6 +772,66 @@ public class BrowserFragment extends Fragment implements View.OnClickListener,
                     return builder.create();
             }
             return null;
+        }
+    }
+
+    public class Item {
+        public String name;
+        public String path;
+    }
+
+    public class ViewAdapter extends RecyclerView.Adapter<BrowserViewHolder> {
+
+        @Override
+        public BrowserViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            LayoutInflater inflater = (LayoutInflater) mContext
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View v = inflater.inflate(R.layout.item, parent, false);
+            BrowserViewHolder vh = new BrowserViewHolder(v);
+            vh.icon = (ImageView) v.findViewById(R.id.image);
+            vh.title = (TextView) v.findViewById(R.id.title);
+            vh.date = (TextView) v.findViewById(R.id.date);
+            vh.info = (TextView) v.findViewById(R.id.info);
+            return vh;
+        }
+
+        @Override
+        public void onBindViewHolder(final BrowserViewHolder holder, final int position) {
+            holder.title.setText(mFiles.get(position).name);
+            IconCache.getIconForFile(mContext, mFiles.get(position).path, holder.icon);
+
+            DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT,
+                    DateFormat.SHORT, Locale.getDefault());
+            File file = new File(mFiles.get(position).path);
+            if (file.isFile()) {
+                holder.info.setText(Utils.displaySize(file.length()));
+            } else {
+                int num = 0;
+                String[] files = file.list();
+                if (files != null) {
+                    num = files.length;
+                }
+                holder.info.setText(String.valueOf(num));
+            }
+            if (mSearching) {
+                holder.date.setText(mFiles.get(position).path);
+            } else {
+                holder.date.setText(df.format(file.lastModified()));
+            }
+        }
+
+        @Override
+        public int getItemCount() {
+            return mFiles.size();
+        }
+
+        public int indexOf(String name) {
+            for (int i = 0; i < getItemCount(); i++) {
+                if (mFiles.get(i).name.equalsIgnoreCase(name)) {
+                    return i;
+                }
+            }
+            return 0;
         }
     }
 

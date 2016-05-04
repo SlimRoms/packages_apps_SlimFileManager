@@ -121,9 +121,13 @@ public class PageSystemButtons {
 
     public interface PageButtonsInterface {
         void nextPageClicked();
+
         void prevPageClicked();
+
         void pageSystemButtonLongClicked();
+
         boolean canReadNextPage();
+
         boolean canReadPrevPage();
     }
 

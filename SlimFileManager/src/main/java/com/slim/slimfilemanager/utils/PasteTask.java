@@ -17,21 +17,17 @@ import java.util.HashMap;
 
 public class PasteTask implements View.OnClickListener {
 
+    private static final int NOTIF_ID = 1001;
     Context mContext;
     ArrayList<String> mFiles = new ArrayList<>();
     boolean mMove;
     String mLocation;
-
-    private Notification.Builder mBuilder;
-    private NotificationManager mNotifManager;
-    private static final int NOTIF_ID = 1001;
-
     String mCurrent;
-
     AlertDialog mDialog;
-
     HashMap<String, String> mExistingFiles = new HashMap<>();
     ArrayList<String> mProcess = new ArrayList<>();
+    private Notification.Builder mBuilder;
+    private NotificationManager mNotifManager;
 
     public PasteTask(Context context,
                      boolean move, String location) {

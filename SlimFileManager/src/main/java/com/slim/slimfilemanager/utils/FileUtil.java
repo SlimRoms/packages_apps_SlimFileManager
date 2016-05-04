@@ -53,7 +53,7 @@ public class FileUtil {
             return true;
         } catch (IOException e) {
             return SettingsProvider.getBoolean(context, SettingsProvider.KEY_ENABLE_ROOT, false)
-                && RootUtils.isRootAvailable() && RootUtils.moveFile(source, destination);
+                    && RootUtils.isRootAvailable() && RootUtils.moveFile(source, destination);
         }
     }
 
@@ -145,7 +145,7 @@ public class FileUtil {
                 return null;
             }
             return reader;
-        } catch (IOException|InterruptedException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
         return null;
@@ -201,7 +201,7 @@ public class FileUtil {
         return false;
     }
 
-    public static boolean mkdir (Context context, File dir) {
+    public static boolean mkdir(Context context, File dir) {
         return dir.mkdirs() || (SettingsProvider.getBoolean(context,
                 SettingsProvider.KEY_ENABLE_ROOT, false) && RootUtils.isRootAvailable()
                 && RootUtils.createFolder(dir));
@@ -222,7 +222,7 @@ public class FileUtil {
             } catch (IOException e) {
                 // ignore
             }
-        } else if (SettingsProvider.getBoolean(context, SettingsProvider.KEY_ENABLE_ROOT, false)){
+        } else if (SettingsProvider.getBoolean(context, SettingsProvider.KEY_ENABLE_ROOT, false)) {
             RootUtils.writeFile(file, content);
         }
     }

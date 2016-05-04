@@ -21,7 +21,6 @@ package com.slim.turboeditor.texteditor;
 
 import android.content.Context;
 
-import com.slim.slimfilemanager.settings.SettingsProvider;
 import com.slim.turboeditor.util.PixelDipConverter;
 
 public class EditTextPadding {
